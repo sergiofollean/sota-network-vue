@@ -62,13 +62,14 @@ import firebase from "firebase/app";
 // // firebase sdk
 // Your web app's Firebase configuration
 var firebaseConfig = {
-  apiKey: "AIzaSyCTbFE_Lqhk1t9A1xKK_X2yLFSOqCjXXYg",
-  authDomain: "egret-vue.firebaseapp.com",
-  databaseURL: "https://egret-vue.firebaseio.com",
-  projectId: "egret-vue",
-  storageBucket: "egret-vue.appspot.com",
-  messagingSenderId: "130729989333",
-  appId: "1:130729989333:web:40b0516d3d3953e59e3e5c"
+  apiKey: "AIzaSyA2FX8u7Q_rgx5gi32730BEyrAxfD53DJ8",
+  authDomain: "botapp-bb4b0.firebaseapp.com",
+  databaseURL: "https://botapp-bb4b0-default-rtdb.firebaseio.com",
+  projectId: "botapp-bb4b0",
+  storageBucket: "botapp-bb4b0.appspot.com",
+  messagingSenderId: "245702413811",
+  appId: "1:245702413811:web:5d370f49db6db0a6f41686",
+  measurementId: "G-PL69VSBB8X"
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

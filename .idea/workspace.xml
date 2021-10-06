@@ -3,8 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/plugins/egret.kit.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/plugins/egret.kit.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,11 +40,17 @@
       <workItem from="1633522609828" duration="5100000" />
       <workItem from="1633532375053" duration="78000" />
       <workItem from="1633532809947" duration="690000" />
-      <workItem from="1633534682349" duration="628000" />
+      <workItem from="1633534682349" duration="1074000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="987" y="433" width="585" height="534" key="find.popup" timestamp="1633535659843">
+      <screen x="0" y="0" width="2560" height="1400" />
+    </state>
+    <state x="987" y="433" width="585" height="534" key="find.popup/0.0.2560.1400/-2560.0.2560.1400@0.0.2560.1400" timestamp="1633535659843" />
   </component>
 </project>
