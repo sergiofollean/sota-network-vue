@@ -1,5 +1,5 @@
 // Locale
-// import { en } from '../../locale'
+import '@/lang/lang'
 
 export const themeConfig = {
   disableCustomizer: true, // options[Boolean] : true, false(default)
