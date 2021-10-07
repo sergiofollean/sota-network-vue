@@ -1,4 +1,7 @@
+import authData from '../store/modules/authData';
+
 export default (to, from, next) => {
+  console.log(authData.actions.checkUser());
   if (
     localStorage.getItem('userInfo') != null &&
     localStorage.getItem('userInfo').length > 0

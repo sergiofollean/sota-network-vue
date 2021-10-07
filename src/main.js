@@ -25,7 +25,7 @@ import { makeServer } from "../server";
 import egretKit from "@/plugins/egret.kit";
 import VueApexCharts from "vue-apexcharts";
 // mock
-import "./fake-db/index.js";
+// import "./fake-db/index.js";
 
 import "animate.css";
 

@@ -15,7 +15,7 @@
           </v-avatar>
 
           <h6 class="text-muted font-semibold mb-10">
-            Sign in to your account
+            Вхід до свого акаунта
           </h6>
           <v-form>
             <v-text-field
@@ -29,33 +29,26 @@
               :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
               :type="show ? 'text' : 'password'"
               name="input-10-2"
-              label="password"
+              label="пароль"
               :counter="10"
               :rules="nameRules"
               v-model="ePassword"
               @click:append="show = !show"
             ></v-text-field>
-            <v-checkbox
-              v-model="checkbox1"
-              label="Remember this computer"
-            ></v-checkbox>
-            <v-btn class="mb-4" @click="formSubmit" block color="primary" dark>
+<!--            <v-checkbox-->
+<!--              v-model="checkbox1"-->
+<!--              label="Запамьятати цей компьютер"-->
+<!--            ></v-checkbox>-->
+            <v-btn class="mt-4 mb-4" @click="formSubmit" block color="primary" dark>
               <v-icon left>mdi-login</v-icon>
-              Sign In</v-btn
-            >
-            <v-btn class="mb-4" @click="googleSignIn" block color="#DB4437" dark>
-              <v-icon left>
-                mdi-google
-              </v-icon>
-              Sign In
-            </v-btn
+              Увійти</v-btn
             >
             <div class="flex justify-around flex-wrap">
               <v-btn text small color="primary" class="mb-2"
-                >Forgot Password</v-btn
+                >Забутий пароль</v-btn
               >
-              <v-btn text small color="primary" to="/app/sessions/sign-up-2"
-                >Create New Account</v-btn
+              <v-btn text small color="primary" to="/app/sessions/sign-up"
+                >Зареєструватися</v-btn
               >
             </div>
           </v-form>

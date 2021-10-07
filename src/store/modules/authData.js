@@ -7,6 +7,7 @@ export default {
       localStorage.getItem("userInfo") != null
         ? JSON.parse(localStorage.getItem("userInfo"))
         : null,
+    currentUser: false,
     loading: false,
     error: null
   },
@@ -41,6 +42,13 @@ export default {
     }
   },
   actions: {
+    checkUser() {
+      firebase.auth().onAuthStateChanged(user => {
+        console.log('User: '+user.email);
+        console.log('User c: '+firebase.auth().currentUser);
+      });
+    },
+
     login({ commit }, data) {
       commit("clearError");
       commit("setLoading", true);
