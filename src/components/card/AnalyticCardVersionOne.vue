@@ -29,9 +29,10 @@
           <h3 class="font-bold m-0">
             {{ headingText }}
           </h3>
-          <h6 class="text-xs mb-8 font-normal">{{ subHeadingText }}</h6>
+          <h6 class="text-xs font-normal">{{ subHeadingText }}</h6>
 
           <v-btn
+            v-if="bottomButtonText != ''"
             depressed
             rounded
             :class="[
@@ -104,7 +105,7 @@
       // bottom button text
       bottomButtonText: {
         type: String,
-        default: '12.6%',
+        default: '',
       },
       // bottom button icon
       bottomButtonIcon: {

@@ -1,14 +1,14 @@
 import authData from '../store/modules/authData';
+import firebase from "firebase/app";
+import "firebase/auth";
 
 export default (to, from, next) => {
-  console.log(authData.actions.checkUser());
-  if (
-    localStorage.getItem('userInfo') != null &&
-    localStorage.getItem('userInfo').length > 0
-  ) {
-    next()
-  } else {
-    localStorage.removeItem('userInfo')
-    next('/app/sessions/sign-in-two')
-  }
+
+  firebase.auth().onAuthStateChanged(async user => {
+    if (user) {
+      next();
+    } else {
+      next('/user/sign-in');
+    }
+  });
 }

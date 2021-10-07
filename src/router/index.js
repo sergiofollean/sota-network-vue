@@ -35,7 +35,7 @@ const router = new Router({
       path: "/",
       component: () => import("@/views/app/Index"),
       beforeEnter: authenticate,
-      redirect: "/app/dashboard/job-management",
+      redirect: "/dashboard",
 
       children: [
         // {
@@ -43,24 +43,24 @@ const router = new Router({
         //   component: () => import("@/views/app/Index")
         // },
         {
-          path: "/app/dashboard",
+          path: "/dashboard",
           component: () => import("@/views/app/dashboard/Index"),
 
-          children: [
-            {
-              path: "job-management",
-              name: "job-management",
-              meta: {
-                breadcrumb: [{ name: "Dashboard" }, { name: "Job Management" }]
-              },
-              component: () => import("@/views/app/dashboard/JobManagement")
-            },
-          ]
+          // children: [
+          //   {
+          //     path: "job-management",
+          //     name: "job-management",
+          //     meta: {
+          //       breadcrumb: [{ name: "Dashboard" }, { name: "Job Management" }]
+          //     },
+          //     component: () => import("@/views/app/dashboard/JobManagement")
+          //   },
+          // ]
         },
       ]
     },
     {
-      path: "/app/sessions",
+      path: "/user",
       component: () => import("@/views/app/sessions/Sessions"),
 
       children: [
@@ -73,7 +73,7 @@ const router = new Router({
           component: () => import("@/views/app/sessions/Forgot")
         },
         {
-          path: "sign-in-two",
+          path: "sign-in",
           name: "login",
           component: () => import("@/views/app/sessions/SignInTwo")
         },

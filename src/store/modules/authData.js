@@ -42,13 +42,6 @@ export default {
     }
   },
   actions: {
-    checkUser() {
-      firebase.auth().onAuthStateChanged(user => {
-        console.log('User: '+user.email);
-        console.log('User c: '+firebase.auth().currentUser);
-      });
-    },
-
     login({ commit }, data) {
       commit("clearError");
       commit("setLoading", true);

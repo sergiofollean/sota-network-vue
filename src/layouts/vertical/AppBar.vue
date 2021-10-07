@@ -34,12 +34,38 @@
         <v-icon>mdi-magnify</v-icon>
       </v-btn>
 
-      <v-chip pill class="bg-transparent py-5" @click="userDrawer = !userDrawer">
-        Hi, Watson
-        <v-avatar class="ml-2">
-          <v-img src="@/assets/images/faces/1.jpg"></v-img>
-        </v-avatar>
-      </v-chip>
+      <v-menu offset-y min-width="150">
+        <template v-slot:activator="{ on, attrs }">
+          <v-chip pill class="bg-transparent py-5" v-bind="attrs" v-on="on">
+            Hi, Watson
+            <v-avatar class="ml-2">
+              <v-img src="@/assets/images/faces/1.jpg"></v-img>
+            </v-avatar>
+          </v-chip>
+        </template>
+        <v-list>
+          <v-list-item @click>
+            <v-list-item-title>
+              <v-icon class="mr-1">mdi-account</v-icon>Profile
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item @click>
+            <v-list-item-title>
+              <v-icon class="mr-1">mdi-cog</v-icon>Account Setting
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item @click>
+            <v-list-item-title>
+              <v-icon class="mr-1">mdi-bell-off</v-icon>Disable Alerts
+            </v-list-item-title>
+          </v-list-item>
+          <v-list-item @click="logoutUser">
+            <v-list-item-title>
+              <v-icon class="mr-1">mdi-logout</v-icon>Sign Out
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
     </v-app-bar>
     <!-- userDrawer -->
     <v-navigation-drawer

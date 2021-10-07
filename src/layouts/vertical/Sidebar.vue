@@ -27,51 +27,9 @@
     >
       <v-list dense nav>
         <v-list-item class="px-0">
-          <v-list-item-avatar>
-            <v-img
-              v-if="getThemeMode.verticalSidebarDrawerColor == 'dark'"
-              src="@/assets/images/arctic-circle-logo.svg"
-            />
-            <v-img v-else src="@/assets/images/logo.svg" />
-          </v-list-item-avatar>
-
-          <v-list-item-title class="text-18 text-uppercase text-default"
-            >Arctic</v-list-item-title
+          <v-list-item-title class="text-18 text-uppercase text-default ml-4"
+            >Sota Network</v-list-item-title
           >
-        </v-list-item>
-        <v-list-item class="p-1" two-line :class="miniVariant && 'px-1'">
-          <v-list-item-avatar
-            class="ml-n1"
-            min-width="40"
-            height="40"
-            width="40"
-          >
-            <v-img src="@/assets/images/faces/1.jpg" />
-          </v-list-item-avatar>
-
-          <v-list-item-content>
-            <v-list-item-title class="text-16 mb-1 font-weight-regular"
-              >Watson Joyce</v-list-item-title
-            >
-            <!-- <v-divider class="d-block" /> -->
-            <v-list-item-subtitle class="mt-n1">
-              <!-- <v-icon class="text-18 mr-2">
-                mdi-card-account-mail-outline
-                
-              </v-icon> -->
-              <v-btn small icon class="mr-2">
-                <v-icon small>mdi-cog</v-icon>
-              </v-btn>
-              <v-btn small icon class="mr-2">
-                <v-icon small>mdi-email</v-icon>
-              </v-btn>
-              <v-btn small icon class="mr-2">
-                <v-icon small>mdi-logout-variant</v-icon>
-              </v-btn>
-              <!-- <v-icon class="text-18 mr-2">mdi-inbox-multiple-outline</v-icon> -->
-              <!-- <v-icon class="text-18 mr-2">mdi-home-edit-outline</v-icon> -->
-            </v-list-item-subtitle>
-          </v-list-item-content>
         </v-list-item>
       </v-list>
 
