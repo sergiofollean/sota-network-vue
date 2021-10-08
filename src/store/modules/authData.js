@@ -9,14 +9,19 @@ export default {
         : null,
     currentUser: false,
     loading: false,
-    error: null
+    error: null,
+    userData: null,
   },
   getters: {
     loggedInUser: state => state.loggedInUser,
     loading: state => state.loading,
-    error: state => state.error
+    error: state => state.error,
+    userData: state => state.userData,
   },
   mutations: {
+    setUserData(state, data) {
+      state.userData = data;
+    },
     setUser(state, data) {
       state.loggedInUser = data;
       state.loading = false;
@@ -42,6 +47,9 @@ export default {
     }
   },
   actions: {
+    setUserData({commit}, user) {
+      commit("setUserData", user);
+    },
     login({ commit }, data) {
       commit("clearError");
       commit("setLoading", true);

@@ -37,7 +37,7 @@
       <v-menu offset-y min-width="150">
         <template v-slot:activator="{ on, attrs }">
           <v-chip pill class="bg-transparent py-5" v-bind="attrs" v-on="on">
-            Hi, Watson
+            {{ userData.email }}
             <v-avatar class="ml-2">
               <v-img src="@/assets/images/faces/1.jpg"></v-img>
             </v-avatar>
@@ -155,6 +155,7 @@ export default {
   },
   computed: {
     ...mapGetters(["getThemeMode"]),
+    ...mapGetters(["userData"]),
   },
   data() {
     return {

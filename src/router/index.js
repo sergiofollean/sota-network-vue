@@ -45,18 +45,21 @@ const router = new Router({
         {
           path: "/dashboard",
           component: () => import("@/views/app/dashboard/Index"),
-
-          // children: [
-          //   {
-          //     path: "job-management",
-          //     name: "job-management",
-          //     meta: {
-          //       breadcrumb: [{ name: "Dashboard" }, { name: "Job Management" }]
-          //     },
-          //     component: () => import("@/views/app/dashboard/JobManagement")
-          //   },
-          // ]
         },
+        {
+          path: "/settings",
+          name: "settings",
+          meta: {
+            breadcrumb: [{ name: "Dashboard" }, { name: "Settings" }]
+          },
+          component: () => import("@/views/app/settings/Index"),
+          children: [
+            {
+              path: '',
+              component: () => import("@/views/app/settings/Main")
+            }
+          ]
+        }
       ]
     },
     {
