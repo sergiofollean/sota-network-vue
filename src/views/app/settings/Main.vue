@@ -2,22 +2,22 @@
   <v-row>
     <v-col sm="12">
       <base-card>
-        <v-card-title>Біржеві акаунти</v-card-title>
+        <v-card-title>
+          Біржеві акаунти
+          <v-btn color="primary" class="ml-4" to="settings/add_account">Додати</v-btn>
+        </v-card-title>
         <v-card-text>
-          <v-simple-table>
-            <template v-slot:default>
-              <thead>
-                <tr>
-                  <th>Назва</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="item in priceDrivers">
-                  <td>{{ item.id }}</td>
-                </tr>
-              </tbody>
-            </template>
-          </v-simple-table>
+            <v-data-table
+                :headers="headers"
+                :items="priceDrivers"
+                hide-default-footer
+                disable-sort
+                no-data-text="Немає жодного акаунта"
+            >
+              <template v-slot:item.actions="{item}">
+                <v-btn color="danger" small text>Видалити</v-btn>
+              </template>
+            </v-data-table>
         </v-card-text>
       </base-card>
     </v-col>
@@ -32,6 +32,12 @@ import "firebase/firestore";
 export default {
   data() {
     return {
+      headers: [
+        { text: "Назва", value: "AccountName" },
+        { text: "Біржа", value: "AccountPlatform" },
+        { text: "Тип", value: "AccountType" },
+        { text: "Дії", value: "actions", align: "center", width: "1%" }
+      ],
       priceDrivers: [],
     }
   },
@@ -41,8 +47,13 @@ export default {
     firebase.auth().onAuthStateChanged(async user => {
       var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
       priceDrivers.onSnapshot(snapshot => {
+        this.priceDrivers = [];
         snapshot.forEach(doc => {
-          this.priceDrivers.push({id: doc.id, data: doc.data()});
+          this.priceDrivers.push({
+            AccountName: doc.data()['AccountName'],
+            AccountPlatform: doc.data()['AccountPlatform'],
+            AccountType: doc.data()['AccountType'],
+          });
         });
       });
     });

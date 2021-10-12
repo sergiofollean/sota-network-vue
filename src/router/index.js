@@ -57,6 +57,10 @@ const router = new Router({
             {
               path: '',
               component: () => import("@/views/app/settings/Main")
+            },
+            {
+              path: 'add_account',
+              component: () => import("@/views/app/settings/AddAccount")
             }
           ]
         }

@@ -11,6 +11,6 @@ export const items = [{
   {
     title: 'Налаштування',
     icon: 'mdi-cog',
-    to: 'settings'
+    to: '/settings'
   },
 ]
