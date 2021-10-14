@@ -16,6 +16,7 @@
                 label="Назва"
                 :rules="[v => !!v || 'Вкажіть назву']"
                 required
+                outlined
             />
             <v-row>
               <v-col md="6">
@@ -24,6 +25,7 @@
                     :items="AccountPlatforms"
                     placeholder="Оберіть біржу"
                     required
+                    outlined
                 />
               </v-col>
               <v-col md="6">
@@ -31,7 +33,9 @@
                     v-model="AccountType"
                     placeholder="Тип акаунту"
                     :items="AccountTypes"
+                    return-object
                     required
+                    outlined
                 />
               </v-col>
             </v-row>
@@ -40,12 +44,14 @@
                 label="Public Key"
                 :rules="[v => !!v || 'Це поле не може бути порожнє!']"
                 required
+                outlined
             />
             <v-text-field
                 v-model="AccountPriv"
                 label="Private Key"
                 :rules="[v => !!v || 'Це поле не може бути порожнє!']"
                 required
+                outlined
             />
             <v-btn color="success" class="my-4" @click="addAccount">Відправити</v-btn>
           </v-form>
@@ -70,12 +76,12 @@ export default {
         'Bybit'
       ],
       AccountTypes: [
-        'Спот',
-        'Фьючерси'
+        { text: 'Спот', value: 'Spot Trading' },
+        { text: 'Фьючерси', value: 'Leverage Trading' }
       ],
       AccountName: '',
       AccountPlatform: '',
-      AccountType: '',
+      AccountType: { text: 'Спот', value: 'spot' },
       AccountPriv: '',
       AccountPub: ''
     }
@@ -89,13 +95,13 @@ export default {
         await db.collection('users').doc(user.uid).collection('PriceDrivers').add({
           AccountName: this.AccountName,
           AccountPlatform: this.AccountPlatform,
-          AccountType: this.AccountType,
+          AccountType: this.AccountType.value,
           AccountPub: this.AccountPub,
           AccountPriv: this.AccountPriv
         }).then(data => {
           this.$router.push('/settings');
         }).catch(data => {
-
+          /* Error if can't add the Account */
         });
 
       });

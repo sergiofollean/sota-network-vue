@@ -15,7 +15,7 @@
                 no-data-text="Немає жодного акаунта"
             >
               <template v-slot:item.actions="{item}">
-                <v-btn color="danger" small text>Видалити</v-btn>
+                <v-btn color="danger" small text @click="removeAccount(item.id)">Видалити</v-btn>
               </template>
             </v-data-table>
         </v-card-text>
@@ -43,13 +43,13 @@ export default {
   },
   created() {
     var db = firebase.firestore();
-    // console.log(this.$store.state.userData.email);
     firebase.auth().onAuthStateChanged(async user => {
       var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
       priceDrivers.onSnapshot(snapshot => {
         this.priceDrivers = [];
         snapshot.forEach(doc => {
           this.priceDrivers.push({
+            id: doc.id,
             AccountName: doc.data()['AccountName'],
             AccountPlatform: doc.data()['AccountPlatform'],
             AccountType: doc.data()['AccountType'],
@@ -57,6 +57,16 @@ export default {
         });
       });
     });
+  },
+  methods: {
+    removeAccount(id) {
+      var db = firebase.firestore();
+
+      firebase.auth().onAuthStateChanged(async user => {
+        var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
+        priceDrivers.doc(id).delete();
+      });
+    }
   }
 }
 </script>

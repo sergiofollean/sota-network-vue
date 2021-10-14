@@ -7,6 +7,7 @@ export const items = [{
   {
     title: 'Боти',
     icon: 'mdi-robot',
+    to: '/bots'
   },
   {
     title: 'Налаштування',

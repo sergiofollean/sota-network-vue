@@ -63,6 +63,25 @@ const router = new Router({
               component: () => import("@/views/app/settings/AddAccount")
             }
           ]
+        },
+        {
+          path: "/bots",
+          name: "bots",
+          component: () => import("@/views/app/bots/Index"),
+          children: [
+            {
+              path: '',
+              component: () => import("@/views/app/bots/Main.vue")
+            },
+            {
+              path: 'bot',
+              component: () => import("@/views/app/bots/Bot")
+            },
+            {
+              path: 'bot/:id',
+              component: () => import("@/views/app/bots/Bot")
+            }
+          ]
         }
       ]
     },
