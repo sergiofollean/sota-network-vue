@@ -20,7 +20,7 @@
                       outlined
                       label="Акаунт"
                       :items="priceDrivers"
-                      @change="test"
+                      @change="getMarkets"
                   />
                 </v-col>
                 <v-col sm="6">
@@ -70,7 +70,8 @@ export default {
     return {
       level: [ "Низький ризик", "Середній ризик", "Високий ризик" ],
       priceDrivers: [],
-      markets: []
+      markets: [],
+      Bot: []
     }
   },
   created() {
@@ -94,7 +95,7 @@ export default {
     // });
   },
   methods: {
-    test(e) {
+    getMarkets(e) {
       var priceDriver = this.priceDrivers.find(obj => {
         return obj.value === e
       });
@@ -116,6 +117,18 @@ export default {
           }
         });
       }
+    },
+
+    saveBot() {
+      var firestore = firebase.firestore();
+
+      firebase.auth().onAuthStateChanged(async user => {
+        if(this.Bot.length == 0) {
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
+
+          });
+        }
+      });
     }
   }
 }

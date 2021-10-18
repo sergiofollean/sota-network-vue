@@ -67,6 +67,7 @@ import router from "@/router";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+import "firebase/database";
 
 export default {
   data() {
@@ -91,6 +92,7 @@ export default {
       if(!this.$refs.AccountForm.validate()) return false;
 
       var db = firebase.firestore();
+      var realdb = firebase.database();
       firebase.auth().onAuthStateChanged(async user => {
         await db.collection('users').doc(user.uid).collection('PriceDrivers').add({
           AccountName: this.AccountName,
@@ -98,7 +100,14 @@ export default {
           AccountType: this.AccountType.value,
           AccountPub: this.AccountPub,
           AccountPriv: this.AccountPriv
-        }).then(data => {
+        }).then(async data => {
+          await realdb.ref('tasks').push().set({
+            user: user.uid,
+            PriceDriver: data.id,
+            AccountType: this.AccountType.value,
+            AccountPub: this.AccountPub,
+            AccountPriv: this.AccountPriv
+          });
           this.$router.push('/settings');
         }).catch(data => {
           /* Error if can't add the Account */
