@@ -6,9 +6,13 @@
           Додавання нового боту
         </v-card-title>
 
-          <v-form>
+          <v-form
+              ref="BotForm"
+              lazy-validation
+          >
             <v-card-text>
               <v-text-field
+                  v-model="Bot.Name"
                   label="Назва"
                   :rules="[v => !!v || 'Вкажіть назву']"
                   required
@@ -17,6 +21,7 @@
               <v-row>
                 <v-col sm="6">
                   <v-select
+                      v-model="Bot.PriceDriver"
                       outlined
                       label="Акаунт"
                       :items="priceDrivers"
@@ -25,6 +30,7 @@
                 </v-col>
                 <v-col sm="6">
                   <v-select
+                      v-model="Bot.Market"
                       outlined
                       label="Маркет"
                       no-data-text="Спершу оберіть акаунт"
@@ -38,6 +44,7 @@
               <v-row>
                 <v-col md="6">
                   <v-slider
+                      v-model="Bot.Level"
                       class="my-4"
                       :tick-labels="level"
                       :max="2"
@@ -46,13 +53,15 @@
                 </v-col>
               </v-row>
               <v-text-field
+                  v-model="Bot.Ballance"
                   outlined
                   label="Баланс для торгівлі"
                   prepend-inner-icon="mdi-currency-usd"
+                  :rules="[v => !!v || 'Це поле обовьязкове!']"
               />
             </v-card-text>
             <v-card-text>
-              <v-btn color="success">Зберегти</v-btn>
+              <v-btn color="success" @click="saveBot">Зберегти</v-btn>
               <v-btn color="primary" disabled class="ml-3">Запустити</v-btn>
             </v-card-text>
           </v-form>
@@ -71,13 +80,15 @@ export default {
       level: [ "Низький ризик", "Середній ризик", "Високий ризик" ],
       priceDrivers: [],
       markets: [],
-      Bot: []
+      Bot: {},
+      id: null
     }
   },
   created() {
-    var db = firebase.firestore();
+    var firestore = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
-      var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
+      // Price Drivers {
+      var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
       priceDrivers.onSnapshot(snapshot => {
         this.priceDrivers = [];
         snapshot.forEach(doc => {
@@ -89,6 +100,18 @@ export default {
           });
         });
       });
+      // } Price Drivers
+
+      // Bot {
+      if(this.$route.params.id) {
+        var Bot = firestore.collection('users').doc(user.uid).collection('Bots').doc(this.$route.params.id);
+
+        if(await Bot.get()) {
+          console.log('yes');
+          // console.log(await Bot.get().data());
+        }
+      }
+      // } Bot
     });
     // axios.get('http://34.116.142.95/GetPriceMarkets').then(response => {
     //   console.log(response);
@@ -120,13 +143,23 @@ export default {
     },
 
     saveBot() {
+      if(!this.$refs.BotForm.validate()) return false;
+
       var firestore = firebase.firestore();
 
       firebase.auth().onAuthStateChanged(async user => {
-        if(this.Bot.length == 0) {
+        if(this.id === null) {
           var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
-
+            Name: this.Bot.Name,
+            PriceDriver: this.Bot.PriceDriver,
+            Market: this.Bot.Market,
+            Level: this.Bot.Level,
+            Ballance: this.Bot.Ballance
           });
+
+          if(Bot) {
+            this.$router.push('/bots/bot/' + Bot.id);
+          }
         }
       });
     }
