@@ -132,7 +132,7 @@ export default {
       }
 
       if(platform.length > 0) {
-        axios.get('http://34.116.142.95/GetPriceMarkets/'+platform).then(response => {
+        axios.get('https://sota-api.gq/GetPriceMarkets/'+platform).then(response => {
           if(response.data.length > 0) {
             response.data.map(el => {
               this.markets.push({ text: el.ShortName, value: el.DisplayName });
