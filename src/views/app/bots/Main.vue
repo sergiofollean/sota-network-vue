@@ -2,10 +2,10 @@
   <v-row>
     <v-col sm="12">
       <base-card>
-        <v-card-title>
-          Боти
-          <v-btn color="primary" class="ml-4" to="bots/bot">Додати</v-btn>
-        </v-card-title>
+<!--        <v-card-title>-->
+<!--          Боти-->
+<!--          <v-btn color="primary" class="ml-4" to="bots/bot">Додати</v-btn>-->
+<!--        </v-card-title>-->
         <v-card-text>
           <v-data-table
               :headers="headers"
@@ -14,6 +14,20 @@
               disable-sort
               no-data-text="Немає жодного бота"
           >
+            <template v-slot:top>
+              <v-toolbar
+                  flat
+              >
+                <v-toolbar-title>Боти</v-toolbar-title>
+                <v-divider
+                    class="mx-4"
+                    inset
+                    vertical
+                ></v-divider>
+<!--                <v-spacer></v-spacer>-->
+                <v-btn color="primary" to="bots/bot">Додати</v-btn>
+              </v-toolbar>
+            </template>
             <template v-slot:item.Status="{item}">
               <template v-if="item.Status === 'active'">
                 <v-chip

@@ -1,6 +1,6 @@
 <template>
-  <v-row>
-    <v-col lg="5" md="12" order="1" order-lg="0">
+  <v-row no-gutters>
+    <v-col lg="5" sm="12" order="1" order-lg="0">
       <base-card>
         <v-card-title v-if="id == null">
           Додавання нового боту
@@ -73,11 +73,17 @@
     <v-col lg="7" md="12" ref="graphCol" @resize="onResize">
       <Graph :colWidth="graphCol"></Graph>
     </v-col>
-    <v-col sm="12" v-if="id != null">
-      <base-card>
+    <v-col cols="12" v-if="id != null" order="3">
+      <base-card class="mt-4">
         <v-card-title>
           Ордери
         </v-card-title>
+
+        <v-card-text>
+          <v-data-table
+              no-data-text="Немає жодного одреру"
+          />
+        </v-card-text>
       </base-card>
     </v-col>
   </v-row>
@@ -220,3 +226,11 @@ export default {
   }
 }
 </script>
+
+<style>
+@media (max-width: 768px) {
+  .v-slider__tick-label {
+    font-size: 12px;
+  }
+}
+</style>
