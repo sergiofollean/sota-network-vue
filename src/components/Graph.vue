@@ -1,5 +1,5 @@
 <template>
-  <trading-vue :data="this.$data"></trading-vue>
+  <trading-vue :data="this.$data" :width="this.$props.colWidth"></trading-vue>
 </template>
 <script>
 // const layout = this.$props.layout
@@ -7,10 +7,12 @@
 // console.log(layout);
 import TradingVue from "trading-vue-js";
 import Overlays from 'tvjs-overlays'
+const Binance = require('node-binance-api');
 
 export default {
   name: 'graph',
   components: { TradingVue },
+  props: ['colWidth'],
   data() {
     return {
       ohlcv: [
@@ -21,12 +23,13 @@ export default {
         [ 1551142800000, 24.1, 24.1, 24, 24.1, 29 ],
       ],
       timer: '',
-      overlays: [Overlays['TradesPlus']]
+      overlays: [Overlays['TradesPlus']],
     }
   },
   async created() {
-    console.log(this.props)
-    console.log(this)
+    // console.log(this.$refs.graph_col);
+    // console.log(this.props)
+    // console.log(this)
     await this.fetchEventsList();
     console.log(this.$refs.tradingVue)
     const https = await this.$http.get('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=15m&limit=10');
@@ -45,15 +48,15 @@ export default {
       const data = candels.data.map((item) => {
         return [Number.parseFloat(item[0]), Number.parseFloat(item[1]), Number.parseFloat(item[2]), Number.parseFloat(item[3]), Number.parseFloat(item[4])];
       });
-      console.log(data[0])
-      console.log(ohlcvElement[0])
+      // console.log(data[0])
+      // console.log(ohlcvElement[0])
       if (ohlcvElement[0] === data[0][0]) {
-        console.log('equal')
+        // console.log('equal')
         this.ohlcv[this.ohlcv.length - 1] = [1634683500000, 64500, 50000];
       } else {
         this.ohlcv.push(data[0]);
       }
-      console.log(this.ohlcv)
+      // console.log(this.ohlcv)
     },
   }
 }

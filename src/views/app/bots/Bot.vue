@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col sm="5">
+    <v-col lg="5" md="12" order="1" order-lg="0">
       <base-card>
         <v-card-title v-if="id == null">
           Додавання нового боту
@@ -70,10 +70,18 @@
           </v-form>
       </base-card>
     </v-col>
-    <v-col sm="7">
-      <Graph></Graph>
+    <v-col lg="7" md="12" ref="graphCol" @resize="onResize">
+      <Graph :colWidth="graphCol"></Graph>
+    </v-col>
+    <v-col sm="12" v-if="id != null">
+      <base-card>
+        <v-card-title>
+          Ордери
+        </v-card-title>
+      </base-card>
     </v-col>
   </v-row>
+
 </template>
 
 <script>
@@ -90,10 +98,16 @@ export default {
       priceDrivers: [],
       markets: [],
       Bot: {},
-      id: null
+      id: null,
+      graphCol: 333
     }
   },
-  created() {
+  async created() {
+    window.addEventListener('resize', this.onResize);
+    setTimeout(() => {
+      this.onResize();
+    }, 100);
+
     var firestore = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
       // Price Drivers {
@@ -128,6 +142,11 @@ export default {
     });
   },
   methods: {
+    onResize(event) {
+      console.log(this.$refs.graphCol.clientWidth);
+      this.graphCol = this.$refs.graphCol.clientWidth - 30;
+    },
+
     getMarkets(e) {
       /* Get Markets for v-select */
 
@@ -149,7 +168,7 @@ export default {
         axios.get('https://sota-api.gq/GetPriceMarkets/'+platform).then(response => {
           if(response.data.length > 0) {
             response.data.map(el => {
-              this.markets.push({ text: el.ShortName, value: el.DisplayName });
+              this.markets.push({ text: el.ShortName, value: el.ShortName });
             });
           }
         });
