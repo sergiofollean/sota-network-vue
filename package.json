@@ -19,6 +19,8 @@
     "nprogress": "^0.2.0",
     "postcss-import": "^12.0.1",
     "tailwindcss": "^1.8.10",
+    "trading-vue-js": "^1.0.2",
+    "tvjs-overlays": "^0.5.0",
     "vue": "^2.6.12",
     "vue-apexcharts": "^1.6.0",
     "vue-axios": "^2.1.5",

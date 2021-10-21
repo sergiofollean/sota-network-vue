@@ -1,9 +1,12 @@
 <template>
   <v-row>
-    <v-col sm="12">
+    <v-col sm="5">
       <base-card>
-        <v-card-title>
+        <v-card-title v-if="id == null">
           Додавання нового боту
+        </v-card-title>
+        <v-card-title v-else>
+          Бот - {{ Bot.Name }}
         </v-card-title>
 
           <v-form
@@ -42,7 +45,7 @@
             <v-subheader>Нашалтування торгів</v-subheader>
             <v-card-text>
               <v-row>
-                <v-col md="6">
+                <v-col md="12">
                   <v-slider
                       v-model="Bot.Level"
                       class="my-4"
@@ -67,14 +70,20 @@
           </v-form>
       </base-card>
     </v-col>
+    <v-col sm="7">
+      <Graph></Graph>
+    </v-col>
   </v-row>
 </template>
 
 <script>
 import axios from "axios";
 import firebase from "firebase";
+import "firebase/database";
+import Graph from "@/components/Graph";
 
 export default {
+  components: {Graph},
   data() {
     return {
       level: [ "Низький ризик", "Середній ризик", "Високий ризик" ],
@@ -102,27 +111,31 @@ export default {
       });
       // } Price Drivers
 
-      // Bot {
+      // Bot (Single page) {
       if(this.$route.params.id) {
-        var Bot = firestore.collection('users').doc(user.uid).collection('Bots').doc(this.$route.params.id);
+        var Bot = firestore
+            .collection('users')
+            .doc(user.uid)
+            .collection('Bots')
+            .doc(this.$route.params.id);
 
         if(await Bot.get()) {
-          console.log('yes');
-          // console.log(await Bot.get().data());
+          this.id = await Bot.id;
+          this.Bot = (await Bot.get()).data();
         }
       }
-      // } Bot
+      // } Bot (Single page)
     });
-    // axios.get('http://34.116.142.95/GetPriceMarkets').then(response => {
-    //   console.log(response);
-    // });
   },
   methods: {
     getMarkets(e) {
+      /* Get Markets for v-select */
+
       var priceDriver = this.priceDrivers.find(obj => {
         return obj.value === e
       });
 
+      /* Formating platform for API */
       var platform = '';
       // Binance
       if(priceDriver.platform === 'Binance') {
@@ -131,6 +144,7 @@ export default {
         }
       }
 
+      /* Doing ajax */
       if(platform.length > 0) {
         axios.get('https://sota-api.gq/GetPriceMarkets/'+platform).then(response => {
           if(response.data.length > 0) {
@@ -143,9 +157,12 @@ export default {
     },
 
     saveBot() {
+      /* Save Bot */
+
       if(!this.$refs.BotForm.validate()) return false;
 
       var firestore = firebase.firestore();
+      var database = firebase.database();
 
       firebase.auth().onAuthStateChanged(async user => {
         if(this.id === null) {
@@ -154,14 +171,32 @@ export default {
             PriceDriver: this.Bot.PriceDriver,
             Market: this.Bot.Market,
             Level: this.Bot.Level,
-            Ballance: this.Bot.Ballance
+            Ballance: this.Bot.Ballance,
+            Status: "pending"
           });
 
           if(Bot) {
+            await database.ref('tasks').push().set({
+              task: 'add_bot',
+              user: user.uid,
+              data: {
+                id: Bot.id,
+                PriceDriver: this.Bot.PriceDriver,
+                Market: this.Bot.Market,
+                Level: this.Bot.Level,
+                Ballance: this.Bot.Ballance,
+              }
+            });
+
             this.$router.push('/bots/bot/' + Bot.id);
           }
         }
       });
+    }
+  },
+  watch: {
+    'Bot.PriceDriver': function(val, oldval) {
+      this.getMarkets(val);
     }
   }
 }

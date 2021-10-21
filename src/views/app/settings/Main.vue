@@ -14,6 +14,40 @@
                 disable-sort
                 no-data-text="Немає жодного акаунта"
             >
+              <template v-slot:item.Status="{item}">
+                <template v-if="item.Status === 'true'">
+                  <v-chip
+                      class=""
+                      color="success"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-icon small left >mdi-check</v-icon>
+                    Активний
+                  </v-chip>
+                </template>
+                <template v-else>
+                  <v-chip
+                      class=""
+                      color="info"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-progress-circular
+                        indeterminate
+                        :value="100"
+                        color="white"
+                        :size="15"
+                        :width="2"
+                        class="mr-2"
+                    ></v-progress-circular>
+                    Обробка
+                  </v-chip>
+                </template>
+              </template>
+
               <template v-slot:item.actions="{item}">
                 <v-btn color="danger" small text @click="removeAccount(item.id)">Видалити</v-btn>
               </template>
@@ -36,6 +70,7 @@ export default {
         { text: "Назва", value: "AccountName" },
         { text: "Біржа", value: "AccountPlatform" },
         { text: "Тип", value: "AccountType" },
+        { text: "Статус", value: "Status", align: "center", width: "1%" },
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       priceDrivers: [],
@@ -47,12 +82,14 @@ export default {
       var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
       priceDrivers.onSnapshot(snapshot => {
         this.priceDrivers = [];
+
         snapshot.forEach(doc => {
           this.priceDrivers.push({
             id: doc.id,
             AccountName: doc.data()['AccountName'],
             AccountPlatform: doc.data()['AccountPlatform'],
             AccountType: doc.data()['AccountType'],
+            Status: doc.data()['Status']
           });
         });
       });

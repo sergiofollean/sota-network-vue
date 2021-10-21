@@ -14,8 +14,70 @@
               disable-sort
               no-data-text="Немає жодного бота"
           >
+            <template v-slot:item.Status="{item}">
+              <template v-if="item.Status === 'active'">
+                <v-chip
+                    class=""
+                    color="success"
+                    label
+                    small
+                    text-color="white"
+                >
+                  <v-icon small left >mdi-check</v-icon>
+                  Активний
+                </v-chip>
+              </template>
+              <template v-else>
+                <v-chip
+                    class=""
+                    color="info"
+                    label
+                    small
+                    text-color="white"
+                >
+                  <v-progress-circular
+                      indeterminate
+                      :value="100"
+                      color="white"
+                      :size="15"
+                      :width="2"
+                      class="mr-2"
+                  ></v-progress-circular>
+                  Обробка
+                </v-chip>
+              </template>
+            </template>
+
             <template v-slot:item.actions="{item}">
-              <v-btn color="danger" small text @click="removeAccount(item.id)">Видалити</v-btn>
+              <div class="flex">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        icon
+                        :to="{name: 'Bot', params: {id: item.id}}"
+                    >
+                      <v-icon>mdi-eye</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Відкрити</span>
+                </v-tooltip>
+
+                <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-btn
+                        v-bind="attrs"
+                        v-on="on"
+                        icon
+                        @click="removeBot(item.id)"
+                    >
+                      <v-icon>mdi-trash-can-outline</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Видалити</span>
+                </v-tooltip>
+              </div>
             </template>
           </v-data-table>
         </v-card-text>
@@ -33,9 +95,10 @@ export default {
   data() {
     return {
       headers: [
-        { text: "Назва", value: "AccountName" },
+        { text: "Назва", value: "Name" },
         { text: "Біржа", value: "AccountPlatform" },
         { text: "Тип", value: "AccountType" },
+        { text: "Статус", value: "Status", width: "1%", align: "center" },
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       Bots: [],
@@ -44,22 +107,37 @@ export default {
   created() {
     var db = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
-      var priceDrivers = db.collection('users').doc(user.uid).collection('Bots');
-      priceDrivers.onSnapshot(snapshot => {
-        this.priceDrivers = [];
-        snapshot.forEach(doc => {
-          // this.priceDrivers.push({
-          //   id: doc.id,
-          //   AccountName: doc.data()['AccountName'],
-          //   AccountPlatform: doc.data()['AccountPlatform'],
-          //   AccountType: doc.data()['AccountType'],
-          // });
+      var Bots = db.collection('users').doc(user.uid).collection('Bots');
+      Bots.onSnapshot(snapshot => {
+        this.Bots = [];
+
+        snapshot.forEach(async doc => {
+          var priceDriver = await db
+              .collection('users')
+              .doc(user.uid)
+              .collection('PriceDrivers')
+              .doc(doc.data()['PriceDriver']).get();;
+
+          this.Bots.push({
+            id: doc.id,
+            Name: doc.data()['Name'],
+            AccountPlatform: await priceDriver.data()['AccountPlatform'],
+            AccountType: await priceDriver.data()['AccountType'],
+            Status: doc.data()['Status']
+          });
         });
       });
     });
   },
   methods: {
+    removeBot(id) {
+      var firestore = firebase.firestore();
 
+      firebase.auth().onAuthStateChanged(async user => {
+        var Bots = firestore.collection('users').doc(user.uid).collection('Bots');
+        Bots.doc(id).delete();
+      });
+    }
   }
 }
 </script>

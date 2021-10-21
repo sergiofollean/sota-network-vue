@@ -39,20 +39,26 @@
                 />
               </v-col>
             </v-row>
-            <v-text-field
-                v-model="AccountPub"
-                label="Public Key"
-                :rules="[v => !!v || 'Це поле не може бути порожнє!']"
-                required
-                outlined
+            <v-checkbox
+                v-model="Simulated"
+                label="Simulated"
             />
-            <v-text-field
-                v-model="AccountPriv"
-                label="Private Key"
-                :rules="[v => !!v || 'Це поле не може бути порожнє!']"
-                required
-                outlined
-            />
+            <template v-if="Simulated === false">
+              <v-text-field
+                  v-model="AccountPub"
+                  label="Public Key"
+                  :rules="[v => !!v || 'Це поле не може бути порожнє!']"
+                  required
+                  outlined
+              />
+              <v-text-field
+                  v-model="AccountPriv"
+                  label="Private Key"
+                  :rules="[v => !!v || 'Це поле не може бути порожнє!']"
+                  required
+                  outlined
+              />
+            </template>
             <v-btn color="success" class="my-4" @click="addAccount">Відправити</v-btn>
           </v-form>
         </v-card-text>
@@ -84,7 +90,8 @@ export default {
       AccountPlatform: '',
       AccountType: { text: 'Спот', value: 'spot' },
       AccountPriv: '',
-      AccountPub: ''
+      AccountPub: '',
+      Simulated: false
     }
   },
   methods: {
@@ -99,14 +106,19 @@ export default {
           AccountPlatform: this.AccountPlatform,
           AccountType: this.AccountType.value,
           AccountPub: this.AccountPub,
-          AccountPriv: this.AccountPriv
+          AccountPriv: this.AccountPriv,
+          Simulated: this.Simulated
         }).then(async data => {
           await realdb.ref('tasks').push().set({
+            task: "add_account",
             user: user.uid,
-            PriceDriver: data.id,
-            AccountType: this.AccountType.value,
-            AccountPub: this.AccountPub,
-            AccountPriv: this.AccountPriv
+            data: {
+              PriceDriver: data.id,
+              AccountType: this.AccountType.value,
+              AccountPub: this.AccountPub,
+              AccountPriv: this.AccountPriv,
+              Simulated: this.Simulated
+            }
           });
           this.$router.push('/settings');
         }).catch(data => {

@@ -78,6 +78,7 @@ const router = new Router({
               component: () => import("@/views/app/bots/Bot")
             },
             {
+              name: 'Bot',
               path: 'bot/:id',
               component: () => import("@/views/app/bots/Bot")
             }
