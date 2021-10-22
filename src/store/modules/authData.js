@@ -1,4 +1,4 @@
-import firebase from "firebase/app";
+import firebase from "firebase";
 import "firebase/auth";
 
 export default {
@@ -48,7 +48,18 @@ export default {
   },
   actions: {
     setUserData({commit}, user) {
-      commit("setUserData", user);
+      var firestore = firebase.firestore();
+
+      var userData = {
+        email: user.email,
+        license: null
+      };
+
+      var userDoc = firestore.collection('users').doc(user.uid).get().then(async data => {
+        userData.license = data.data().license;
+      });
+
+      commit("setUserData", userData);
     },
     login({ commit }, data) {
       commit("clearError");

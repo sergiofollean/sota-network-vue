@@ -8,15 +8,29 @@
           <v-card-text>
             <div class="ul-donation-item flex items-center justify-between py-lg flex-wrap">
               <div class="flex-grow-1 py-4">
-                <div class="card-title m-0 text-xl">
-                  Ліцензія - PRO
-                </div>
-                <p class="text-muted mb-0">
-                  Залишилося днів - 14
-                </p>
+                <!--        Licenses {        -->
+                <!--        No License        -->
+                <template v-if="userData.license === 'no-license'">
+                  <div class="card-title m-0 text-xl">
+                    У вас не немає активних підписок
+                  </div>
+                  <p class="text-muted mb-0">
+                    Перегляньте доступні підписки
+                  </p>
+                </template>
+                <!--        Pro        -->
+                <template v-if="userData.license === 'pro'">
+                  <div class="card-title m-0 text-xl">
+                    Ліцензія - PRO
+                  </div>
+                  <p class="text-muted mb-0">
+                    Залишилося днів - 14
+                  </p>
+                </template>
+                <!--        } Licenses        -->
               </div>
               <v-btn
-                  outlined
+                  text
                   color="primary"
               >
                 Керування підписками
@@ -59,11 +73,15 @@
 
 <script>
 import analyticOneCard from "@/components/card/AnalyticCardVersionOne";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Dashboard",
   components: {
     "analytic-one-card": analyticOneCard,
   },
+  computed: {
+    ...mapGetters(["userData"]),
+  }
 }
 </script>

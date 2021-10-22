@@ -1,5 +1,5 @@
 <template>
-    <graph :width="500" :height="500">
+    <graph :width="1200" :height="800">
     </graph>
 
 </template>

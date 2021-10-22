@@ -2,10 +2,10 @@
   <v-row>
     <v-col sm="12">
       <base-card>
-        <v-card-title>
-          Біржеві акаунти
-          <v-btn color="primary" class="ml-4" to="settings/add_account">Додати</v-btn>
-        </v-card-title>
+<!--        <v-card-title>-->
+<!--          Біржеві акаунти-->
+<!--          <v-btn color="primary" class="ml-4" to="settings/add_account">Додати</v-btn>-->
+<!--        </v-card-title>-->
         <v-card-text>
             <v-data-table
                 :headers="headers"
@@ -14,6 +14,20 @@
                 disable-sort
                 no-data-text="Немає жодного акаунта"
             >
+              <template v-slot:top>
+                <v-toolbar
+                    flat
+                >
+                  <v-toolbar-title>Біржеві акаунти</v-toolbar-title>
+                  <v-divider
+                      class="mx-4"
+                      inset
+                      vertical
+                  ></v-divider>
+                  <!--                <v-spacer></v-spacer>-->
+                  <v-btn color="primary" to="settings/add_account">Додати</v-btn>
+                </v-toolbar>
+              </template>
               <template v-slot:item.Status="{item}">
                 <template v-if="item.Status === 'true'">
                   <v-chip
