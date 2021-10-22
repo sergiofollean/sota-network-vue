@@ -7,6 +7,28 @@
         </v-card-title>
         <v-card-title v-else>
           Бот - {{ Bot.Name }}
+          <v-chip
+              v-if="Bot.Status === 'active'"
+              class="ml-4"
+              color="success"
+              label
+              small
+              text-color="white"
+          >
+            <v-icon small left >mdi-check</v-icon>
+            Активний
+          </v-chip>
+          <v-chip
+              v-if="Bot.Status === 'paused'"
+              class="ml-4"
+              color="warning"
+              label
+              small
+              text-color="white"
+          >
+            <v-icon class="mr-2" size="15">mdi-pause</v-icon>
+            Зупинений
+          </v-chip>
         </v-card-title>
 
           <v-form
@@ -60,12 +82,16 @@
                   outlined
                   label="Баланс для торгівлі"
                   prepend-inner-icon="mdi-currency-usd"
+                  suffix="USDT"
                   :rules="[v => !!v || 'Це поле обовьязкове!']"
+                  :hint="BallanceHint"
+                  persistent-hint
               />
             </v-card-text>
             <v-card-text>
               <v-btn color="success" @click="saveBot">Зберегти</v-btn>
-              <v-btn color="primary" disabled class="ml-3">Запустити</v-btn>
+              <v-btn v-if="Bot.Status === 'paused'" color="primary" class="ml-3">Запустити</v-btn>
+              <v-btn v-if="Bot.Status === 'active'" color="primary" class="ml-3">Зупинити</v-btn>
             </v-card-text>
           </v-form>
       </base-card>
@@ -95,6 +121,18 @@ import axios from "axios";
 import firebase from "firebase";
 import "firebase/database";
 import Graph from "@/components/Graph";
+import Binance from 'binance-api-node';
+
+const client = Binance();
+var firestore = firebase.firestore();
+var database = firebase.database();
+
+// Authenticated client, can make signed calls
+// const client2 = Binance({
+//   apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
+//   apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
+//   // getTime: xxx,
+// })
 
 export default {
   components: {Graph},
@@ -103,9 +141,11 @@ export default {
       level: [ "Низький ризик", "Середній ризик", "Високий ризик" ],
       priceDrivers: [],
       markets: [],
+      Markets: null,
       Bot: {},
       id: null,
-      graphCol: 333
+      graphCol: 333,
+      BallanceHint: 'Спершу оберіть біржу'
     }
   },
   async created() {
@@ -114,7 +154,6 @@ export default {
       this.onResize();
     }, 100);
 
-    var firestore = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
       // Price Drivers {
       var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
@@ -153,8 +192,8 @@ export default {
       this.graphCol = this.$refs.graphCol.clientWidth - 30;
     },
 
-    getMarkets(e) {
-      /* Get Markets for v-select */
+    async getMarkets(e) {
+      /* Get Markets for v-select { */
 
       var priceDriver = this.priceDrivers.find(obj => {
         return obj.value === e
@@ -169,28 +208,38 @@ export default {
         }
       }
 
-      /* Doing ajax */
+      /* Doing ajax to get markets from Haas */
       if(platform.length > 0) {
         axios.get('https://sota-api.gq/GetPriceMarkets/'+platform).then(response => {
           if(response.data.length > 0) {
             response.data.map(el => {
-              this.markets.push({ text: el.ShortName, value: el.ShortName });
+              this.markets.push({
+                text: el.ShortName,
+                value: el.ShortName,
+                PrimaryCurrency: el.PrimaryCurrency,
+                SecondaryCurrency: el.SecondaryCurrency,
+                MinimumTradeAmount: el.MinimumTradeAmount
+              });
             });
           }
         });
+
+        /* Doing request to Binance API */
+        this.Markets = await client.futuresPrices();
+        this.calculateBallance();
       }
+      /* } Get Markets for v-select */
     },
 
     saveBot() {
-      /* Save Bot */
+      /* Save Bot { */
 
       if(!this.$refs.BotForm.validate()) return false;
 
-      var firestore = firebase.firestore();
-      var database = firebase.database();
-
       firebase.auth().onAuthStateChanged(async user => {
+        /* First save so create new { */
         if(this.id === null) {
+          // Adding to firestore user profile
           var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
             Name: this.Bot.Name,
             PriceDriver: this.Bot.PriceDriver,
@@ -200,6 +249,7 @@ export default {
             Status: "pending"
           });
 
+          // Adding to the tasker
           if(Bot) {
             await database.ref('tasks').push().set({
               task: 'add_bot',
@@ -209,19 +259,73 @@ export default {
                 PriceDriver: this.Bot.PriceDriver,
                 Market: this.Bot.Market,
                 Level: this.Bot.Level,
-                Ballance: this.Bot.Ballance,
+                SlotSize: this.Bot.SlotSize,
               }
             });
 
+            // Redirect to new exist bot
             this.$router.push('/bots/bot/' + Bot.id);
           }
         }
+        /* } First save so create new  */
+        /* Save exist bot { */
+        else {
+          //
+        }
+        /* } Save exist bot */
       });
+      /* } Save Bot */
+    },
+
+    calculateBallance() {
+      /* Calculating contracts count to Ballance */
+
+      if(this.Markets) {
+        if(this.Bot.Market) {
+          if(this.Bot.Ballance) {
+            let marketObject = this.markets.find(obj => {
+              return obj.value === this.Bot.Market
+            });
+
+            // format market symbols
+            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+
+            // calculating contract size
+            let contractUstd = this.Bot.Ballance / 110;
+            let contractSize = (contractUstd / this.Markets[marketObj]).toFixed(3);
+
+            // check if more then minimum trade amount
+            if(contractSize >= marketObject.MinimumTradeAmount) {
+              this.BallanceHint = "Розмір ордеру " + contractSize;
+              this.Bot.SlotSize = contractSize;
+            }
+            else {
+              console.log(marketObject.MinimumTradeAmount);
+              this.BallanceHint = "Замалий баланс для торгівлі";
+            }
+          }
+          else {
+            this.BallanceHint = "Вкажіть суму в рамках якої буде працювати бот";
+          }
+        }
+        else {
+          this.BallanceHint = "Тепер оберіть маркет";
+        }
+      }
+      else {
+        this.BallanceHint = "Спершу оберіть біржу";
+      }
     }
   },
   watch: {
     'Bot.PriceDriver': function(val, oldval) {
       this.getMarkets(val);
+    },
+    'Bot.Ballance': function(val, oldval) {
+      this.calculateBallance();
+    },
+    'Bot.Market': function () {
+      this.calculateBallance();
     }
   }
 }
