@@ -26,6 +26,15 @@ module.exports = {
     },
     disableHostCheck: true
   },
+  configureWebpack: {
+    node: {
+      fs: "empty",
+      dgram: "empty",
+      net: 'empty',
+      tls: 'empty',
+      dns: 'empty'
+    }
+  },
   // chainWebpack: config => {
   //   config.module
   //     .rule("vue")

@@ -1,7 +1,7 @@
 <template>
   <v-row no-gutters>
     <v-col lg="5" sm="12" order="1" order-lg="0">
-      <base-card>
+      <base-card ref="panelCol" class="panelCol-event">
         <v-card-title v-if="id == null">
           Додавання нового боту
         </v-card-title>
@@ -28,6 +28,24 @@
           >
             <v-icon class="mr-2" size="15">mdi-pause</v-icon>
             Зупинений
+          </v-chip>
+          <v-chip
+              v-else
+              class="ml-4"
+              color="info"
+              label
+              small
+              text-color="white"
+          >
+            <v-progress-circular
+                indeterminate
+                :value="100"
+                color="white"
+                :size="15"
+                :width="2"
+                class="mr-2"
+            ></v-progress-circular>
+            Обробка
           </v-chip>
         </v-card-title>
 
@@ -97,7 +115,7 @@
       </base-card>
     </v-col>
     <v-col lg="7" md="12" ref="graphCol" @resize="onResize">
-      <Graph :colWidth="graphCol"></Graph>
+      <graph :width="graphWidth" :height="graphHeight" :symbol-name="symbolName" />
     </v-col>
     <v-col cols="12" v-if="id != null" order="3">
       <base-card class="mt-4">
@@ -120,8 +138,8 @@
 import axios from "axios";
 import firebase from "firebase";
 import "firebase/database";
-import Graph from "@/components/Graph";
 import Binance from 'binance-api-node';
+import Graph from "@/views/app/dashboard/Graph";
 
 const client = Binance();
 var firestore = firebase.firestore();
@@ -144,15 +162,22 @@ export default {
       Markets: null,
       Bot: {},
       id: null,
-      graphCol: 333,
-      BallanceHint: 'Спершу оберіть біржу'
+      graphWidth: 333,
+      graphHeight: 333,
+      BallanceHint: 'Спершу оберіть біржу',
+      symbolName: 'BTCUSDT'
     }
   },
-  async created() {
+  mounted() {
     window.addEventListener('resize', this.onResize);
     setTimeout(() => {
       this.onResize();
-    }, 100);
+    }, 300);
+  },
+  async created() {
+    setTimeout(() => {
+      this.onResize();
+    }, 300);
 
     firebase.auth().onAuthStateChanged(async user => {
       // Price Drivers {
@@ -186,10 +211,13 @@ export default {
       // } Bot (Single page)
     });
   },
+  destroyed() {
+    window.removeEventListener('resize', this.onResize);
+  },
   methods: {
-    onResize(event) {
-      console.log(this.$refs.graphCol.clientWidth);
-      this.graphCol = this.$refs.graphCol.clientWidth - 30;
+    async onResize(event) {
+        this.graphWidth = await this.$refs.graphCol.clientWidth;
+        this.graphHeight = await this.$refs.panelCol.$el.clientHeight - 34;
     },
 
     async getMarkets(e) {
@@ -289,6 +317,7 @@ export default {
 
             // format market symbols
             let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+            this.symbolName = marketObj;
 
             // calculating contract size
             let contractUstd = this.Bot.Ballance / 110;
