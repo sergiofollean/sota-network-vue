@@ -191,7 +191,9 @@ export default {
       ],
       orders: [],
       bussy: false,
-      needsUpdate: false
+      needsUpdate: false,
+      apiKey: null,
+      apiSecret: null
     }
   },
   mounted() {

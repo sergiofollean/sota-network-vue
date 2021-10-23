@@ -1,6 +1,19 @@
 <template>
   <v-row>
-    <v-col sm="12">
+    <v-col sm="12" v-if="requireAccount">
+      <base-card>
+        <div class="flex-wrap">
+          <v-col sm="12" class="text-center">
+            <h2 class="title mt-4">Перед початком необхідно додати акаунт біржі.</h2>
+          </v-col>
+
+          <v-col sm="12" class="text-center">
+            <v-btn class="mb-4" color="primary" text to="/settings">Налаштування</v-btn>
+          </v-col>
+        </div>
+      </base-card>
+    </v-col>
+    <v-col v-else sm="12">
       <base-card>
         <v-card-text>
           <v-data-table
@@ -131,12 +144,23 @@ export default {
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       Bots: [],
-      loading: false
+      loading: false,
+      requireAccount: true
     }
   },
   mounted() {
     var db = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
+      var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
+      priceDrivers = await priceDrivers.where('Status', '==', "true");
+      priceDrivers = await priceDrivers.where('AccountPriv', '!=', '');
+
+      if((await priceDrivers.get()).size === 0) {
+        this.requireAccount = true;
+        return false;
+      }
+
+      this.requireAccount = false;
       var Bots = db.collection('users').doc(user.uid).collection('Bots');
       Bots.onSnapshot(snapshot => {
         this.loading = true;
