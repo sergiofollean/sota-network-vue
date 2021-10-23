@@ -69,6 +69,7 @@
                       label="Акаунт"
                       :items="priceDrivers"
                       @change="getMarkets"
+                      :rules="[(v) => !!v || 'Оберіть акаунт']"
                   />
                 </v-col>
                 <v-col sm="6">
@@ -78,6 +79,7 @@
                       label="Маркет"
                       no-data-text="Спершу оберіть акаунт"
                       :items="markets"
+                      :rules="[(v) => !!v || 'Оберіть маркет']"
                   />
                 </v-col>
               </v-row>
@@ -107,7 +109,7 @@
               />
             </v-card-text>
             <v-card-text>
-              <v-btn color="success" @click="saveBot">Зберегти</v-btn>
+              <v-btn color="success" @click="saveBot" :disabled="bussy">Зберегти</v-btn>
               <v-btn v-if="Bot.Status === 'paused'" color="primary" class="ml-3" @click="botStart">Запустити</v-btn>
               <v-btn v-if="Bot.Status === 'active'" color="primary" class="ml-3" @click="botStop">Зупинити</v-btn>
               <v-btn v-if="Bot.Status === 'pending'" color="primary" class="ml-3" disabled>Обробка</v-btn>
@@ -126,9 +128,28 @@
 
         <v-card-text>
           <v-data-table
+              :headers="ordersHeaders"
               :items="orders"
               no-data-text="Немає жодного одреру"
-          />
+          >
+            <template v-slot:item.time="{item}">
+              {{item.time}}
+            </template>
+
+            <template v-slot:item.positionSide="{item}">
+              <v-chip
+                  v-if="item.positionSide === 'LONG'"
+                  color="success"
+                  small
+              >{{item.positionSide}}</v-chip>
+
+              <v-chip
+                  v-if="item.positionSide === 'SHORT'"
+                  color="error"
+                  small
+              >{{item.positionSide}}</v-chip>
+            </template>
+          </v-data-table>
         </v-card-text>
       </base-card>
     </v-col>
@@ -161,56 +182,22 @@ export default {
       graphHeight: 333,
       BallanceHint: 'Спершу оберіть біржу',
       symbolName: 'BTCUSDT',
-      orders: []
+      ordersHeaders: [
+        { text: "Дата", value: "time" },
+        { text: "Маркет", value: "market" },
+        { text: "Сторона", value: "positionSide" },
+        { text: "Ціна", value: "price" },
+        { text: "Кількість", value: "origQty" },
+      ],
+      orders: [],
+      bussy: false,
+      needsUpdate: false
     }
   },
   mounted() {
     window.addEventListener('resize', this.onResize);
-    setTimeout(() => {
-      this.onResize();
-    }, 300);
 
-    firebase.auth().onAuthStateChanged(async user => {
-      // Price Drivers {
-      var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
-      priceDrivers.onSnapshot(snapshot => {
-        this.priceDrivers = [];
-        snapshot.forEach(doc => {
-          this.priceDrivers.push({
-            text: doc.data()['AccountName'],
-            value: doc.id,
-            type: doc.data()['AccountType'],
-            platform: doc.data()['AccountPlatform']
-          });
-        });
-      });
-      // } Price Drivers
-
-      // Bot (Single page) {
-      if(this.$route.params.id) {
-        var Bot = firestore
-            .collection('users')
-            .doc(user.uid)
-            .collection('Bots')
-            .doc(this.$route.params.id);
-
-        if(await Bot.get()) {
-          this.id = await Bot.id;
-
-          Bot.onSnapshot(async snapshot => {
-            this.Bot = (await Bot.get()).data();
-          });
-        }
-
-        // Authenticated client, can make signed calls
-        // const client2 = Binance({
-        //   apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
-        //   apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
-        //   // getTime: xxx,
-        // })
-      }
-      // } Bot (Single page)
-    });
+    this.needsUpdate = true;
   },
   destroyed() {
     window.removeEventListener('resize', this.onResize);
@@ -267,8 +254,19 @@ export default {
 
     saveBot() {
       /* Save Bot { */
+      if(!this.bussy) {
+        this.bussy = true;
+      }
+      else if(this.bussy === true) {
+        return false;
+      }
 
-      if(!this.$refs.BotForm.validate()) return false;
+      if(!this.$refs.BotForm.validate()){
+        setTimeout(() => {
+          this.bussy = false;
+        }, 500);
+        return false;
+      }
 
       firebase.auth().onAuthStateChanged(async user => {
         /* First save so create new { */
@@ -298,7 +296,8 @@ export default {
             });
 
             // Redirect to new exist bot
-            this.$router.push('/bots/bot/' + Bot.id);
+            await this.$router.push({ name: 'Bot', params: { id: Bot.id } });
+            this.needsUpdate = true;
           }
         }
         /* } First save so create new  */
@@ -322,6 +321,10 @@ export default {
 
             if(this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
+              console.log('Market');
+              Bot.update({
+                Market: this.Bot.Market
+              });
             }
 
             if(this.Bot.Level !== (await Bot.get()).data()['Level']) {
@@ -352,6 +355,7 @@ export default {
           }
         }
         /* } Save exist bot */
+        this.bussy = false;
       });
       /* } Save Bot */
     },
@@ -401,7 +405,7 @@ export default {
     calculateBallance() {
       /* Calculating contracts count to Ballance */
 
-      if(this.Markets) {
+      if(this.Markets && this.markets) {
         if(this.Bot.Market) {
           if(this.Bot.Ballance) {
             let marketObject = this.markets.find(obj => {
@@ -448,6 +452,86 @@ export default {
     },
     'Bot.Market': function () {
       this.calculateBallance();
+    },
+    'symbolName': async function(val, oldval) {
+      // Authenticated client, can make signed calls
+      const client2 = Binance({
+        apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
+        apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
+        // getTime: await client.time(),
+      })
+
+      let futuresUserTrades = await client2.futuresAllOrders({
+        symbol: this.symbolName,
+        // status: 'active'
+      });
+
+      this.orders = [];
+      await futuresUserTrades.map(el => {
+        if(el.status === "NEW") {
+          let time = new Date(el.time);
+
+          this.orders.push({
+            time: time.toLocaleString().replace(',',''),
+            market: this.Bot.Market,
+            positionSide: el.positionSide,
+            price: el.price,
+            origQty: el.origQty
+          });
+          console.log(el);
+        }
+      });
+    },
+    'needsUpdate': function() {
+      firebase.auth().onAuthStateChanged(async user => {
+        // Price Drivers {
+        var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
+        priceDrivers.onSnapshot(snapshot => {
+          this.priceDrivers = [];
+          snapshot.forEach(doc => {
+            this.priceDrivers.push({
+              text: doc.data()['AccountName'],
+              value: doc.id,
+              type: doc.data()['AccountType'],
+              platform: doc.data()['AccountPlatform']
+            });
+          });
+        });
+        // } Price Drivers
+
+        // Bot (Single page) {
+        if(this.$route.params.id) {
+          var Bot = firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('Bots')
+              .doc(this.$route.params.id);
+
+          if(await Bot.get()) {
+            this.id = await Bot.id;
+
+            Bot.onSnapshot(async snapshot => {
+              this.Bot = (await Bot.get()).data();
+            });
+          }
+        }
+        // } Bot (Single page)
+
+        // Interval to fix graph size {
+        let i = 5;
+        let afterInterval = setInterval(() => {
+          if(i > 0) {
+            this.onResize();
+            i--;
+          }
+          else {
+            clearInterval(afterInterval);
+          }
+        }, 300);
+        // } Interval to fix graph size
+
+        this.needsUpdate = false;
+      });
     }
   }
 }

@@ -8,6 +8,8 @@ module.exports = {
   },
 
   devServer: {
+    // https: true,
+    // proxy: 'https://sota-network.com/',
     clientLogLevel: "warning",
     hot: true,
     contentBase: "dist",

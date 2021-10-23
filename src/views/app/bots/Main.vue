@@ -9,6 +9,7 @@
               hide-default-footer
               disable-sort
               no-data-text="Немає жодного бота"
+              :loading="loading"
           >
             <!--      Top {      -->
             <template v-slot:top>
@@ -130,23 +131,26 @@ export default {
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       Bots: [],
+      loading: false
     }
   },
-  created() {
+  mounted() {
     var db = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
       var Bots = db.collection('users').doc(user.uid).collection('Bots');
       Bots.onSnapshot(snapshot => {
-        this.Bots = [];
+        this.loading = true;
+        // this.Bots = [];
+        let Bots = [];
 
         snapshot.forEach(async doc => {
           var priceDriver = await db
               .collection('users')
               .doc(user.uid)
               .collection('PriceDrivers')
-              .doc(doc.data()['PriceDriver']).get();;
+              .doc(doc.data()['PriceDriver']).get();
 
-          this.Bots.push({
+          Bots.push({
             id: doc.id,
             Name: doc.data()['Name'],
             AccountPlatform: await priceDriver.data()['AccountPlatform'],
@@ -154,6 +158,9 @@ export default {
             Status: doc.data()['Status']
           });
         });
+
+        this.Bots = Bots;
+        this.loading = false;
       });
     });
   },

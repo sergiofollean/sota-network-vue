@@ -29,7 +29,6 @@ import VueApexCharts from "vue-apexcharts";
 
 import "animate.css";
 
-
 Vue.component("apexchart", VueApexCharts);
 
 Vue.use(egretKit);
