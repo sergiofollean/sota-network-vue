@@ -19,7 +19,7 @@
             Активний
           </v-chip>
           <v-chip
-              v-if="Bot.Status === 'paused'"
+              v-else-if="Bot.Status === 'paused'"
               class="ml-4"
               color="warning"
               label
@@ -108,8 +108,9 @@
             </v-card-text>
             <v-card-text>
               <v-btn color="success" @click="saveBot">Зберегти</v-btn>
-              <v-btn v-if="Bot.Status === 'paused'" color="primary" class="ml-3">Запустити</v-btn>
-              <v-btn v-if="Bot.Status === 'active'" color="primary" class="ml-3">Зупинити</v-btn>
+              <v-btn v-if="Bot.Status === 'paused'" color="primary" class="ml-3" @click="botStart">Запустити</v-btn>
+              <v-btn v-if="Bot.Status === 'active'" color="primary" class="ml-3" @click="botStop">Зупинити</v-btn>
+              <v-btn v-if="Bot.Status === 'pending'" color="primary" class="ml-3" disabled>Обробка</v-btn>
             </v-card-text>
           </v-form>
       </base-card>
@@ -125,6 +126,7 @@
 
         <v-card-text>
           <v-data-table
+              :items="orders"
               no-data-text="Немає жодного одреру"
           />
         </v-card-text>
@@ -145,13 +147,6 @@ const client = Binance();
 var firestore = firebase.firestore();
 var database = firebase.database();
 
-// Authenticated client, can make signed calls
-// const client2 = Binance({
-//   apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
-//   apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
-//   // getTime: xxx,
-// })
-
 export default {
   components: {Graph},
   data() {
@@ -165,16 +160,12 @@ export default {
       graphWidth: 333,
       graphHeight: 333,
       BallanceHint: 'Спершу оберіть біржу',
-      symbolName: 'BTCUSDT'
+      symbolName: 'BTCUSDT',
+      orders: []
     }
   },
   mounted() {
     window.addEventListener('resize', this.onResize);
-    setTimeout(() => {
-      this.onResize();
-    }, 300);
-  },
-  async created() {
     setTimeout(() => {
       this.onResize();
     }, 300);
@@ -205,8 +196,18 @@ export default {
 
         if(await Bot.get()) {
           this.id = await Bot.id;
-          this.Bot = (await Bot.get()).data();
+
+          Bot.onSnapshot(async snapshot => {
+            this.Bot = (await Bot.get()).data();
+          });
         }
+
+        // Authenticated client, can make signed calls
+        // const client2 = Binance({
+        //   apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
+        //   apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
+        //   // getTime: xxx,
+        // })
       }
       // } Bot (Single page)
     });
@@ -216,8 +217,13 @@ export default {
   },
   methods: {
     async onResize(event) {
-        this.graphWidth = await this.$refs.graphCol.clientWidth;
-        this.graphHeight = await this.$refs.panelCol.$el.clientHeight - 34;
+      if(this.$refs.graphCol.clientWidth !== undefined) {
+        this.graphWidth = this.$refs.graphCol.clientWidth;
+      }
+
+      if(this.$refs.panelCol.$el.clientHeight !== undefined) {
+        this.graphHeight = this.$refs.panelCol.$el.clientHeight - 34;
+      }
     },
 
     async getMarkets(e) {
@@ -298,11 +304,98 @@ export default {
         /* } First save so create new  */
         /* Save exist bot { */
         else {
-          //
+          let Bot = firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('Bots')
+              .doc(this.id);
+
+          if(await Bot.get()) {
+            await Bot.update({
+              Name: this.Bot.Name
+            });
+
+            let data = {};
+            if(this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
+              // Update PriceDriver
+            }
+
+            if(this.Bot.Market !== (await Bot.get()).data()['Market']) {
+              // Update Market
+            }
+
+            if(this.Bot.Level !== (await Bot.get()).data()['Level']) {
+              // Update Level
+            }
+
+            if(this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
+              // Update Level
+              data.SlotSize = this.Bot.SlotSize;
+              Bot.update({
+                Ballance: this.Bot.Ballance
+              });
+            }
+
+            if(Object.keys(data).length > 0) {
+              data.id = Bot.id;
+
+              await Bot.update({
+                Status: 'pending'
+              });
+
+              await database.ref('tasks').push().set({
+                task: 'update_bot',
+                user: user.uid,
+                data: data
+              });
+            }
+          }
         }
         /* } Save exist bot */
       });
       /* } Save Bot */
+    },
+
+    async botStart() {
+      firebase.auth().onAuthStateChanged(async user => {
+        if(this.id !== null) {
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
+
+          if(Bot) {
+            Bot.update({
+              Status: 'pending'
+            });
+            database.ref('tasks').push().set({
+              task: 'bot_start',
+              user: user.uid,
+              data: {
+                id: Bot.id
+              }
+            });
+          }
+        }
+      });
+    },
+
+    async botStop() {
+      firebase.auth().onAuthStateChanged(async user => {
+        if(this.id !== null) {
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
+
+          if(Bot) {
+            Bot.update({
+              Status: 'pending'
+            });
+            database.ref('tasks').push().set({
+              task: 'bot_stop',
+              user: user.uid,
+              data: {
+                id: Bot.id
+              }
+            });
+          }
+        }
+      });
     },
 
     calculateBallance() {

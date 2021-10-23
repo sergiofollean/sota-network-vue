@@ -39,7 +39,7 @@
                   Активний
                 </v-chip>
               </template>
-              <template v-if="item.Status === 'paused'">
+              <template v-else-if="item.Status === 'paused'">
                 <v-chip
                     class=""
                     color="warning"
