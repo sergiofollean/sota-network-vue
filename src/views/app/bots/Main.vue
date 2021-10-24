@@ -161,11 +161,11 @@ export default {
       priceDrivers = await priceDrivers.where('AccountPriv', '!=', '');
 
       if((await priceDrivers.get()).size === 0) {
-        this.validation = true;
+        this.validation = false;
         return false;
       }
 
-      this.validation = false;
+      this.validation = true;
       var Bots = db.collection('users').doc(user.uid).collection('Bots');
       Bots.onSnapshot(snapshot => {
         this.loading = true;
