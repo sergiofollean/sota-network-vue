@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col sm="12" v-if="requireAccount">
+    <v-col sm="12" v-if="validation === false">
       <v-alert
           type="error"
           text
@@ -149,8 +149,8 @@ export default {
       ],
       Bots: [],
       loading: false,
-      requireAccount: true,
-      validation: false
+      // requireAccount: true,
+      validation: true
     }
   },
   mounted() {
@@ -161,11 +161,11 @@ export default {
       priceDrivers = await priceDrivers.where('AccountPriv', '!=', '');
 
       if((await priceDrivers.get()).size === 0) {
-        this.requireAccount = true;
+        this.validation = true;
         return false;
       }
 
-      this.requireAccount = false;
+      this.validation = false;
       var Bots = db.collection('users').doc(user.uid).collection('Bots');
       Bots.onSnapshot(snapshot => {
         this.loading = true;
