@@ -443,11 +443,54 @@ export default {
       else {
         this.BallanceHint = "Спершу оберіть біржу";
       }
+    },
+
+    async getOrders() {
+      if(this.apiKey && this.apiSecret) {
+        const client2 = Binance({
+          apiKey: this.apiKey,
+          apiSecret: this.apiSecret,
+          // getTime: await client.time(),
+        })
+
+        let futuresUserTrades = await client2.futuresAllOrders({
+          symbol: this.symbolName,
+          // status: 'active'
+        });
+
+        this.orders = [];
+        await futuresUserTrades.map(el => {
+          if(el.status === "NEW") {
+            let time = new Date(el.time);
+
+            this.orders.push({
+              time: time.toLocaleString().replace(',',''),
+              market: this.Bot.Market,
+              positionSide: el.positionSide,
+              price: el.price,
+              origQty: el.origQty
+            });
+            console.log(el);
+          }
+        });
+      }
+      else {
+        this.orders = [];
+      }
     }
   },
   watch: {
     'Bot.PriceDriver': function(val, oldval) {
       this.getMarkets(val);
+
+      let priceDriver = this.priceDrivers.find(obj => {
+        return obj.value === val
+      });
+
+      this.apiKey = priceDriver.apiKey;
+      this.apiSecret = priceDriver.apiSecret;
+
+      this.getOrders();
     },
     'Bot.Ballance': function(val, oldval) {
       this.calculateBallance();
@@ -456,33 +499,7 @@ export default {
       this.calculateBallance();
     },
     'symbolName': async function(val, oldval) {
-      // Authenticated client, can make signed calls
-      const client2 = Binance({
-        apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
-        apiSecret: 'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa',
-        // getTime: await client.time(),
-      })
-
-      let futuresUserTrades = await client2.futuresAllOrders({
-        symbol: this.symbolName,
-        // status: 'active'
-      });
-
-      this.orders = [];
-      await futuresUserTrades.map(el => {
-        if(el.status === "NEW") {
-          let time = new Date(el.time);
-
-          this.orders.push({
-            time: time.toLocaleString().replace(',',''),
-            market: this.Bot.Market,
-            positionSide: el.positionSide,
-            price: el.price,
-            origQty: el.origQty
-          });
-          console.log(el);
-        }
-      });
+      this.getOrders();
     },
     'needsUpdate': function() {
       firebase.auth().onAuthStateChanged(async user => {
@@ -495,7 +512,9 @@ export default {
               text: doc.data()['AccountName'],
               value: doc.id,
               type: doc.data()['AccountType'],
-              platform: doc.data()['AccountPlatform']
+              platform: doc.data()['AccountPlatform'],
+              apiKey: doc.data()['AccountPub'],
+              apiSecret: doc.data()['AccountPriv']
             });
           });
         });

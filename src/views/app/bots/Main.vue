@@ -1,19 +1,23 @@
 <template>
   <v-row>
     <v-col sm="12" v-if="requireAccount">
-      <base-card>
-        <div class="flex-wrap">
+      <v-alert
+          type="error"
+          text
+          prominent
+      >
+        <v-row align="center">
           <v-col sm="12" class="text-center">
-            <h2 class="title mt-4">Перед початком необхідно додати акаунт біржі.</h2>
+            Перед початком необхідно додати акаунт біржі.
           </v-col>
 
           <v-col sm="12" class="text-center">
-            <v-btn class="mb-4" color="primary" text to="/settings">Налаштування</v-btn>
+            <v-btn to="/settings">Налаштування</v-btn>
           </v-col>
-        </div>
-      </base-card>
+        </v-row>
+      </v-alert>
     </v-col>
-    <v-col v-else sm="12">
+    <v-col sm="12">
       <base-card>
         <v-card-text>
           <v-data-table
@@ -35,7 +39,7 @@
                     inset
                     vertical
                 ></v-divider>
-                <v-btn color="primary" to="bots/bot">Додати</v-btn>
+                <v-btn color="primary" to="bots/bot" :disabled="validation === false">Додати</v-btn>
               </v-toolbar>
             </template>
             <!--      } Top      -->
@@ -145,7 +149,8 @@ export default {
       ],
       Bots: [],
       loading: false,
-      requireAccount: true
+      requireAccount: true,
+      validation: false
     }
   },
   mounted() {

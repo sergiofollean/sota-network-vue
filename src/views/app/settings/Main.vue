@@ -206,7 +206,17 @@ export default {
 
       firebase.auth().onAuthStateChanged(async user => {
         var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
-        priceDrivers.doc(id).delete();
+
+        var realdb = firebase.database();
+        await realdb.ref('tasks').push().set({
+          task: 'delete_account',
+          user: user.uid,
+          data: {
+            account_id: id
+          }
+        });
+
+        // priceDrivers.doc(id).delete();
       });
     },
     addAccount() {
