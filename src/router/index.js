@@ -47,6 +47,14 @@ const router = new Router({
           component: () => import("@/views/app/dashboard/Index"),
         },
         {
+          path: "/dashboard/graph",
+          component: () => import("@/views/app/dashboard/Graph"),
+        },
+        {
+          path: "/dashboard/test",
+          component: () => import("@/views/app/dashboard/Test"),
+        },
+        {
           path: "/settings",
           name: "settings",
           meta: {

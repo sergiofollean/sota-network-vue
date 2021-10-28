@@ -8,6 +8,8 @@ module.exports = {
   },
 
   devServer: {
+    // https: true,
+    // proxy: 'https://sota-network.com/',
     clientLogLevel: "warning",
     hot: true,
     contentBase: "dist",
@@ -25,6 +27,15 @@ module.exports = {
       ignored: /node_modules/
     },
     disableHostCheck: true
+  },
+  configureWebpack: {
+    node: {
+      fs: "empty",
+      dgram: "empty",
+      net: 'empty',
+      tls: 'empty',
+      dns: 'empty'
+    }
   },
   // chainWebpack: config => {
   //   config.module

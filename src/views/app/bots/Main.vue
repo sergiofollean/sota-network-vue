@@ -1,11 +1,24 @@
 <template>
   <v-row>
+    <v-col sm="12" v-if="validation === false">
+      <v-alert
+          type="error"
+          text
+          prominent
+      >
+        <v-row align="center">
+          <v-col sm="12" class="text-center">
+            Перед початком необхідно додати акаунт біржі.
+          </v-col>
+
+          <v-col sm="12" class="text-center">
+            <v-btn to="/settings">Налаштування</v-btn>
+          </v-col>
+        </v-row>
+      </v-alert>
+    </v-col>
     <v-col sm="12">
       <base-card>
-<!--        <v-card-title>-->
-<!--          Боти-->
-<!--          <v-btn color="primary" class="ml-4" to="bots/bot">Додати</v-btn>-->
-<!--        </v-card-title>-->
         <v-card-text>
           <v-data-table
               :headers="headers"
@@ -13,7 +26,9 @@
               hide-default-footer
               disable-sort
               no-data-text="Немає жодного бота"
+              :loading="loading"
           >
+            <!--      Top {      -->
             <template v-slot:top>
               <v-toolbar
                   flat
@@ -24,10 +39,11 @@
                     inset
                     vertical
                 ></v-divider>
-<!--                <v-spacer></v-spacer>-->
-                <v-btn color="primary" to="bots/bot">Додати</v-btn>
+                <v-btn color="primary" to="bots/bot" :disabled="validation === false">Додати</v-btn>
               </v-toolbar>
             </template>
+            <!--      } Top      -->
+            <!--      Table {      -->
             <template v-slot:item.Status="{item}">
               <template v-if="item.Status === 'active'">
                 <v-chip
@@ -39,6 +55,18 @@
                 >
                   <v-icon small left >mdi-check</v-icon>
                   Активний
+                </v-chip>
+              </template>
+              <template v-else-if="item.Status === 'paused'">
+                <v-chip
+                    class=""
+                    color="warning"
+                    label
+                    small
+                    text-color="white"
+                >
+                  <v-icon class="mr-2" size="15">mdi-pause</v-icon>
+                  Зупинений
                 </v-chip>
               </template>
               <template v-else>
@@ -93,6 +121,7 @@
                 </v-tooltip>
               </div>
             </template>
+            <!--      } Table      -->
           </v-data-table>
         </v-card-text>
       </base-card>
@@ -105,6 +134,9 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 
+var firestore = firebase.firestore();
+var database = firebase.database();
+
 export default {
   data() {
     return {
@@ -116,23 +148,38 @@ export default {
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       Bots: [],
+      loading: false,
+      // requireAccount: true,
+      validation: true
     }
   },
-  created() {
+  mounted() {
     var db = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
+      var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
+      priceDrivers = await priceDrivers.where('Status', '==', "true");
+      priceDrivers = await priceDrivers.where('AccountPriv', '!=', '');
+
+      if((await priceDrivers.get()).size === 0) {
+        this.validation = false;
+        return false;
+      }
+
+      this.validation = true;
       var Bots = db.collection('users').doc(user.uid).collection('Bots');
       Bots.onSnapshot(snapshot => {
-        this.Bots = [];
+        this.loading = true;
+        // this.Bots = [];
+        let Bots = [];
 
         snapshot.forEach(async doc => {
           var priceDriver = await db
               .collection('users')
               .doc(user.uid)
               .collection('PriceDrivers')
-              .doc(doc.data()['PriceDriver']).get();;
+              .doc(doc.data()['PriceDriver']).get();
 
-          this.Bots.push({
+          Bots.push({
             id: doc.id,
             Name: doc.data()['Name'],
             AccountPlatform: await priceDriver.data()['AccountPlatform'],
@@ -140,16 +187,28 @@ export default {
             Status: doc.data()['Status']
           });
         });
+
+        this.Bots = Bots;
+        this.loading = false;
       });
     });
   },
   methods: {
     removeBot(id) {
-      var firestore = firebase.firestore();
 
       firebase.auth().onAuthStateChanged(async user => {
-        var Bots = firestore.collection('users').doc(user.uid).collection('Bots');
-        Bots.doc(id).delete();
+        var Bot = firestore.collection('users').doc(user.uid).collection('Bots').doc(id);
+
+        if(Bot) {
+          database.ref('tasks').push().set({
+            task: 'remove_bot',
+            user: user.uid,
+            data: {
+              id: Bot.id
+            }
+          });
+          Bot.delete();
+        }
       });
     }
   }
