@@ -1,10 +1,6 @@
 <template>
   <div>
-<<<<<<< HEAD
-    <base-tf-selector :charts="tfs" :width="this.$props.width" v-on:selected="on_selected" :period="this.$props.symbolPeriod">
-=======
     <base-tf-selector :charts="tfs" :width="this.$props.width" :height="this.$props.height" v-on:selected="on_selected" :period="this.period">
->>>>>>> 02a0d94488e955abfc923e664dbad43f720655ce
     </base-tf-selector>
     <trading-vue :data="chart" :overlays="overlays" :width="this.$props.width" :height="this.$props.height" :title-txt="this.symbol" :toolbar="true" :tf="this.period" ref="tradingVue"></trading-vue>
   </div>
