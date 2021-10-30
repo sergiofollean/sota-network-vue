@@ -30,17 +30,23 @@ export default {
     height: {
       type: Number,
       default: 600
+    },
+    apiKey: {
+      type: String
+    },
+    apiSecret: {
+      type: String
     }
   },
   async created() {
     this.binance = new Binance({
-      apiKey: 'lbzNU6YXAlK5BuFeHCGKeWVlogymuIeUY74oV9j6ZZcgMkz8lKZNFuSdh08qq8A5',
-      apiSecret: '7RbFl4NgokCUKwdE1FJ8i836SMZdteHl56TE2pz3YevHWWQZqC8S3W2OFm0lzwGl'
+      apiKey: this.apiKey,
+      apiSecret: this.apiSecret
     });
   },
   data() {
     return {
-      overlays: [Overlays['EMA'], Overlays['Ichi']],
+      overlays: [Overlays['EMA'], Overlays['Ichi'], Overlays['LongShortTrades']],
       timer: '',
       symbol: this.symbolName,
       period: this.symbolPeriod,
@@ -69,6 +75,7 @@ export default {
       this.chart.set('chart.data', candleChartResults.map((candle) => {
         return [candle.openTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close) , Number(candle.volume)];
       }));
+      this.chart.del('Trades')
       this.chart.del('EMA')
       this.chart.del('Ichi')
       this.chart.add('onchart', { name: 'EMA 33', type: 'EMA', data: [], settings: {
@@ -93,6 +100,37 @@ export default {
         }
       })
       this.$refs.tradingVue.resetChart();
+      const orders = await this.binance.allOrders({
+        symbol: this.symbol,
+      });
+      const ordersData = [];
+      orders.forEach((order) => {
+          if (order.status === 'FILLED') {
+            const orderType = order.side === 'BUY' ? 1 : 3
+            const total = order.cummulativeQuoteQty;
+            const qty = order.executedQty;
+            let data = this.findNearestCandle(order.time);
+            if (data) {
+              ordersData.push([
+                data[0], orderType, total / qty, total, data[1], data[2], data[3], data[4]
+              ])
+            }
+          }
+
+      });
+      this.chart.add('onchart', { name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
+        'z-index': 10,
+        'showLabel': true
+      }})
+    },
+    findNearestCandle(time) {
+      let counter = 0;
+      const step = this.chart.data.chart.data[1][0] - this.chart.data.chart.data[0][0];
+      let candle = this.chart.data.chart.data[counter];
+      while (time - candle[0] > 0) {
+        candle = this.chart.data.chart.data[counter++];
+      }
+      return candle[0] - time < step ? this.chart.data.chart.data[counter++] : null;
     }
   }
 }
