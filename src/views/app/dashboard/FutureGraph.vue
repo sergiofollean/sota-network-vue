@@ -1,8 +1,9 @@
 <template>
   <div>
-    <base-tf-selector :charts="tfs" :width="this.$props.width" :height="this.$props.height" v-on:selected="on_selected" :period="this.period">
+    {{ symbol }}
+    <base-tf-selector :charts="tfs" :width="width" :height="height" v-on:selected="on_selected" :period="period">
     </base-tf-selector>
-    <trading-vue :data="chart" :overlays="overlays" :width="this.$props.width" :height="this.$props.height" :title-txt="this.symbol" :toolbar="true" :tf="this.period" ref="tradingVue"></trading-vue>
+    <trading-vue :data="chart" :overlays="overlays" :width="width" :height="height" :title-txt="symbol" :toolbar="true" :tf="period" ref="tradingVue"></trading-vue>
   </div>
 </template>
 <script>
@@ -139,6 +140,12 @@ export default {
         candle = this.chart.data.chart.data[counter++];
       }
       return candle[0] - time < step ? this.chart.data.chart.data[counter++] : null;
+    }
+  },
+  watch: {
+    symbolName: function(newVal, oldVal) { // watch it
+      this.symbol = newVal;
+      this.on_selected({i: 0, name: '1m'})
     }
   }
 }
