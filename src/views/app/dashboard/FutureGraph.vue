@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ symbol }}
     <base-tf-selector :charts="tfs" :width="width" :height="height" v-on:selected="on_selected" :period="period">
     </base-tf-selector>
     <trading-vue :data="chart" :overlays="overlays" :width="width" :height="height" :title-txt="symbol" :toolbar="true" :tf="period" ref="tradingVue"></trading-vue>
@@ -40,10 +39,7 @@ export default {
     }
   },
   async created() {
-    this.binance = new Binance({
-      apiKey: this.apiKey,
-      apiSecret: this.apiSecret
-    });
+
   },
   data() {
     return {
@@ -52,7 +48,6 @@ export default {
       symbol: this.symbolName,
       period: this.symbolPeriod,
       tfs: {'1m': {}, '3m': {}, '5m': {}, '15m': {}, '1h': {}, '4h': {}},
-      binance: null,
       chart: new DataCube({
         chart: {
           tf: '1m',
@@ -61,10 +56,20 @@ export default {
       }),
       wk: 1,
       ws: null,
+      token: this.apiKey,
+      secret: this.apiSecret,
+      binance: new Binance({
+        apiKey: this.token,
+        apiSecret: this.secret
+      })
     }
   },
   methods: {
     async on_selected(tf) {
+      this.binance = new Binance({
+        apiKey: this.apiKey,
+        apiSecret: this.apiSecret
+      })
       this.chart.set('chart.data', []);
 
       if (this.ws) {
@@ -143,8 +148,16 @@ export default {
     }
   },
   watch: {
-    symbolName: function(newVal, oldVal) { // watch it
+    symbolName: function(newVal, oldVal) {
       this.symbol = newVal;
+      this.on_selected({i: 0, name: '1m'})
+    },
+    apiSecret: function(newVal, oldVal) {
+      this.secret = newVal;
+      this.on_selected({i: 0, name: '1m'})
+    },
+    apiKey: function(newVal, oldVal) {
+      this.token = newVal;
       this.on_selected({i: 0, name: '1m'})
     }
   }

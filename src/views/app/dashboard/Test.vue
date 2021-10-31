@@ -1,10 +1,10 @@
 <template>
   <div>
-    <future-graph :width="1200" :height="800" :symbol-name="message" :symbol-period="'1m'"
-           :api-key="'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR'"
+    <future-graph :width="1200" :height="800" :symbol-name="'QTUMUSDT'" :symbol-period="'1m'"
+           :api-key="apiKey"
            :api-secret="'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa'">
     </future-graph>
-    <p>{{ message }}</p>
+    <p>{{ apiKey }}</p>
   <button v-on:click="setNewValue">Set new value</button>
   </div>
 </template>
@@ -16,12 +16,12 @@ export default {
   },
   data() {
     return {
-      message: 'BTCUSDT'
+      apiKey: 'a'
     }
   },
   methods: {
     setNewValue: function () {
-      this.message = 'XRPUSDT';
+      this.apiKey = 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR';
     }
   }
 
