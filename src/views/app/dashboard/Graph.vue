@@ -100,11 +100,12 @@ export default {
         }
       })
       this.$refs.tradingVue.resetChart();
-      const orders = await this.binance.allOrders({
-        symbol: this.symbol,
-      });
-      const ordersData = [];
-      orders.forEach((order) => {
+      if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
+        const orders = await this.binance.allOrders({
+          symbol: this.symbol,
+        });
+        const ordersData = [];
+        orders.forEach((order) => {
           if (order.status === 'FILLED') {
             const orderType = order.side === 'BUY' ? 1 : 3
             const total = order.cummulativeQuoteQty;
@@ -117,11 +118,14 @@ export default {
             }
           }
 
-      });
-      this.chart.add('onchart', { name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
-        'z-index': 10,
-        'showLabel': true
-      }})
+        });
+        this.chart.add('onchart', {
+          name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
+            'z-index': 10,
+            'showLabel': true
+          }
+        })
+      }
     },
     findNearestCandle(time) {
       let counter = 0;

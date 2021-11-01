@@ -106,36 +106,38 @@ export default {
         }
       })
       this.$refs.tradingVue.resetChart();
-      const orders = await this.binance.futuresAllOrders({
-        symbol: this.symbol,
-      });
-      const ordersData = [];
-      const orderIds = []
-      orders.forEach((order) => {
-        if (order.status === 'FILLED') {
-            let orderType;
-            if (order.positionSide === 'LONG') {
-              orderType = order.side === 'BUY' ? 1 : 3;
-            } else {
-              orderType = order.side === 'BUY' ? 0 : 2;
+      if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
+        const orders = await this.binance.futuresAllOrders({
+          symbol: this.symbol,
+        });
+        const ordersData = [];
+        const orderIds = []
+        orders.forEach((order) => {
+          if (order.status === 'FILLED') {
+              let orderType;
+              if (order.positionSide === 'LONG') {
+                orderType = order.side === 'BUY' ? 1 : 3;
+              } else {
+                orderType = order.side === 'BUY' ? 0 : 2;
+              }
+              if (orderIds[order.orderId]) {
+                orderIds[order.orderId].push(order);
+              } else {
+                orderIds[order.orderId] = [order];
+              }
+              let data = this.findNearestCandle(order.time);
+              if (data) {
+                ordersData.push([
+                  data[0], orderType, Number(order.avgPrice), '', data[1], data[2], data[3], data[4]
+                ])
+              }
             }
-            if (orderIds[order.orderId]) {
-              orderIds[order.orderId].push(order);
-            } else {
-              orderIds[order.orderId] = [order];
-            }
-            let data = this.findNearestCandle(order.time);
-            if (data) {
-              ordersData.push([
-                data[0], orderType, Number(order.avgPrice), '', data[1], data[2], data[3], data[4]
-              ])
-            }
-          }
-      });
+        });
       this.chart.add('onchart', { name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
         'z-index': 10,
         'showLabel': true
       }})
+      }
     },
     findNearestCandle(time) {
       let counter = 0;

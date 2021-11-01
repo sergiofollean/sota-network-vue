@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-      apiKey: 'a'
+      apiKey: ''
     }
   },
   methods: {
