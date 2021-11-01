@@ -35,7 +35,7 @@
 export default {
   name: 'CSTM_bot',
   props: {
-    Bot: [],
+    Bot: {},
     markets: [],
     binanceMarkets: null
   },
@@ -51,15 +51,15 @@ export default {
 
       if (this.binanceMarkets && this.markets) {
         if (this.Bot.Market) {
+          let marketObject = this.markets.find(obj => {
+            return obj.value === this.Bot.Market
+          });
+
+          // format market symbols
+          let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+          this.Bot.symbolName = marketObj;
+
           if (this.Bot.Ballance) {
-            let marketObject = this.markets.find(obj => {
-              return obj.value === this.Bot.Market
-            });
-
-            // format market symbols
-            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
-            this.Bot.symbolName = marketObj;
-
             // calculating contract size
             let contractUstd = this.Bot.Ballance / 110;
             let contractSize = (contractUstd / this.binanceMarkets[marketObj]).toFixed(3);
@@ -91,6 +91,9 @@ export default {
       this.calculateBallance();
     },
     'markets': function () {
+      this.calculateBallance();
+    },
+    'Bot.symbolName': function() {
       this.calculateBallance();
     }
   }

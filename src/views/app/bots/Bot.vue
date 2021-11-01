@@ -120,7 +120,7 @@
       </base-card>
     </v-col>
     <v-col lg="12" md="12" ref="graphCol" @resize="onResize">
-      <futureGraph class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="symbolName" :apiKey="apiKey"
+      <futureGraph class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
                    :apiSecret="apiSecret"/>
     </v-col>
     <v-col cols="12" v-if="id != null">
@@ -186,7 +186,7 @@ export default {
       id: null,
       graphWidth: 333,
       graphHeight: 400,
-      symbolName: 'BTCUSDT',
+      // symbolName: 'BTCUSDT',
       ordersHeaders: [
         {text: "Дата", value: "time"},
         {text: "Маркет", value: "market"},
@@ -417,7 +417,7 @@ export default {
         })
 
         let futuresUserTrades = await client2.futuresAllOrders({
-          symbol: this.symbolName,
+          symbol: this.Bot.symbolName,
           // status: 'active'
         });
 
@@ -454,7 +454,10 @@ export default {
 
       this.getOrders();
     },
-    'symbolName': async function (val, oldval) {
+    'Bot.symbolName': async function (val, oldval) {
+      this.getOrders();
+    },
+    'Bot.Market': function() {
       this.getOrders();
     },
     'needsUpdate': function () {
@@ -489,6 +492,7 @@ export default {
 
             Bot.onSnapshot(async snapshot => {
               this.Bot = (await Bot.get()).data();
+              this.Bot.symbolName = 'BTCUSDT';
             });
           }
         }
