@@ -66,10 +66,13 @@ export default {
   },
   methods: {
     async on_selected(tf) {
-      this.binance = new Binance({
-        apiKey: this.apiKey,
-        apiSecret: this.apiSecret
-      })
+      if(this.apiKey && this.apiSecret) {
+        this.binance = new Binance({
+          apiKey: this.apiKey,
+          apiSecret: this.apiSecret
+        })
+      }
+
       this.chart.set('chart.data', []);
 
       if (this.ws) {
