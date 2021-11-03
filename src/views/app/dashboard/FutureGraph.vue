@@ -43,7 +43,7 @@ export default {
   },
   data() {
     return {
-      overlays: [Overlays['EMA'], Overlays['Ichi'], Overlays['LongShortTrades']],
+      overlays: Object.values(Overlays),
       timer: '',
       symbol: this.symbolName,
       period: this.symbolPeriod,
@@ -70,11 +70,11 @@ export default {
         apiKey: this.apiKey,
         apiSecret: this.apiSecret
       })
-      this.chart.set('chart.data', []);
 
       if (this.ws) {
         await this.ws();
       }
+      this.chart.set('chart.data', []);
       this.period = tf.name;
       this.chart.set('chart.tf', tf.name);
       let candleChartResults = await this.binance.candles({ symbol: this.symbol, interval: this.period });
@@ -114,29 +114,26 @@ export default {
         const orderIds = []
         orders.forEach((order) => {
           if (order.status === 'FILLED') {
-              let orderType;
-              if (order.positionSide === 'LONG') {
-                orderType = order.side === 'BUY' ? 1 : 3;
-              } else {
-                orderType = order.side === 'BUY' ? 0 : 2;
-              }
+              const orderType = order.side === 'BUY' ? 1 : 0;
+              const orderPos = order.side === 'BUY' ? order.positionSide.substr(0, 1) : 'Sell'
               if (orderIds[order.orderId]) {
                 orderIds[order.orderId].push(order);
               } else {
                 orderIds[order.orderId] = [order];
               }
               let data = this.findNearestCandle(order.time);
+              console.log(order);
               if (data) {
                 ordersData.push([
-                  data[0], orderType, Number(order.avgPrice), '', data[1], data[2], data[3], data[4]
-                ])
+                  Number(data[0]), Number(orderType), Number(order.avgPrice), orderPos
+                ]);
               }
             }
         });
-      this.chart.add('onchart', { name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
-        'z-index': 10,
-        'showLabel': true
-      }})
+        console.log(ordersData);
+        this.chart.add('onchart', { name: 'Trades', type: 'TradesPlus', data: ordersData, settings: {
+          'z-index': 10
+        }})
       }
     },
     findNearestCandle(time) {

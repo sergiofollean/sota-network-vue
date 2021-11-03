@@ -64,11 +64,11 @@ export default {
   },
   methods: {
     async on_selected(tf) {
-      this.chart.set('chart.data', []);
 
       if (this.ws) {
         await this.ws();
       }
+      this.chart.set('chart.data', []);
       this.period = tf.name;
       this.chart.set('chart.tf', tf.name);
       let candleChartResults = await this.binance.candles({ symbol: this.symbol, interval: this.period });

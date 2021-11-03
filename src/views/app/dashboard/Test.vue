@@ -16,7 +16,7 @@ export default {
   },
   data() {
     return {
-      apiKey: ''
+      apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR'
     }
   },
   methods: {
