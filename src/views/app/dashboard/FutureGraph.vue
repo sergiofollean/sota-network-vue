@@ -122,7 +122,6 @@ export default {
                 orderIds[order.orderId] = [order];
               }
               let data = this.findNearestCandle(order.time);
-              console.log(order);
               if (data) {
                 ordersData.push([
                   Number(data[0]), Number(orderType), Number(order.avgPrice), orderPos
@@ -130,7 +129,6 @@ export default {
               }
             }
         });
-        console.log(ordersData);
         this.chart.add('onchart', { name: 'Trades', type: 'TradesPlus', data: ordersData, settings: {
           'z-index': 10
         }})
