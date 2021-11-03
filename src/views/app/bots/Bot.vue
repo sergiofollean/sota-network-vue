@@ -1,126 +1,129 @@
 <template>
   <v-row no-gutters>
-    <v-col lg="5" sm="12" order="1" order-lg="0">
+    <v-col lg="12" sm="12">
       <base-card ref="panelCol" class="panelCol-event">
-        <v-card-title v-if="id == null">
-          Додавання нового боту
-        </v-card-title>
-        <v-card-title v-else>
-          Бот - {{ Bot.Name }}
-          <v-chip
-              v-if="Bot.Status === 'active'"
-              class="ml-4"
-              color="success"
-              label
-              small
-              text-color="white"
-          >
-            <v-icon small left >mdi-check</v-icon>
-            Активний
-          </v-chip>
-          <v-chip
-              v-else-if="Bot.Status === 'paused'"
-              class="ml-4"
-              color="warning"
-              label
-              small
-              text-color="white"
-          >
-            <v-icon class="mr-2" size="15">mdi-pause</v-icon>
-            Зупинений
-          </v-chip>
-          <v-chip
-              v-else
-              class="ml-4"
-              color="info"
-              label
-              small
-              text-color="white"
-          >
-            <v-progress-circular
-                indeterminate
-                :value="100"
-                color="white"
-                :size="15"
-                :width="2"
-                class="mr-2"
-            ></v-progress-circular>
-            Обробка
-          </v-chip>
-        </v-card-title>
+        <v-form
+            ref="BotForm"
+            lazy-validation
+        >
+          <v-card-text>
+            <v-row>
+              <v-col lg="6">
+                <v-card-title class="px-0" v-if="id == null">
+                  Додавання нового боту
+                </v-card-title>
+                <v-card-title class="px-0" v-else>
+                  Бот - {{ Bot.Name }}
+                  <v-chip
+                      v-if="Bot.Status === 'active'"
+                      class="ml-4"
+                      color="success"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-icon small left>mdi-check</v-icon>
+                    Активний
+                  </v-chip>
+                  <v-chip
+                      v-else-if="Bot.Status === 'paused'"
+                      class="ml-4"
+                      color="warning"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-icon class="mr-2" size="15">mdi-pause</v-icon>
+                    Зупинений
+                  </v-chip>
+                  <v-chip
+                      v-else
+                      class="ml-4"
+                      color="info"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-progress-circular
+                        indeterminate
+                        :value="100"
+                        color="white"
+                        :size="15"
+                        :width="2"
+                        class="mr-2"
+                    ></v-progress-circular>
+                    Обробка
+                  </v-chip>
+                </v-card-title>
+                <v-text-field
+                    v-model="Bot.Name"
+                    label="Назва"
+                    :rules="[v => !!v || 'Вкажіть назву']"
+                    required
+                    outlined
+                />
+                <v-row>
+                  <v-col sm="6">
+                    <v-select
+                        v-model="Bot.PriceDriver"
+                        outlined
+                        label="Акаунт"
+                        :items="priceDrivers"
+                        @change="getMarkets"
+                        :rules="[(v) => !!v || 'Оберіть акаунт']"
+                    />
+                  </v-col>
+                  <v-col sm="6">
+                    <v-select
+                        v-model="Bot.Market"
+                        outlined
+                        label="Маркет"
+                        no-data-text="Спершу оберіть акаунт"
+                        :items="markets"
+                        :rules="[(v) => !!v || 'Оберіть маркет']"
+                    />
+                  </v-col>
+                </v-row>
+                <v-btn-toggle color="primary" borderless mandatory v-model="Bot.script" v-if="priceDriver">
+                  <v-btn :disabled="priceDriver.type !== 'Spot Trading'" value="Spot">Спот</v-btn>
+                  <v-btn :disabled="priceDriver.type !== 'Leverage Trading'" value="Simple Futures">Simple Futures</v-btn>
+                  <v-btn :disabled="priceDriver.type !== 'Leverage Trading'" value="Pro Futures">Pro Futures</v-btn>
+                </v-btn-toggle>
+              </v-col>
+              <v-col lg="6">
+                <div v-if="!Bot.script">
+                  <v-alert
+                      type="info"
+                      text
+                      prominent
+                  >
+                    Спершу виберіть акаунт
+                  </v-alert>
+                </div>
+                <CSTM
+                    :Bot="Bot"
+                    :markets="markets"
+                    :binanceMarkets="binanceMarkets"
+                    v-if="Bot.script === 'Simple Futures'"
+                />
 
-          <v-form
-              ref="BotForm"
-              lazy-validation
-          >
-            <v-card-text>
-              <v-text-field
-                  v-model="Bot.Name"
-                  label="Назва"
-                  :rules="[v => !!v || 'Вкажіть назву']"
-                  required
-                  outlined
-              />
-              <v-row>
-                <v-col sm="6">
-                  <v-select
-                      v-model="Bot.PriceDriver"
-                      outlined
-                      label="Акаунт"
-                      :items="priceDrivers"
-                      @change="getMarkets"
-                      :rules="[(v) => !!v || 'Оберіть акаунт']"
-                  />
-                </v-col>
-                <v-col sm="6">
-                  <v-select
-                      v-model="Bot.Market"
-                      outlined
-                      label="Маркет"
-                      no-data-text="Спершу оберіть акаунт"
-                      :items="markets"
-                      :rules="[(v) => !!v || 'Оберіть маркет']"
-                  />
-                </v-col>
-              </v-row>
-            </v-card-text>
-            <v-subheader>Нашалтування торгів</v-subheader>
-            <v-card-text>
-              <v-row>
-                <v-col md="12">
-                  <v-slider
-                      v-model="Bot.Level"
-                      class="my-4"
-                      :tick-labels="level"
-                      :max="2"
-                      ticks="always"
-                  />
-                </v-col>
-              </v-row>
-              <v-text-field
-                  v-model="Bot.Ballance"
-                  outlined
-                  label="Баланс для торгівлі"
-                  prepend-inner-icon="mdi-currency-usd"
-                  suffix="USDT"
-                  :rules="[v => !!v || 'Це поле обовьязкове!']"
-                  :hint="BallanceHint"
-                  persistent-hint
-              />
-            </v-card-text>
-            <v-card-text>
-              <v-btn color="success" @click="saveBot" :disabled="bussy">Зберегти</v-btn>
-              <v-btn v-if="Bot.Status === 'paused'" color="primary" class="ml-3" @click="botStart">Запустити</v-btn>
-              <v-btn v-if="Bot.Status === 'active'" color="primary" class="ml-3" @click="botStop">Зупинити</v-btn>
-              <v-btn v-if="Bot.Status === 'pending'" color="primary" class="ml-3" disabled>Обробка</v-btn>
-            </v-card-text>
-          </v-form>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-text align="center">
+            <v-btn color="success" @click="saveBot" :disabled="bussy" class="mr-4">Зберегти</v-btn>
+            <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart">Запустити</v-btn>
+            <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop">Зупинити</v-btn>
+            <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled>Обробка</v-btn>
+          </v-card-text>
+        </v-form>
       </base-card>
     </v-col>
-    <v-col lg="7" md="12" ref="graphCol" @resize="onResize">
-      <graph :width="graphWidth" :height="graphHeight" :symbol-name="symbolName" />
+    <v-col lg="12" md="12" ref="graphCol" @resize="onResize">
+      <futureGraph class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
+                   :apiSecret="apiSecret"/>
     </v-col>
-    <v-col cols="12" v-if="id != null" order="3">
+    <v-col cols="12" v-if="id != null">
       <base-card class="mt-4">
         <v-card-title>
           Ордери
@@ -133,7 +136,7 @@
               no-data-text="Немає жодного одреру"
           >
             <template v-slot:item.time="{item}">
-              {{item.time}}
+              {{ item.time }}
             </template>
 
             <template v-slot:item.positionSide="{item}">
@@ -141,13 +144,15 @@
                   v-if="item.positionSide === 'LONG'"
                   color="success"
                   small
-              >{{item.positionSide}}</v-chip>
+              >{{ item.positionSide }}
+              </v-chip>
 
               <v-chip
                   v-if="item.positionSide === 'SHORT'"
                   color="error"
                   small
-              >{{item.positionSide}}</v-chip>
+              >{{ item.positionSide }}
+              </v-chip>
             </template>
           </v-data-table>
         </v-card-text>
@@ -162,32 +167,32 @@ import axios from "axios";
 import firebase from "firebase";
 import "firebase/database";
 import Binance from 'binance-api-node';
-import Graph from "@/views/app/dashboard/Graph";
+import futureGraph from '@/views/app/dashboard/FutureGraph';
+import CSTM from "@/views/app/bots/CSTM";
 
 const client = Binance();
 var firestore = firebase.firestore();
 var database = firebase.database();
 
 export default {
-  components: {Graph},
+  components: {futureGraph, CSTM},
   data() {
     return {
-      level: [ "Низький ризик", "Середній ризик", "Високий ризик" ],
       priceDrivers: [],
+      priceDriver: null,
       markets: [],
-      Markets: null,
+      binanceMarkets: null,
       Bot: {},
       id: null,
       graphWidth: 333,
-      graphHeight: 333,
-      BallanceHint: 'Спершу оберіть біржу',
-      symbolName: 'BTCUSDT',
+      graphHeight: 400,
+      // symbolName: 'BTCUSDT',
       ordersHeaders: [
-        { text: "Дата", value: "time" },
-        { text: "Маркет", value: "market" },
-        { text: "Сторона", value: "positionSide" },
-        { text: "Ціна", value: "price" },
-        { text: "Кількість", value: "origQty" },
+        {text: "Дата", value: "time"},
+        {text: "Маркет", value: "market"},
+        {text: "Сторона", value: "positionSide"},
+        {text: "Ціна", value: "price"},
+        {text: "Кількість", value: "origQty"},
       ],
       orders: [],
       bussy: false,
@@ -206,13 +211,13 @@ export default {
   },
   methods: {
     async onResize(event) {
-      if(this.$refs.graphCol.clientWidth !== undefined) {
+      if (this.$refs.graphCol.clientWidth !== undefined) {
         this.graphWidth = this.$refs.graphCol.clientWidth;
       }
 
-      if(this.$refs.panelCol.$el.clientHeight !== undefined) {
-        this.graphHeight = this.$refs.panelCol.$el.clientHeight - 34;
-      }
+      // if(this.$refs.panelCol.$el.clientHeight !== undefined) {
+      //   this.graphHeight = this.$refs.panelCol.$el.clientHeight - 34;
+      // }
     },
 
     async getMarkets(e) {
@@ -221,20 +226,21 @@ export default {
       var priceDriver = this.priceDrivers.find(obj => {
         return obj.value === e
       });
+      this.priceDriver = priceDriver;
 
       /* Formating platform for API */
       var platform = '';
       // Binance
-      if(priceDriver.platform === 'Binance') {
-        if(priceDriver.type === 'Leverage Trading') {
+      if (priceDriver.platform === 'Binance') {
+        if (priceDriver.type === 'Leverage Trading') {
           platform = 'BinanceFutures'
         }
       }
 
       /* Doing ajax to get markets from Haas */
-      if(platform.length > 0) {
-        axios.get('https://sota-api.gq/GetPriceMarkets/'+platform).then(response => {
-          if(response.data.length > 0) {
+      if (platform.length > 0) {
+        axios.get('https://sota-api.gq/GetPriceMarkets/' + platform).then(response => {
+          if (response.data.length > 0) {
             response.data.map(el => {
               this.markets.push({
                 text: el.ShortName,
@@ -248,22 +254,20 @@ export default {
         });
 
         /* Doing request to Binance API */
-        this.Markets = await client.futuresPrices();
-        this.calculateBallance();
+        this.binanceMarkets = await client.futuresPrices();
       }
       /* } Get Markets for v-select */
     },
 
     saveBot() {
       /* Save Bot { */
-      if(!this.bussy) {
+      if (!this.bussy) {
         this.bussy = true;
-      }
-      else if(this.bussy === true) {
+      } else if (this.bussy === true) {
         return false;
       }
 
-      if(!this.$refs.BotForm.validate()){
+      if (!this.$refs.BotForm.validate()) {
         setTimeout(() => {
           this.bussy = false;
         }, 500);
@@ -272,7 +276,7 @@ export default {
 
       firebase.auth().onAuthStateChanged(async user => {
         /* First save so create new { */
-        if(this.id === null) {
+        if (this.id === null) {
           // Adding to firestore user profile
           var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
             Name: this.Bot.Name,
@@ -284,7 +288,7 @@ export default {
           });
 
           // Adding to the tasker
-          if(Bot) {
+          if (Bot) {
             await database.ref('tasks').push().set({
               task: 'add_bot',
               user: user.uid,
@@ -298,11 +302,11 @@ export default {
             });
 
             // Redirect to new exist bot
-            await this.$router.push({ name: 'Bot', params: { id: Bot.id } });
+            await this.$router.push({name: 'Bot', params: {id: Bot.id}});
             this.needsUpdate = true;
           }
         }
-        /* } First save so create new  */
+            /* } First save so create new  */
         /* Save exist bot { */
         else {
           let Bot = firestore
@@ -311,17 +315,17 @@ export default {
               .collection('Bots')
               .doc(this.id);
 
-          if(await Bot.get()) {
+          if (await Bot.get()) {
             await Bot.update({
               Name: this.Bot.Name
             });
 
             let data = {};
-            if(this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
+            if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
             }
 
-            if(this.Bot.Market !== (await Bot.get()).data()['Market']) {
+            if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
               console.log('Market');
               Bot.update({
@@ -329,11 +333,11 @@ export default {
               });
             }
 
-            if(this.Bot.Level !== (await Bot.get()).data()['Level']) {
+            if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
               // Update Level
             }
 
-            if(this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
+            if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
               // Update Level
               data.SlotSize = this.Bot.SlotSize;
               Bot.update({
@@ -341,7 +345,7 @@ export default {
               });
             }
 
-            if(Object.keys(data).length > 0) {
+            if (Object.keys(data).length > 0) {
               data.id = Bot.id;
 
               await Bot.update({
@@ -364,10 +368,10 @@ export default {
 
     async botStart() {
       firebase.auth().onAuthStateChanged(async user => {
-        if(this.id !== null) {
+        if (this.id !== null) {
           var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
 
-          if(Bot) {
+          if (Bot) {
             Bot.update({
               Status: 'pending'
             });
@@ -385,10 +389,10 @@ export default {
 
     async botStop() {
       firebase.auth().onAuthStateChanged(async user => {
-        if(this.id !== null) {
+        if (this.id !== null) {
           var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
 
-          if(Bot) {
+          if (Bot) {
             Bot.update({
               Status: 'pending'
             });
@@ -404,49 +408,8 @@ export default {
       });
     },
 
-    calculateBallance() {
-      /* Calculating contracts count to Ballance */
-
-      if(this.Markets && this.markets) {
-        if(this.Bot.Market) {
-          if(this.Bot.Ballance) {
-            let marketObject = this.markets.find(obj => {
-              return obj.value === this.Bot.Market
-            });
-
-            // format market symbols
-            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
-            this.symbolName = marketObj;
-
-            // calculating contract size
-            let contractUstd = this.Bot.Ballance / 110;
-            let contractSize = (contractUstd / this.Markets[marketObj]).toFixed(3);
-
-            // check if more then minimum trade amount
-            if(contractSize >= marketObject.MinimumTradeAmount) {
-              this.BallanceHint = "Розмір ордеру " + contractSize;
-              this.Bot.SlotSize = contractSize;
-            }
-            else {
-              console.log(marketObject.MinimumTradeAmount);
-              this.BallanceHint = "Замалий баланс для торгівлі";
-            }
-          }
-          else {
-            this.BallanceHint = "Вкажіть суму в рамках якої буде працювати бот";
-          }
-        }
-        else {
-          this.BallanceHint = "Тепер оберіть маркет";
-        }
-      }
-      else {
-        this.BallanceHint = "Спершу оберіть біржу";
-      }
-    },
-
     async getOrders() {
-      if(this.apiKey && this.apiSecret) {
+      if (this.apiKey && this.apiSecret) {
         const client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
@@ -454,17 +417,17 @@ export default {
         })
 
         let futuresUserTrades = await client2.futuresAllOrders({
-          symbol: this.symbolName,
+          symbol: this.Bot.symbolName,
           // status: 'active'
         });
 
         this.orders = [];
         await futuresUserTrades.map(el => {
-          if(el.status === "NEW") {
+          if (el.status === "NEW") {
             let time = new Date(el.time);
 
             this.orders.push({
-              time: time.toLocaleString().replace(',',''),
+              time: time.toLocaleString().replace(',', ''),
               market: this.Bot.Market,
               positionSide: el.positionSide,
               price: el.price,
@@ -473,14 +436,13 @@ export default {
             console.log(el);
           }
         });
-      }
-      else {
+      } else {
         this.orders = [];
       }
     }
   },
   watch: {
-    'Bot.PriceDriver': function(val, oldval) {
+    'Bot.PriceDriver': function (val, oldval) {
       this.getMarkets(val);
 
       let priceDriver = this.priceDrivers.find(obj => {
@@ -492,16 +454,13 @@ export default {
 
       this.getOrders();
     },
-    'Bot.Ballance': function(val, oldval) {
-      this.calculateBallance();
-    },
-    'Bot.Market': function () {
-      this.calculateBallance();
-    },
-    'symbolName': async function(val, oldval) {
+    'Bot.symbolName': async function (val, oldval) {
       this.getOrders();
     },
-    'needsUpdate': function() {
+    'Bot.Market': function() {
+      this.getOrders();
+    },
+    'needsUpdate': function () {
       firebase.auth().onAuthStateChanged(async user => {
         // Price Drivers {
         var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
@@ -521,18 +480,19 @@ export default {
         // } Price Drivers
 
         // Bot (Single page) {
-        if(this.$route.params.id) {
+        if (this.$route.params.id) {
           var Bot = firestore
               .collection('users')
               .doc(user.uid)
               .collection('Bots')
               .doc(this.$route.params.id);
 
-          if(await Bot.get()) {
+          if (await Bot.get()) {
             this.id = await Bot.id;
 
             Bot.onSnapshot(async snapshot => {
               this.Bot = (await Bot.get()).data();
+              this.Bot.symbolName = 'BTCUSDT';
             });
           }
         }
@@ -541,11 +501,10 @@ export default {
         // Interval to fix graph size {
         let i = 5;
         let afterInterval = setInterval(() => {
-          if(i > 0) {
+          if (i > 0) {
             this.onResize();
             i--;
-          }
-          else {
+          } else {
             clearInterval(afterInterval);
           }
         }, 300);

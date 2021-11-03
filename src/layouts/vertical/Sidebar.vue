@@ -26,7 +26,7 @@
       style="height: 100%"
     >
       <v-list dense nav>
-        <v-list-item class="px-0">
+        <v-list-item class="px-0 pt-3">
           <v-list-item-title class="text-18 text-uppercase text-default ml-4"
             >Sota Network</v-list-item-title
           >

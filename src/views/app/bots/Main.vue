@@ -148,7 +148,7 @@ export default {
         { text: "Дії", value: "actions", align: "center", width: "1%" }
       ],
       Bots: [],
-      loading: false,
+      loading: true,
       // requireAccount: true,
       validation: true
     }

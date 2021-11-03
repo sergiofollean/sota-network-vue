@@ -13,6 +13,7 @@
                 hide-default-footer
                 disable-sort
                 no-data-text="Немає жодного акаунта"
+                :loading="bussy"
             >
               <template v-slot:top>
                 <v-toolbar
@@ -138,7 +139,7 @@
               </template>
 
               <template v-slot:item.actions="{item}">
-                <v-btn color="danger" small text @click="removeAccount(item.id)">Видалити</v-btn>
+                <v-btn color="danger" small text @click="removeAccount(item.id)" :disabled="bussy">Видалити</v-btn>
               </template>
             </v-data-table>
         </v-card-text>
@@ -151,6 +152,9 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
+
+var db = firebase.firestore();
+var realdb = firebase.database();
 
 export default {
   data() {
@@ -182,8 +186,16 @@ export default {
     }
   },
   created() {
-    var db = firebase.firestore();
     firebase.auth().onAuthStateChanged(async user => {
+      realdb.ref('tasks').orderByChild('user').equalTo(user.uid).on('value', (snapshot) => {
+        if(snapshot.exists()) {
+          this.bussy = true;
+        }
+        else {
+          this.bussy = false;
+        }
+      });
+
       var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
       priceDrivers.onSnapshot(snapshot => {
         this.priceDrivers = [];
@@ -202,7 +214,7 @@ export default {
   },
   methods: {
     removeAccount(id) {
-      var db = firebase.firestore();
+      this.bussy = true;
 
       firebase.auth().onAuthStateChanged(async user => {
         var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
@@ -228,8 +240,6 @@ export default {
         return false;
       }
 
-      var db = firebase.firestore();
-      var realdb = firebase.database();
       firebase.auth().onAuthStateChanged(async user => {
         await db.collection('users').doc(user.uid).collection('PriceDrivers').add({
           AccountName: this.AccountName,
