@@ -137,13 +137,19 @@ export default {
             });
 
             let data = {};
+            if (this.Bot.Oposition !== (await Bot.get()).data()['Oposition']) {
+              data.Oposition = this.Bot.Oposition;
+              await Bot.update({
+                Oposition: this.Bot.Oposition
+              });
+            }
+
             if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
             }
 
             if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
-              console.log('Market');
               Bot.update({
                 Market: this.Bot.Market
               });
@@ -156,7 +162,7 @@ export default {
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
               // Update Level
               data.SlotSize = this.Bot.SlotSize;
-              Bot.update({
+              await Bot.update({
                 Ballance: this.Bot.Ballance
               });
             }
