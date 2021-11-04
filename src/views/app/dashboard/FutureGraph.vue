@@ -70,7 +70,7 @@ export default {
         apiKey: this.apiKey,
         apiSecret: this.apiSecret
       })
-
+      this.chart.set('chart.data', []);
       if (this.ws) {
         await this.ws();
       }
@@ -97,7 +97,7 @@ export default {
           lineWidth: 3
       }})
       this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
-      this.ws = this.binance.ws.candles(this.symbol, this.period, candle => {
+      this.ws = await this.binance.ws.candles(this.symbol, this.period, candle => {
         if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
           this.chart.data.chart.data.splice(this.chart.data.chart.data.length - 1, 1,
               [candle.startTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close), Number(candle.volume)]);
