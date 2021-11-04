@@ -6,10 +6,49 @@
             ref="BotForm"
             lazy-validation
         >
-          <v-card-text>
+
+          <v-card-text v-if="!Bot.Bot && !bussy">
+            <v-row justify="center">
+              <v-col cols="12">
+                <v-card-title class="px-0 justify-center" v-if="Bot.id == null">
+                  Оберіть бот який хочете створити
+                </v-card-title>
+              </v-col>
+              <v-col md="4" class="flex flex-column align-center">
+                <v-tooltip top :disabled="disabledBot.spot === false" max-width="300">
+                  <template v-slot:activator="{ on }">
+                    <div class="col" v-on="on">
+                      <v-btn
+                          block
+                          :disabled="disabledBot.spot"
+                          @click="Bot.Bot = 'spot'"
+                          value="spot"
+                      >Спот</v-btn>
+                    </div>
+                  </template>
+                  <span>Для використання цього боту додайте спотовий акаунт в налаштуваннях</span>
+                </v-tooltip>
+                <v-tooltip top :disabled="disabledBot.futures === false" max-width="300">
+                  <template v-slot:activator="{ on }">
+                    <div class="col" v-on="on">
+                      <v-btn block :disabled="disabledBot.futures" @click="Bot.Bot = 'futures'" value="futures">Фьючерси (простий)</v-btn>
+                    </div>
+                  </template>
+                </v-tooltip>
+                <v-tooltip top :disabled="disabledBot.futurespro === false" max-width="300">
+                  <template v-slot:activator="{ on }">
+                    <div class="col" v-on="on">
+                      <v-btn block :disabled="disabledBot.futurespro" @click="Bot.Bot = 'futurespro'" value="futurespro">Фьючерси (PRO)</v-btn>
+                    </div>
+                  </template>
+                </v-tooltip>
+              </v-col>
+            </v-row>
+          </v-card-text>
+          <v-card-text v-if="Bot.Bot">
             <v-row>
-              <v-col lg="6">
-                <v-card-title class="px-0" v-if="id == null">
+              <v-col cols="12" lg="6">
+                <v-card-title class="px-0" v-if="Bot.id === null">
                   Додавання нового боту
                 </v-card-title>
                 <v-card-title class="px-0" v-else>
@@ -55,14 +94,17 @@
                     Обробка
                   </v-chip>
                 </v-card-title>
-                <v-text-field
-                    v-model="Bot.Name"
-                    label="Назва"
-                    :rules="[v => !!v || 'Вкажіть назву']"
-                    required
-                    outlined
-                />
                 <v-row>
+                  <v-col cols="12">
+                    <v-text-field
+                        v-model="Bot.Name"
+                        label="Назва"
+                        :rules="[v => !!v || 'Вкажіть назву']"
+                        required
+                        outlined
+                        hide-details
+                    />
+                  </v-col>
                   <v-col sm="6">
                     <v-select
                         v-model="Bot.PriceDriver"
@@ -71,6 +113,7 @@
                         :items="priceDrivers"
                         @change="getMarkets"
                         :rules="[(v) => !!v || 'Оберіть акаунт']"
+                        hide-details
                     />
                   </v-col>
                   <v-col sm="6">
@@ -81,49 +124,37 @@
                         no-data-text="Спершу оберіть акаунт"
                         :items="markets"
                         :rules="[(v) => !!v || 'Оберіть маркет']"
+                        hide-details
                     />
                   </v-col>
                 </v-row>
-                <v-btn-toggle color="primary" borderless mandatory v-model="Bot.script" v-if="priceDriver">
-                  <v-btn :disabled="priceDriver.type !== 'Spot Trading'" value="Spot">Спот</v-btn>
-                  <v-btn :disabled="priceDriver.type !== 'Leverage Trading'" value="Simple Futures">Simple Futures</v-btn>
-                  <v-btn :disabled="priceDriver.type !== 'Leverage Trading'" value="Pro Futures">Pro Futures</v-btn>
-                </v-btn-toggle>
               </v-col>
               <v-col lg="6">
-                <div v-if="!Bot.script">
-                  <v-alert
-                      type="info"
-                      text
-                      prominent
-                  >
-                    Спершу виберіть акаунт
-                  </v-alert>
-                </div>
                 <CSTM
                     :Bot="Bot"
                     :markets="markets"
                     :binanceMarkets="binanceMarkets"
-                    v-if="Bot.script === 'Simple Futures'"
+                    v-if="Bot.Bot === 'futures'"
+                    ref="CSTM"
                 />
 
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-text align="center">
-            <v-btn color="success" @click="saveBot" :disabled="bussy" class="mr-4">Зберегти</v-btn>
-            <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart">Запустити</v-btn>
-            <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop">Зупинити</v-btn>
-            <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled>Обробка</v-btn>
+          <v-card-text align="center" v-if="Bot.Bot">
+            <v-btn color="success" @click="saveBot" :disabled="bussy">Зберегти</v-btn>
+            <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4">Запустити</v-btn>
+            <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop" class="ml-4">Зупинити</v-btn>
+            <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled class="ml-4">Обробка</v-btn>
           </v-card-text>
         </v-form>
       </base-card>
     </v-col>
-    <v-col lg="12" md="12" ref="graphCol" @resize="onResize">
+    <v-col lg="12" md="12" ref="graphCol" @resize="onResize" v-if="Bot.Bot">
       <futureGraph class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
                    :apiSecret="apiSecret"/>
     </v-col>
-    <v-col cols="12" v-if="id != null">
+    <v-col cols="12" v-if="Bot.id !== null">
       <base-card class="mt-4">
         <v-card-title>
           Ордери
@@ -171,8 +202,8 @@ import futureGraph from '@/views/app/dashboard/FutureGraph';
 import CSTM from "@/views/app/bots/CSTM";
 
 const client = Binance();
-var firestore = firebase.firestore();
-var database = firebase.database();
+const firestore = firebase.firestore();
+const database = firebase.database();
 
 export default {
   components: {futureGraph, CSTM},
@@ -182,10 +213,12 @@ export default {
       priceDriver: null,
       markets: [],
       binanceMarkets: null,
-      Bot: {},
-      id: null,
+      Bot: {
+        Bot: false,
+        id: null
+      },
       graphWidth: 333,
-      graphHeight: 400,
+      graphHeight: 500,
       // symbolName: 'BTCUSDT',
       ordersHeaders: [
         {text: "Дата", value: "time"},
@@ -198,7 +231,12 @@ export default {
       bussy: false,
       needsUpdate: false,
       apiKey: null,
-      apiSecret: null
+      apiSecret: null,
+      disabledBot: {
+        spot: true,
+        futures: true,
+        futurespro: true
+      }
     }
   },
   mounted() {
@@ -211,7 +249,7 @@ export default {
   },
   methods: {
     async onResize(event) {
-      if (this.$refs.graphCol.clientWidth !== undefined) {
+      if (typeof this.$refs.graphCol !== 'undefined') {
         this.graphWidth = this.$refs.graphCol.clientWidth;
       }
 
@@ -259,7 +297,7 @@ export default {
       /* } Get Markets for v-select */
     },
 
-    saveBot() {
+    async saveBot() {
       /* Save Bot { */
       if (!this.bussy) {
         this.bussy = true;
@@ -274,102 +312,19 @@ export default {
         return false;
       }
 
-      firebase.auth().onAuthStateChanged(async user => {
-        /* First save so create new { */
-        if (this.id === null) {
-          // Adding to firestore user profile
-          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
-            Name: this.Bot.Name,
-            PriceDriver: this.Bot.PriceDriver,
-            Market: this.Bot.Market,
-            Level: this.Bot.Level,
-            Ballance: this.Bot.Ballance,
-            Status: "pending"
-          });
+      if(this.Bot.Bot === 'futures') await this.$refs.CSTM.saveCSTM();
 
-          // Adding to the tasker
-          if (Bot) {
-            await database.ref('tasks').push().set({
-              task: 'add_bot',
-              user: user.uid,
-              data: {
-                id: Bot.id,
-                PriceDriver: this.Bot.PriceDriver,
-                Market: this.Bot.Market,
-                Level: this.Bot.Level,
-                SlotSize: this.Bot.SlotSize,
-              }
-            });
-
-            // Redirect to new exist bot
-            await this.$router.push({name: 'Bot', params: {id: Bot.id}});
-            this.needsUpdate = true;
-          }
-        }
-            /* } First save so create new  */
-        /* Save exist bot { */
-        else {
-          let Bot = firestore
-              .collection('users')
-              .doc(user.uid)
-              .collection('Bots')
-              .doc(this.id);
-
-          if (await Bot.get()) {
-            await Bot.update({
-              Name: this.Bot.Name
-            });
-
-            let data = {};
-            if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
-              // Update PriceDriver
-            }
-
-            if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
-              // Update Market
-              console.log('Market');
-              Bot.update({
-                Market: this.Bot.Market
-              });
-            }
-
-            if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
-              // Update Level
-            }
-
-            if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
-              // Update Level
-              data.SlotSize = this.Bot.SlotSize;
-              Bot.update({
-                Ballance: this.Bot.Ballance
-              });
-            }
-
-            if (Object.keys(data).length > 0) {
-              data.id = Bot.id;
-
-              await Bot.update({
-                Status: 'pending'
-              });
-
-              await database.ref('tasks').push().set({
-                task: 'update_bot',
-                user: user.uid,
-                data: data
-              });
-            }
-          }
-        }
-        /* } Save exist bot */
-        this.bussy = false;
-      });
+      // Redirect to new exist bot
+      await this.$router.push({name: 'Bot', params: {id: this.Bot.id}});
+      this.needsUpdate = true;
+      this.bussy = false;
       /* } Save Bot */
     },
 
     async botStart() {
       firebase.auth().onAuthStateChanged(async user => {
-        if (this.id !== null) {
-          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
+        if (this.Bot.id !== null) {
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.Bot.id);
 
           if (Bot) {
             Bot.update({
@@ -389,8 +344,8 @@ export default {
 
     async botStop() {
       firebase.auth().onAuthStateChanged(async user => {
-        if (this.id !== null) {
-          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.id);
+        if (this.Bot.id !== null) {
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').doc(this.Bot.id);
 
           if (Bot) {
             Bot.update({
@@ -433,7 +388,6 @@ export default {
               price: el.price,
               origQty: el.origQty
             });
-            console.log(el);
           }
         });
       } else {
@@ -442,6 +396,11 @@ export default {
     }
   },
   watch: {
+    'Bot.Bot': function() {
+      setTimeout(() => {
+        this.onResize();
+      }, 500);
+    },
     'Bot.PriceDriver': function (val, oldval) {
       this.getMarkets(val);
 
@@ -467,6 +426,12 @@ export default {
         priceDrivers.onSnapshot(snapshot => {
           this.priceDrivers = [];
           snapshot.forEach(doc => {
+            if(doc.data()['AccountType'] === 'Leverage Trading') {
+              this.disabledBot.futures = false;
+              this.disabledBot.futurespro = false;
+            }
+            if(doc.data()['AccountType'] === 'Spot Trading') this.disabledBot.spot = false;
+
             this.priceDrivers.push({
               text: doc.data()['AccountName'],
               value: doc.id,
@@ -488,10 +453,9 @@ export default {
               .doc(this.$route.params.id);
 
           if (await Bot.get()) {
-            this.id = await Bot.id;
-
             Bot.onSnapshot(async snapshot => {
               this.Bot = (await Bot.get()).data();
+              this.Bot.id = Bot.id;
               this.Bot.symbolName = 'BTCUSDT';
             });
           }

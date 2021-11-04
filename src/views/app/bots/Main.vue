@@ -108,14 +108,45 @@
 
                 <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                    <v-btn
-                        v-bind="attrs"
-                        v-on="on"
-                        icon
-                        @click="removeBot(item.id)"
+                    <v-dialog
+                        v-model="item.removeDialog"
+                        persistent
+                        max-width="360"
                     >
-                      <v-icon>mdi-trash-can-outline</v-icon>
-                    </v-btn>
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-btn
+                            v-bind="attrs"
+                            v-on="on"
+                            icon
+                        >
+                          <v-icon>mdi-trash-can-outline</v-icon>
+                        </v-btn>
+                      </template>
+
+                      <v-card>
+                        <v-card-title class="text-h5 text-break">
+                          Ви впевнені що хочете видалити бот {{ item.Name }}?
+                        </v-card-title>
+                        <v-card-text>Видаливши бот ви забираєте контроль над позиціями на себе.</v-card-text>
+                        <v-card-actions>
+                          <v-spacer></v-spacer>
+                          <v-btn
+                              color="primary"
+                              text
+                              @click="item.removeDialog = false"
+                          >
+                            Відміна
+                          </v-btn>
+                          <v-btn
+                              color="danger"
+                              text
+                              @click="removeBot(item.id)"
+                          >
+                            Видалити
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-dialog>
                   </template>
                   <span>Видалити</span>
                 </v-tooltip>
@@ -184,7 +215,8 @@ export default {
             Name: doc.data()['Name'],
             AccountPlatform: await priceDriver.data()['AccountPlatform'],
             AccountType: await priceDriver.data()['AccountType'],
-            Status: doc.data()['Status']
+            Status: doc.data()['Status'],
+            removeDialog: false
           });
         });
 

@@ -1,14 +1,16 @@
 <template>
   <div>
     <v-card-title class="px-0">Нашалтування торгів</v-card-title>
-    <v-radio-group label="Сторона" row v-model="Bot.oposition">
+    <v-radio-group label="Сторона" row v-model="Bot.Oposition">
       <v-radio
-          label="Short"
+          label="short"
           color="red"
+          value="short"
       />
       <v-radio
-          label="Long"
+          label="long"
           color="green"
+          value="long"
       />
     </v-radio-group>
     <v-slider
@@ -32,6 +34,11 @@
 </template>
 
 <script>
+import firebase from "firebase";
+import "firebase/database";
+const firestore = firebase.firestore();
+const database = firebase.database();
+
 export default {
   name: 'CSTM_bot',
   props: {
@@ -81,6 +88,96 @@ export default {
       } else {
         this.BallanceHint = "Спершу оберіть біржу";
       }
+    },
+    saveCSTM() {
+      firebase.auth().onAuthStateChanged(async user => {
+        /* First save so create new { */
+        if (this.Bot.id === null) {
+          // Adding to firestore user profile
+          var Bot = await firestore.collection('users').doc(user.uid).collection('Bots').add({
+            Name: this.Bot.Name,
+            PriceDriver: this.Bot.PriceDriver,
+            Market: this.Bot.Market,
+            Oposition: this.Bot.Oposition,
+            Level: this.Bot.Level,
+            Ballance: this.Bot.Ballance,
+            Status: "pending",
+            Bot: this.Bot.Bot
+          });
+
+          // Adding to the tasker
+          if (Bot) {
+            await database.ref('tasks').push().set({
+              task: 'add_bot',
+              user: user.uid,
+              data: {
+                id: Bot.id,
+                PriceDriver: this.Bot.PriceDriver,
+                Market: this.Bot.Market,
+                Oposition: this.Bot.Oposition,
+                Level: this.Bot.Level,
+                SlotSize: this.Bot.SlotSize,
+                Bot: this.Bot.Bot
+              }
+            });
+          }
+        }
+        /* } First save so create new  */
+        /* Save exist bot { */
+        else {
+          let Bot = firestore
+              .collection('users')
+              .doc(user.uid)
+              .collection('Bots')
+              .doc(this.Bot.id);
+
+          if (await Bot.get()) {
+            await Bot.update({
+              Name: this.Bot.Name
+            });
+
+            let data = {};
+            if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
+              // Update PriceDriver
+            }
+
+            if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
+              // Update Market
+              console.log('Market');
+              Bot.update({
+                Market: this.Bot.Market
+              });
+            }
+
+            if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
+              // Update Level
+            }
+
+            if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
+              // Update Level
+              data.SlotSize = this.Bot.SlotSize;
+              Bot.update({
+                Ballance: this.Bot.Ballance
+              });
+            }
+
+            if (Object.keys(data).length > 0) {
+              data.id = Bot.id;
+
+              await Bot.update({
+                Status: 'pending'
+              });
+
+              await database.ref('tasks').push().set({
+                task: 'update_bot',
+                user: user.uid,
+                data: data
+              });
+            }
+          }
+        }
+        /* } Save exist bot */
+      });
     }
   },
   watch: {
