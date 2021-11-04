@@ -2,7 +2,7 @@ export const items = [{
     title: 'Головна',
     icon: 'mdi-view-dashboard',
     group: 'dashboard',
-    to: 'dashboard'
+    to: '/dashboard'
   },
   {
     title: 'Боти',

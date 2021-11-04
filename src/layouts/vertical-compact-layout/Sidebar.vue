@@ -145,21 +145,6 @@
               >
                 <v-img src="@/assets/images/faces/1.jpg" />
               </v-list-item-avatar>
-              <v-list-item-content class="text-center">
-                <v-list-item-title class="text-16 mb-1 font-weight-regular"
-                  >Watson Joyce</v-list-item-title
-                >
-                <v-divider />
-                <v-list-item-subtitle class="mt-1">
-                  <v-icon class="text-18 mr-2"
-                    >mdi-card-account-mail-outline</v-icon
-                  >
-                  <v-icon class="text-18 mr-2"
-                    >mdi-inbox-multiple-outline</v-icon
-                  >
-                  <v-icon class="text-18 mr-2">mdi-home-edit-outline</v-icon>
-                </v-list-item-subtitle>
-              </v-list-item-content>
             </div>
           </v-list>
 

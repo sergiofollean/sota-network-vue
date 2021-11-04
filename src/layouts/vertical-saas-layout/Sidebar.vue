@@ -16,36 +16,7 @@
       class="h-100 rtl-ps-none ps scroll"
       style="height: 100%"
     >
-      <v-list>
-        <v-list-item class="p-0">
-          <div class="flex text-center justify-center flex-column">
-            <v-list-item-avatar
-              class="m-0"
-              min-width="50"
-              height="50"
-              width="50"
-            >
-              <v-img src="@/assets/images/faces/1.jpg" />
-            </v-list-item-avatar>
-
-            <v-list-item-content>
-              <v-list-item-title class="text-16 mb-1 font-weight-regular"
-                >Watson Joyce</v-list-item-title
-              >
-              <v-divider />
-              <v-list-item-subtitle class="mt-1">
-                <v-icon class="text-18 mr-2"
-                  >mdi-card-account-mail-outline</v-icon
-                >
-                <v-icon class="text-18 mr-2">mdi-inbox-multiple-outline</v-icon>
-                <v-icon class="text-18 mr-2">mdi-home-edit-outline</v-icon>
-              </v-list-item-subtitle>
-            </v-list-item-content>
-          </div>
-        </v-list-item>
-      </v-list>
-
-      <v-list rounded dense>
+      <v-list rounded dense class="mt-4">
         <template v-for="(item, i) in computedItems">
           <base-item-group
             v-if="item.children"

@@ -21,70 +21,13 @@ export default {
             type: "link",
             text: "Dashboard",
             iconLeft: '<i class="mdi mdi-view-dashboard"></i>',
-            subMenuOptions: [
-              {
-                type: "link",
-                text: "Learning Management",
-                path: { name: "learning-management" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-
-              {
-                type: "link",
-                text: "Job Management",
-                path: { name: "job-management" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Analytic",
-                path: { name: "analytic" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Cryptocurrency",
-                path: { name: "crypto-currency" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Sales",
-                path: { name: "sales" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Subscription",
-                path: { name: "donation" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-            ],
+            path: 'dashboard'
           },
           {
             type: "link",
-            text: "Invoice",
-            iconLeft: '<i class="mdi mdi-book-open-page-variant"></i>',
-            subMenuOptions: [
-              {
-                type: "link",
-                text: "Invoice Ver 1",
-                path: { name: "invoice-ver-one" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Invoice Ver 2",
-                path: { name: "invoice-ver-two" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-              {
-                type: "link",
-                text: "Edit Invoice",
-                path: { name: "edit-invoice" },
-                iconLeft: '<i class="mdi mdi-circle-medium"></i>',
-              },
-            ],
+            text: "Боти",
+            iconLeft: '<i class="mdi mdi-robot"></i>',
+            path: '/bots'
           },
           {
             type: "link",

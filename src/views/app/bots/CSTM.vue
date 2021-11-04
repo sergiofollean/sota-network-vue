@@ -121,6 +121,8 @@ export default {
               }
             });
           }
+
+          await this.$router.push({name: 'Bot', params: {id: this.Bot.id}});
         }
         /* } First save so create new  */
         /* Save exist bot { */
@@ -146,17 +148,26 @@ export default {
 
             if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
+              data.PriceDriver = this.Bot.PriceDriver;
+              await Bot.update({
+                PriceDriver: this.Bot.PriceDriver
+              });
             }
 
             if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
-              Bot.update({
+              data.Market = this.Bot.Market;
+              await Bot.update({
                 Market: this.Bot.Market
               });
             }
 
             if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
               // Update Level
+              data.Level = this.Bot.Level;
+              await Bot.update({
+                Level: this.Bot.Level
+              });
             }
 
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {

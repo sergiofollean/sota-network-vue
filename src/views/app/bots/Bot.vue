@@ -137,14 +137,16 @@
                     v-if="Bot.Bot === 'futures'"
                     ref="CSTM"
                 />
-
+                <Spot
+                    v-if="Bot.Bot === 'spot'"
+                />
               </v-col>
             </v-row>
           </v-card-text>
           <v-card-text align="center" v-if="Bot.Bot">
-            <v-btn color="success" @click="saveBot" :disabled="bussy">Зберегти</v-btn>
-            <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4">Запустити</v-btn>
-            <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop" class="ml-4">Зупинити</v-btn>
+            <v-btn color="success" @click="saveBot" :disabled="bussy || Bot.Status === 'pending'" depressed>Зберегти</v-btn>
+            <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4" depressed>Запустити</v-btn>
+            <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop" class="ml-4" depressed>Зупинити</v-btn>
             <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled class="ml-4">Обробка</v-btn>
           </v-card-text>
         </v-form>
@@ -200,13 +202,14 @@ import "firebase/database";
 import Binance from 'binance-api-node';
 import futureGraph from '@/views/app/dashboard/FutureGraph';
 import CSTM from "@/views/app/bots/CSTM";
+import Spot from "@/views/app/bots/Spot";
 
 const client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
 
 export default {
-  components: {futureGraph, CSTM},
+  components: {Spot, futureGraph, CSTM},
   data() {
     return {
       priceDrivers: [],
@@ -240,9 +243,9 @@ export default {
     }
   },
   mounted() {
-    window.addEventListener('resize', this.onResize);
-
     this.needsUpdate = true;
+
+    window.addEventListener('resize', this.onResize);
   },
   destroyed() {
     window.removeEventListener('resize', this.onResize);
@@ -315,8 +318,7 @@ export default {
       if(this.Bot.Bot === 'futures') await this.$refs.CSTM.saveCSTM();
 
       // Redirect to new exist bot
-      await this.$router.push({name: 'Bot', params: {id: this.Bot.id}});
-      this.needsUpdate = true;
+      // this.needsUpdate = true;
       this.bussy = false;
       /* } Save Bot */
     },
@@ -397,21 +399,39 @@ export default {
   },
   watch: {
     'Bot.Bot': function() {
+      this.needsUpdate = true;
+
       setTimeout(() => {
         this.onResize();
       }, 500);
     },
+    'priceDrivers': function(val) {
+      if(this.Bot.PriceDriver) {
+        this.getMarkets(this.Bot.PriceDriver);
+
+        let priceDriver = this.priceDrivers.find(obj => {
+          return obj.value === this.Bot.PriceDriver
+        });
+
+        this.apiKey = priceDriver.apiKey;
+        this.apiSecret = priceDriver.apiSecret;
+
+        this.getOrders();
+      }
+    },
     'Bot.PriceDriver': function (val, oldval) {
-      this.getMarkets(val);
+      if(this.priceDrivers.length > 0) {
+        this.getMarkets(val);
 
-      let priceDriver = this.priceDrivers.find(obj => {
-        return obj.value === val
-      });
+        let priceDriver = this.priceDrivers.find(obj => {
+          return obj.value === val
+        });
 
-      this.apiKey = priceDriver.apiKey;
-      this.apiSecret = priceDriver.apiSecret;
+        this.apiKey = priceDriver.apiKey;
+        this.apiSecret = priceDriver.apiSecret;
 
-      this.getOrders();
+        this.getOrders();
+      }
     },
     'Bot.symbolName': async function (val, oldval) {
       this.getOrders();
@@ -420,30 +440,9 @@ export default {
       this.getOrders();
     },
     'needsUpdate': function () {
+      this.bussy = true;
+
       firebase.auth().onAuthStateChanged(async user => {
-        // Price Drivers {
-        var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
-        priceDrivers.onSnapshot(snapshot => {
-          this.priceDrivers = [];
-          snapshot.forEach(doc => {
-            if(doc.data()['AccountType'] === 'Leverage Trading') {
-              this.disabledBot.futures = false;
-              this.disabledBot.futurespro = false;
-            }
-            if(doc.data()['AccountType'] === 'Spot Trading') this.disabledBot.spot = false;
-
-            this.priceDrivers.push({
-              text: doc.data()['AccountName'],
-              value: doc.id,
-              type: doc.data()['AccountType'],
-              platform: doc.data()['AccountPlatform'],
-              apiKey: doc.data()['AccountPub'],
-              apiSecret: doc.data()['AccountPriv']
-            });
-          });
-        });
-        // } Price Drivers
-
         // Bot (Single page) {
         if (this.$route.params.id) {
           var Bot = firestore
@@ -462,6 +461,41 @@ export default {
         }
         // } Bot (Single page)
 
+        // Price Drivers {
+        var priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
+        priceDrivers.onSnapshot(snapshot => {
+          this.priceDrivers = [];
+          snapshot.forEach(doc => {
+            if(doc.data()['AccountType'] === 'Leverage Trading') {
+              this.disabledBot.futures = false;
+              this.disabledBot.futurespro = false;
+            }
+            if(doc.data()['AccountType'] === 'Spot Trading') this.disabledBot.spot = false;
+
+            if(doc.data()['AccountType'] === 'Spot Trading' && this.Bot.Bot === 'spot') {
+              this.priceDrivers.push({
+                text: doc.data()['AccountName'],
+                value: doc.id,
+                type: doc.data()['AccountType'],
+                platform: doc.data()['AccountPlatform'],
+                apiKey: doc.data()['AccountPub'],
+                apiSecret: doc.data()['AccountPriv']
+              });
+            }
+            else if(doc.data()['AccountType'] === 'Leverage Trading' && (this.Bot.Bot === 'futures' || this.Bot.Bot === 'futurespro')) {
+              this.priceDrivers.push({
+                text: doc.data()['AccountName'],
+                value: doc.id,
+                type: doc.data()['AccountType'],
+                platform: doc.data()['AccountPlatform'],
+                apiKey: doc.data()['AccountPub'],
+                apiSecret: doc.data()['AccountPriv']
+              });
+            }
+          });
+        });
+        // } Price Drivers
+
         // Interval to fix graph size {
         let i = 5;
         let afterInterval = setInterval(() => {
@@ -475,6 +509,7 @@ export default {
         // } Interval to fix graph size
 
         this.needsUpdate = false;
+        this.bussy = false;
       });
     }
   }

@@ -11,7 +11,7 @@ export const themeConfig = {
   verticalSaasSidebarDrawer: true, // options[Boolean] : true, false(default)
   showBreadcrumb: true, // options[Boolean] : true, false(default)
 
-  layout: "VerticalSidebar", //VerticalCompactSidebar,VerticalSaasLayout,VerticalSidebar,HorizontalBar
+  layout: "VerticalSaasLayout", //VerticalCompactSidebar,VerticalSaasLayout,VerticalSidebar,HorizontalBar
   isLoading: false,
 
   isDark: false,
