@@ -218,7 +218,8 @@ export default {
       binanceMarkets: null,
       Bot: {
         Bot: false,
-        id: null
+        id: null,
+        symbolName: 'BTCUSDT',
       },
       graphWidth: 333,
       graphHeight: 500,

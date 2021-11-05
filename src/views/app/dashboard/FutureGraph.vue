@@ -55,7 +55,7 @@ export default {
         }
       }),
       wk: 1,
-      ws: null,
+      wss: [],
       token: this.apiKey,
       secret: this.apiSecret,
       binance: new Binance({
@@ -70,14 +70,16 @@ export default {
         apiKey: this.apiKey,
         apiSecret: this.apiSecret
       })
-      this.chart.set('chart.data', []);
-      if (this.ws) {
-        await this.ws();
+      if (this.wss.length > 0) {
+        for(const ws of this.wss) {
+          ws();
+          this.wss.splice(0, 1);
+        }
       }
       this.chart.set('chart.data', []);
       this.period = tf.name;
       this.chart.set('chart.tf', tf.name);
-      let candleChartResults = await this.binance.candles({ symbol: this.symbol, interval: this.period });
+      let candleChartResults = await this.binance.futuresCandles({ symbol: this.symbol, interval: this.period });
       this.chart.set('chart.data', candleChartResults.map((candle) => {
         return [candle.openTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close) , Number(candle.volume)];
       }));
@@ -97,14 +99,21 @@ export default {
           lineWidth: 3
       }})
       this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
-      this.ws = await this.binance.ws.candles(this.symbol, this.period, candle => {
-        if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
+      const ws = await this.binance.ws.futuresCandles(this.symbol, this.period, candle => {
+        if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1].length && this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
           this.chart.data.chart.data.splice(this.chart.data.chart.data.length - 1, 1,
               [candle.startTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close), Number(candle.volume)]);
         } else {
           this.chart.data.chart.data.push([candle.startTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close), Number(candle.volume)]);
         }
       })
+      if (this.wss.length > 0) {
+        for(const ws of this.wss) {
+          ws();
+          this.wss.splice(0, 1);
+        }
+      }
+      this.wss.push(ws);
       this.$refs.tradingVue.resetChart();
       if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
         const orders = await this.binance.futuresAllOrders({

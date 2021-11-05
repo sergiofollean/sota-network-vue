@@ -59,14 +59,18 @@ export default {
         }
       }),
       wk: 1,
-      ws: null,
+      wss: [],
     }
   },
   methods: {
     async on_selected(tf) {
 
-      if (this.ws) {
-        await this.ws();
+      this.chart.set('chart.data', []);
+      if (this.wss.length > 0) {
+        for(const ws of this.wss) {
+          ws();
+          this.wss.splice(0, 1);
+        }
       }
       this.chart.set('chart.data', []);
       this.period = tf.name;
@@ -91,14 +95,21 @@ export default {
           lineWidth: 3
       }})
       this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
-      this.ws = await this.binance.ws.candles(this.symbol, this.period, candle => {
-        if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
+      const ws = await this.binance.ws.candles(this.symbol, this.period, candle => {
+        if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1].length && this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
           this.chart.data.chart.data.splice(this.chart.data.chart.data.length - 1, 1,
               [candle.startTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close), Number(candle.volume)]);
         } else {
           this.chart.data.chart.data.push([candle.startTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close), Number(candle.volume)]);
         }
       })
+      if (this.wss.length > 0) {
+        for(const ws of this.wss) {
+          ws();
+          this.wss.splice(0, 1);
+        }
+      }
+      this.wss.push(ws);
       this.$refs.tradingVue.resetChart();
       if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
         const orders = await this.binance.allOrders({
