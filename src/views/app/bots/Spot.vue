@@ -124,6 +124,7 @@ export default {
             if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
               data.PriceDriver = this.Bot.PriceDriver;
+              data.Market = this.Bot.Market;
               await Bot.update({
                 PriceDriver: this.Bot.PriceDriver
               });

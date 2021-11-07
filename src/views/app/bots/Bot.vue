@@ -181,14 +181,14 @@
 
             <template v-slot:item.positionSide="{item}">
               <v-chip
-                  v-if="item.positionSide === 'LONG'"
+                  v-if="item.positionSide === 'LONG' || item.positionSide === 'BUY'"
                   color="success"
                   small
               >{{ item.positionSide }}
               </v-chip>
 
               <v-chip
-                  v-if="item.positionSide === 'SHORT'"
+                  v-if="item.positionSide === 'SHORT' || item.positionSide === 'SELL'"
                   color="error"
                   small
               >{{ item.positionSide }}
@@ -231,7 +231,6 @@ export default {
       },
       graphWidth: 333,
       graphHeight: 500,
-      // symbolName: 'BTCUSDT',
       ordersHeaders: [
         {text: "Дата", value: "time"},
         {text: "Маркет", value: "market"},
@@ -307,7 +306,12 @@ export default {
         });
 
         /* Doing request to Binance API */
-        this.binanceMarkets = await client.futuresPrices();
+        if(this.Bot.Bot === 'spot') {
+          this.binanceMarkets = await client.prices();
+        }
+        else {
+          this.binanceMarkets = await client.futuresPrices();
+        }
       }
       /* } Get Markets for v-select */
     },
@@ -380,35 +384,69 @@ export default {
 
     async getOrders() {
       if (this.apiKey && this.apiSecret) {
+        if (!this.bussy) {
+          this.bussy = true;
+        } else if (this.bussy === true) {
+          return false;
+        }
+
         const client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
           // getTime: await client.time(),
         })
 
-        let futuresUserTrades = await client2.futuresAllOrders({
-          symbol: this.Bot.symbolName,
-          // status: 'active'
-        });
+        if(this.Bot.Bot === 'spot') {
+          let spotUserTrades = await client2.allOrders({
+            symbol: this.Bot.symbolName,
+          });
 
-        this.orders = [];
-        await futuresUserTrades.map(el => {
-          if (el.status === "NEW") {
-            let time = new Date(el.time);
+          this.orders = [];
 
-            this.orders.push({
-              time: time.toLocaleString().replace(',', ''),
-              market: this.Bot.Market,
-              positionSide: el.positionSide,
-              price: el.price,
-              origQty: el.origQty
+          if(spotUserTrades) {
+            await spotUserTrades.map(el => {
+              if (el.status === "NEW") {
+                let time = new Date(el.time);
+
+                this.orders.push({
+                  time: time.toLocaleString().replace(',', ''),
+                  market: this.Bot.Market,
+                  positionSide: el.side,
+                  price: el.price,
+                  origQty: el.origQty
+                });
+              }
             });
           }
-        });
+        }
+        else {
+          let futuresUserTrades = await client2.futuresAllOrders({
+            symbol: this.Bot.symbolName,
+            // status: 'active'
+          });
+
+          this.orders = [];
+          if(await futuresUserTrades) {
+            await futuresUserTrades.map(el => {
+              if (el.status === "NEW") {
+                let time = new Date(el.time);
+
+                this.orders.push({
+                  time: time.toLocaleString().replace(',', ''),
+                  market: this.Bot.Market,
+                  positionSide: el.positionSide,
+                  price: el.price,
+                  origQty: el.origQty
+                });
+              }
+            });
+          }
+        }
+
+        this.bussy = false;
       } else {
         this.orders = [];
-      }
-    }
+      }}
   },
   watch: {
     'Bot.Bot': function() {
@@ -446,12 +484,7 @@ export default {
         this.getOrders();
       }
     },
-    'Bot.symbolName': async function (val, oldval) {
-      this.getOrders();
-    },
-    'Bot.Market': function() {
-      this.getOrders();
-
+    'binanceMarkets': function() {
       if (this.binanceMarkets && this.markets) {
         if (this.Bot.Market) {
           let marketObject = this.markets.find(obj => {
@@ -459,10 +492,17 @@ export default {
           });
 
           // format market symbols
-          let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
-          this.Bot.symbolName = marketObj;
+          if(marketObject) {
+            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+            this.Bot.symbolName = marketObj;
+
+            this.getOrders();
+          }
         }
       }
+    },
+    'Bot.Market': function() {
+      this.getOrders();
     },
     'needsUpdate': function () {
       this.bussy = true;

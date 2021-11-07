@@ -5,7 +5,7 @@
     height="100vh"
     class="vertical-sass-sidebar"
     :right="$vuetify.rtl"
-    color="white"
+    :color="$vuetify.theme.dark ? 'dark' : 'white'"
     flat
     floating
     app
