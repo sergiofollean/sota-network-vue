@@ -2,10 +2,67 @@
   <v-row>
     <v-col sm="12">
       <base-card>
-<!--        <v-card-title>-->
-<!--          Біржеві акаунти-->
-<!--          <v-btn color="primary" class="ml-4" to="settings/add_account">Додати</v-btn>-->
-<!--        </v-card-title>-->
+        <v-card-title>
+          {{ $t('profile.accountSettings') }}
+        </v-card-title>
+        <v-card-text>
+          <v-form>
+            <v-row>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    label="email"
+                    v-model="userData.email"
+                    required
+                    disabled
+                />
+              </v-col>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    :label="this.$t('register.firstAddress')"
+                    v-model="userData.firstAddress"
+                    required
+                    disabled
+                />
+              </v-col>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    :label="this.$t('register.secondAddress')"
+                    v-model="userData.firstAddress"
+                    required
+                    disabled
+                />
+              </v-col>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    :label="this.$t('register.city')"
+                    v-model="userData.city"
+                    required
+                    disabled
+                />
+              </v-col>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    :label="this.$t('register.state')"
+                    v-model="userData.state"
+                    required
+                    disabled
+                />
+              </v-col>
+              <v-col lg="4" sm="6">
+                <v-text-field
+                    :label="this.$t('register.zip')"
+                    v-model="userData.zip"
+                    required
+                    disabled
+                />
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </base-card>
+    </v-col>
+    <v-col sm="12">
+      <base-card>
         <v-card-text>
             <v-data-table
                 :headers="headers"
@@ -19,7 +76,7 @@
                 <v-toolbar
                     flat
                 >
-                  <v-toolbar-title>Біржеві акаунти</v-toolbar-title>
+                  <v-toolbar-title>{{ $t('profile.tradingSettings') }}</v-toolbar-title>
                   <v-divider
                       class="mx-4"
                       inset
@@ -182,16 +239,23 @@ export default {
       AccountType: { text: 'Спот', value: 'spot' },
       AccountPriv: '',
       AccountPub: '',
-      Simulated: false
+      Simulated: false,
+      userData: {
+        email: '',
+        firstAddress: '',
+        secondAddress: '',
+        city: '',
+        state: '',
+        zip: '',
+      },
     }
   },
-  created() {
+  async created() {
     firebase.auth().onAuthStateChanged(async user => {
       realdb.ref('tasks').orderByChild('user').equalTo(user.uid).on('value', (snapshot) => {
-        if(snapshot.exists()) {
+        if (snapshot.exists()) {
           this.bussy = true;
-        }
-        else {
+        } else {
           this.bussy = false;
         }
       });
@@ -211,6 +275,14 @@ export default {
         });
       });
     });
+
+    let documentReference = await db.collection('users').doc(firebase.auth().currentUser.uid).get();
+    this.userData.email = documentReference.get('email');
+    this.userData.firstAddress = documentReference.get('firstAddress');
+    this.userData.secondAddress = documentReference.get('secondAddress');
+    this.userData.city = documentReference.get('city');
+    this.userData.state = documentReference.get('state');
+    this.userData.zip = documentReference.get('zip');
   },
   methods: {
     removeAccount(id) {
