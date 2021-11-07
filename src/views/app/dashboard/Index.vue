@@ -40,6 +40,9 @@
         </base-card>
       </v-col>
 
+    </v-row>
+
+    <v-row>
       <v-col cols="12" md="6" lg="4" sm="6">
         <analytic-one-card
             main-icon-name="mdi-robot"
@@ -67,6 +70,13 @@
             heading-text="+ 79,23 $"
         />
       </v-col>
+
+    </v-row>
+    <v-row>
+      <v-col cols="12" md="6" lg="4" sm="6">
+        {{ $t('indexes.fearAndGreed')}}
+        <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index" />
+      </v-col>
     </v-row>
   </div>
 </template>
@@ -74,7 +84,6 @@
 <script>
 import analyticOneCard from "@/components/card/AnalyticCardVersionOne";
 import {mapGetters} from "vuex";
-
 export default {
   name: "Dashboard",
   components: {

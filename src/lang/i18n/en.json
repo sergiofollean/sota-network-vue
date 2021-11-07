@@ -5,5 +5,36 @@
     "versionTwo": "Version Two",
     "versionThree": "Version Three",
     "versionFour": "Version Four"
+  },
+  "login": {
+    "login": "Login",
+    "verify": "Please, before enter verify your email.",
+    "wrong": "Wrong email or password.",
+    "enterToAccount": "Login into account",
+    "forgotPassword": "Forgot password",
+    "signUp": "Sign up"
+  },
+  "register": {
+    "password": "Password",
+    "email": "Email",
+    "passwordConfirmation": "Password confirmation",
+    "firstAddress": "Address 1",
+    "secondAddress": "Address 2",
+    "city": "City",
+    "state": "State",
+    "zip": "Zip",
+    "phoneNumber": "Phone number",
+    "terms": "I have read and agree to the terms of service.",
+    "register": "Sign-up",
+    "getStarted": "Lets get started",
+    "done": "Sent email link verification to your email.",
+    "errors": {
+      "empty": "Field should not be empty.",
+      "invalidEmail": "Email is invalid.",
+      "exists": "Email is already exists."
+    }
+  },
+  "indexes": {
+    "fearAndGreed": "Crypto Fear and Greed"
   }
 }

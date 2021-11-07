@@ -15,7 +15,7 @@
           </v-avatar>
 
           <h6 class="text-muted font-semibold mb-10">
-            Вхід до свого акаунта
+            {{ $t('login.enterToAccount') }}
           </h6>
           <v-form>
             <v-text-field
@@ -35,20 +35,18 @@
               v-model="ePassword"
               @click:append="show = !show"
             ></v-text-field>
-<!--            <v-checkbox-->
-<!--              v-model="checkbox1"-->
-<!--              label="Запамьятати цей компьютер"-->
-<!--            ></v-checkbox>-->
+            <v-card-text v-if="error" class="error">
+              {{ $t(error) }}
+            </v-card-text>
             <v-btn class="mt-4 mb-4" @click="formSubmit" block color="primary" dark>
               <v-icon left>mdi-login</v-icon>
-              Увійти</v-btn
-            >
+              {{ $t('login.login') }}</v-btn>
             <div class="flex justify-around flex-wrap">
               <v-btn text small color="primary" class="mb-2"
-                >Забутий пароль</v-btn
+                >{{ $t('login.forgotPassword') }}</v-btn
               >
-              <v-btn text small color="primary" to="/app/sessions/sign-up"
-                >Зареєструватися</v-btn
+              <v-btn text small color="primary" to="/user/sign-up"
+                >{{ $t('login.signUp') }}</v-btn
               >
             </div>
           </v-form>
@@ -60,6 +58,7 @@
 <script>
 import firebase from "firebase/app";
 import { mapGetters, mapActions } from "vuex";
+
 export default {
   name: "login",
   metaInfo: {
@@ -90,25 +89,8 @@ export default {
   },
   methods: {
     ...mapActions(["login"]),
-    // login: function() {
-    //   firebase.auth().signInWithEmailAndPassword(this.email, this.ePassword)
-    //     .then(
-    //       user => {
-    //         // console.log(user);
-    //         this.loading = true;
-    //         this.$router.push('/');
-
-    //       },
-    //       err => {
-
-    //         // alert(err);
-
-    //       }
-    //     )
-    // },
     formSubmit() {
       this.login({ email: this.email, password: this.ePassword });
-      
     },
     googleSignIn() {
       const provider = new firebase.auth.GoogleAuthProvider();
@@ -125,23 +107,13 @@ export default {
     }
   },
   watch: {
-    // loading (val) {
-    //   if (!val) return
-    //   setTimeout(() => (this.loading = false), 2000)
-    // },
     loggedInUser(val) {
       if (val && val.uid && val.uid.length > 0) {
-        // this.makeToast("success", "Successfully Logged In");
         console.log("logged in successfully ");
         this.loading = true;
         setTimeout(() => {
           this.$router.push("/");
         }, 500);
-      }
-    },
-    error(val) {
-      if (val != null) {
-        // this.makeToast("warning", val.message);
       }
     },
   },

@@ -38,10 +38,6 @@ const router = new Router({
       redirect: "/dashboard",
 
       children: [
-        // {
-        //   path: "layout/:layout",
-        //   component: () => import("@/views/app/Index")
-        // },
         {
           path: "/dashboard",
           component: () => import("@/views/app/dashboard/Index"),
@@ -116,7 +112,15 @@ const router = new Router({
           path: "sign-up",
           component: () => import("@/views/app/sessions/SignUp")
         },
+        {
+          path: "verify",
+          component: () => import("@/views/app/sessions/Verify")
+        },
       ]
+    },
+    {
+      path: "/profile",
+      component: () => import("@/views/app/pages/account/Account")
     }
   ]
 });

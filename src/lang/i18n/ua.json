@@ -1,3 +1,24 @@
 {
-
+  "register": {
+    "password": "Пароль",
+    "email": "Е-мейл",
+    "passwordConfirmation": "Повтор паролю",
+    "firstAddress": "Адресса 1",
+    "secondAddress": "Адресса 2",
+    "city": "Місто",
+    "state": "Область",
+    "zip": "Поштовий індекс",
+    "phoneNumber": "Мобільний номер"
+  },
+  "login": {
+    "login": "Логін",
+    "verify": "Please, before enter verify your email.",
+    "wrong": "Wrong email or password.",
+    "enterToAccount": "Login into account",
+    "forgotPassword": "Forgot password",
+    "signUp": "Sign up"
+  },
+  "indexes": {
+    "fearAndGreed": "Тест"
+  }
 }

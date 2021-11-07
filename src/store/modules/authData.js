@@ -56,32 +56,35 @@ export default {
       };
 
       var userDoc = firestore.collection('users').doc(user.uid).get().then(async data => {
+        console.log(data.data())
         userData.license = data.data().license;
       });
 
       commit("setUserData", userData);
     },
-    login({ commit }, data) {
+    async login({ commit }, data) {
       commit("clearError");
       commit("setLoading", true);
-      firebase
-        .auth()
-        .signInWithEmailAndPassword(data.email, data.password)
-        .then(user => {
-          const newUser = { uid: user.user.uid };
-          localStorage.setItem("userInfo", JSON.stringify(newUser));
-          commit("setUser", { uid: user.user.uid });
-          console.log("user");
-        })
-        .catch(function(error) {
-          // Handle Errors here.
-          // var errorCode = error.code;
-          // var errorMessage = error.message;
-          console.log(error);
-          localStorage.removeItem("userInfo");
-          commit("setError", error);
-          // ...
-        });
+      try {
+        let userCredential = await firebase
+            .auth()
+            .signInWithEmailAndPassword(data.email, data.password);
+        if (!userCredential.user.emailVerified) {
+            commit("setError", 'login.verify');
+        }
+        commit("setUser", { uid: userCredential.user.uid });
+      } catch (e) {
+        console.log(e);
+        if (e.code === 'auth/user-not-found') {
+          commit("setError", 'login.wrong');
+        }
+      }
+    },
+    async verify({ commit }, data) {
+      firebase.auth().applyActionCode(data.actionCode).then(async (res) => {
+      }).catch((error) => {
+        console.log(error);
+      });
     },
 
     signUserUp({ commit }, data) {

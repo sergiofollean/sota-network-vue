@@ -14,7 +14,7 @@ export const themeConfig = {
   layout: "VerticalSaasLayout", //VerticalCompactSidebar,VerticalSaasLayout,VerticalSidebar,HorizontalBar
   isLoading: false,
 
-  isDark: false,
+  isDark: true,
   verticalSidebarDrawerColor: "white", // primary,white,sucsess,warning,etc
   appBarColor: "white" // primary,white,sucsess,warning,etc
 };
