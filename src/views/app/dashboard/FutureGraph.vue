@@ -66,6 +66,12 @@ export default {
   },
   methods: {
     async on_selected(tf) {
+      this.period = tf.name;
+      this.chart.set('chart.tf', tf.name);
+      await this.rerender();
+    },
+    async rerender() {
+      console.log('rerender');
       this.binance = new Binance({
         apiKey: this.apiKey,
         apiSecret: this.apiSecret
@@ -77,27 +83,11 @@ export default {
         }
       }
       this.chart.set('chart.data', []);
-      this.period = tf.name;
-      this.chart.set('chart.tf', tf.name);
       let candleChartResults = await this.binance.futuresCandles({ symbol: this.symbol, interval: this.period });
       this.chart.set('chart.data', candleChartResults.map((candle) => {
         return [candle.openTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close) , Number(candle.volume)];
       }));
-      this.chart.del('Trades')
-      this.chart.del('EMA')
-      this.chart.del('Ichi')
-      this.chart.add('onchart', { name: 'EMA 33', type: 'EMA', data: [], settings: {
-          length: 33,
-          lineWidth: 1
-      }})
-      this.chart.add('onchart', { name: 'EMA 55', type: 'EMA', data: [], settings: {
-          length: 55,
-          lineWidth: 2
-      }})
-      this.chart.add('onchart', { name: 'EMA 120', type: 'EMA', data: [], settings: {
-          length: 120,
-          lineWidth: 3
-      }})
+
       this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
       const ws = await this.binance.ws.futuresCandles(this.symbol, this.period, candle => {
         if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1].length && this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
@@ -123,25 +113,40 @@ export default {
         const orderIds = []
         orders.forEach((order) => {
           if (order.status === 'FILLED') {
-              const orderType = order.side === 'BUY' ? 1 : 0;
-              const orderPos = order.side === 'BUY' ? order.positionSide.substr(0, 1) : 'Sell'
-              if (orderIds[order.orderId]) {
-                orderIds[order.orderId].push(order);
-              } else {
-                orderIds[order.orderId] = [order];
-              }
-              let data = this.findNearestCandle(order.time);
-              if (data) {
-                ordersData.push([
-                  Number(data[0]), Number(orderType), Number(order.avgPrice), orderPos
-                ]);
-              }
+            const orderType = order.side === 'BUY' ? 1 : 0;
+            const orderPos = order.side === 'BUY' ? order.positionSide.substr(0, 1) : 'Sell'
+            if (orderIds[order.orderId]) {
+              orderIds[order.orderId].push(order);
+            } else {
+              orderIds[order.orderId] = [order];
             }
+            let data = this.findNearestCandle(order.time);
+            if (data) {
+              ordersData.push([
+                Number(data[0]), Number(orderType), Number(order.avgPrice), orderPos
+              ]);
+            }
+          }
         });
         this.chart.add('onchart', { name: 'Trades', type: 'TradesPlus', data: ordersData, settings: {
-          'z-index': 10
-        }})
-      }
+            'z-index': 10
+          }})
+        this.chart.del('Trades')
+        this.chart.del('EMA')
+        this.chart.del('Ichi')
+        this.chart.add('onchart', { name: 'EMA 33', type: 'EMA', data: [], settings: {
+            length: 33,
+            lineWidth: 1
+          }})
+        this.chart.add('onchart', { name: 'EMA 55', type: 'EMA', data: [], settings: {
+            length: 55,
+            lineWidth: 2
+          }})
+        this.chart.add('onchart', { name: 'EMA 120', type: 'EMA', data: [], settings: {
+            length: 120,
+            lineWidth: 3
+          }})
+        }
     },
     findNearestCandle(time) {
       let counter = 0;
@@ -157,6 +162,7 @@ export default {
     symbolName: function(newVal, oldVal) {
       this.symbol = newVal;
       this.on_selected({i: 0, name: '1m'})
+      this.rerender();
     },
     apiSecret: function(newVal, oldVal) {
       this.secret = newVal;

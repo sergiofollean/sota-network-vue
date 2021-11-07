@@ -28,6 +28,7 @@ import VueApexCharts from "vue-apexcharts";
 // import "./fake-db/index.js";
 
 import "animate.css";
+import i18n from "./lang/lang";
 
 Vue.component("apexchart", VueApexCharts);
 
@@ -41,5 +42,6 @@ new Vue({
   store,
   router,
   vuetify,
+  i18n,
   render: h => h(App)
 }).$mount("#app");

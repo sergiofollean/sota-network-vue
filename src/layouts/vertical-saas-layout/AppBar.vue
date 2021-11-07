@@ -51,7 +51,7 @@
           </v-chip>
         </template>
         <v-list>
-          <v-list-item @click>
+          <v-list-item :to="'/profile'">
             <v-list-item-title>
               <v-icon class="mr-1">mdi-account</v-icon>Profile
             </v-list-item-title>
@@ -66,7 +66,7 @@
               <v-icon class="mr-1">mdi-bell-off</v-icon>Disable Alerts
             </v-list-item-title>
           </v-list-item>
-          <v-list-item @click>
+          <v-list-item @click.native="logoutUser">
             <v-list-item-title>
               <v-icon class="mr-1">mdi-logout</v-icon>Sign Out
             </v-list-item-title>
@@ -223,13 +223,19 @@ export default {
     };
   },
   methods: {
-    ...mapActions(["changeVerticalSaasSidebarDrawer"]),
+    ...mapActions(["changeVerticalSaasSidebarDrawer", "signOut"]),
     toggleVerticalSaasSidebarDrawer() {
       this.changeVerticalSaasSidebarDrawer();
 
       // this.$emit("update:mini-variant");
       // console.log("check");
     },
+    logoutUser() {
+      console.log('logout');
+      this.signOut();
+
+      this.$router.push("/app/sessions/sign-in-two");
+    }
   },
 };
 </script>

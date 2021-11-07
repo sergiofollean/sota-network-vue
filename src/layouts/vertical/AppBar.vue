@@ -236,6 +236,7 @@ export default {
       // console.log("check");
     },
     logoutUser() {
+      console.log('logout');
       this.signOut();
 
       this.$router.push("/app/sessions/sign-in-two");

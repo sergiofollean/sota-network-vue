@@ -2,7 +2,7 @@ import Vue from 'vue'
 import VueI18n from 'vue-i18n'
 Vue.use(VueI18n)
 
-const DEFAULT_LANG = 'ua'
+const DEFAULT_LANG = 'en'
 
 const locales = {
   bn: require('./i18n/bn.json'),
