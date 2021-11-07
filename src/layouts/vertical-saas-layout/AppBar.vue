@@ -20,26 +20,40 @@
         color="primary"
       />
 
-      <v-toolbar-title>Arctic</v-toolbar-title>
+      <v-toolbar-title>Sota-Network</v-toolbar-title>
 
       <v-spacer />
 
-      <v-badge
-        bordered
-        overlap
-        content="3"
-        color="red"
-        offset-x="22"
-        offset-y="22"
+      <v-btn
+          v-if="!$vuetify.theme.dark"
+          @click="changeDarkMode(true)"
+          icon
       >
-        <v-btn icon @click="notificationDrawer = !notificationDrawer">
-          <v-icon>mdi-bell</v-icon>
-        </v-btn>
-      </v-badge>
-
-      <v-btn icon @click="searchDrawer = !searchDrawer">
-        <v-icon>mdi-magnify</v-icon>
+        <v-icon>mdi-weather-night</v-icon>
       </v-btn>
+      <v-btn v-else @click="changeDarkMode(false)" icon>
+        <v-icon color="warning">mdi-weather-night</v-icon>
+      </v-btn>
+
+      <v-menu offset-y min-width="150">
+        <template v-slot:activator="{ on, attrs }">
+          <v-btn color dark v-bind="attrs" v-on="on" icon>
+            <v-avatar size="30">
+              <img src="@/assets/images/flags/1x1/ua.svg" alt />
+            </v-avatar>
+          </v-btn>
+        </template>
+        <v-list>
+          <v-list-item v-for="(item, index) in flags" :key="index" @click>
+            <v-list-item-title>
+              <v-avatar class="mr-1" size="24">
+                <img :src="item.country" alt />
+              </v-avatar>
+              {{ item.lang }}
+            </v-list-item-title>
+          </v-list-item>
+        </v-list>
+      </v-menu>
 
       <v-menu offset-y min-width="150">
         <template v-slot:activator="{ on, attrs }">
@@ -74,128 +88,6 @@
         </v-list>
       </v-menu>
     </v-app-bar>
-    <!-- userDrawer -->
-    <v-navigation-drawer
-      v-model="userDrawer"
-      fixed
-      right=""
-      height="100%"
-      temporary
-      floating
-      width="350"
-    >
-      <vue-perfect-scrollbar
-        :settings="{ suppressScrollX: true, wheelPropagation: false }"
-        class="h-100 rtl-ps-none ps scroll"
-        style="height: 100%"
-      >
-        <div class="p-5 relative">
-          <v-app-bar
-            :color="$vuetify.theme.dark ? 'dark' : 'white'"
-            :dark="$vuetify.theme.dark"
-            class="pt-1 shadow-sm"
-            fixed
-          >
-            <div class="flex justify-between items-center">
-              <h6 class="m-0">My Account</h6>
-              <v-btn icon color="" @click.stop="userDrawer = !userDrawer">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </div>
-          </v-app-bar>
-        </div>
-
-        <user-drawer></user-drawer>
-      </vue-perfect-scrollbar>
-      <template v-slot:append>
-        <div class="my-4 mx-4">
-          <base-hover-button
-            text="Logout"
-            block
-            bg-color="bg-blue-200"
-            icon-name="mdi-logout"
-          />
-        </div>
-      </template>
-    </v-navigation-drawer>
-
-    <!-- notificationDrawer  -->
-    <v-navigation-drawer
-      v-model="notificationDrawer"
-      fixed
-      right=""
-      height="100%"
-      temporary
-      floating
-      width="350"
-    >
-      <vue-perfect-scrollbar
-        :settings="{ suppressScrollX: true, wheelPropagation: false }"
-        class="h-100 rtl-ps-none ps scroll"
-        style="height: 100%"
-      >
-        <div class="p-5 relative">
-          <v-app-bar class="pt-1" fixed flat>
-            <div class="flex justify-between items-center">
-              <h6 class="m-0">Notifications</h6>
-              <v-btn
-                icon
-                color=""
-                @click.stop="notificationDrawer = !notificationDrawer"
-              >
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </div>
-          </v-app-bar>
-        </div>
-
-        <notification-drawer> </notification-drawer>
-      </vue-perfect-scrollbar>
-      <template v-slot:append>
-        <div class="my-4 mx-4">
-          <base-hover-button
-            text="View All Notifications"
-            block
-            bg-color="bg-blue-200"
-          />
-        </div>
-      </template>
-    </v-navigation-drawer>
-    <!-- searchDrawer -->
-    <v-navigation-drawer
-      v-model="searchDrawer"
-      fixed
-      right=""
-      height="100%"
-      temporary
-      floating
-      width="380"
-    >
-      <vue-perfect-scrollbar
-        :settings="{ suppressScrollX: true, wheelPropagation: false }"
-        class="h-100 rtl-ps-none ps scroll"
-        style="height: 100%"
-      >
-        <div class="p-5 relative">
-          <v-app-bar class="pt-1" fixed flat>
-            <div class="flex justify-between items-center">
-              <v-text-field
-                dense
-                outlined
-                label="Seacrh File & People"
-                prepend-inner-icon="mdi-magnify"
-                class="mr-8 mt-5"
-              ></v-text-field>
-              <v-btn icon color="" @click.stop="searchDrawer = !searchDrawer">
-                <v-icon>mdi-close</v-icon>
-              </v-btn>
-            </div>
-          </v-app-bar>
-        </div>
-
-        <search-drawer> </search-drawer>
-      </vue-perfect-scrollbar>
-    </v-navigation-drawer>
   </div>
 </template>
 
@@ -218,8 +110,20 @@ export default {
   data() {
     return {
       userDrawer: false,
-      notificationDrawer: false,
-      searchDrawer: false,
+      flags: [
+        {
+          country: require("@/assets/images/flags/1x1/ua.svg"),
+          lang: "Українська",
+        },
+        {
+          country: require("@/assets/images/flags/1x1/ru.svg"),
+          lang: "Русский",
+        },
+        {
+          country: require("@/assets/images/flags/1x1/us.svg"),
+          lang: "English",
+        },
+      ],
     };
   },
   methods: {
@@ -229,6 +133,10 @@ export default {
 
       // this.$emit("update:mini-variant");
       // console.log("check");
+    },
+    changeDarkMode(data) {
+      // this.changeThemeDarkMode(data);
+      this.$vuetify.theme.dark = data;
     },
   },
 };

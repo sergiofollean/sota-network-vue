@@ -36,6 +36,7 @@
                           color="primary"
                           v-bind="attrs"
                           v-on="on"
+                          depressed
                       >Додати</v-btn>
                     </template>
 
