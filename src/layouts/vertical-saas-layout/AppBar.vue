@@ -134,19 +134,16 @@ export default {
       // this.$emit("update:mini-variant");
       // console.log("check");
     },
-<<<<<<< HEAD
     changeDarkMode(data) {
       // this.changeThemeDarkMode(data);
       this.$vuetify.theme.dark = data;
     },
-=======
     logoutUser() {
       console.log('logout');
       this.signOut();
 
       this.$router.push("/app/sessions/sign-in-two");
     }
->>>>>>> 75b02941a75d0cafa7b6fdde8ea18c888ed20119
   },
 };
 </script>
