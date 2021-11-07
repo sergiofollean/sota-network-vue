@@ -168,7 +168,7 @@ export default {
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
-              data.Bot = Bot.Bot;
+              data.Bot = this.Bot.Bot;
 
               await Bot.update({
                 Status: 'pending'

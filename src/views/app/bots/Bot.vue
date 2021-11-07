@@ -543,11 +543,11 @@ export default {
 
 <style>
 .v-overflow-btn {
-  margin-top: 0;
+  margin-top: 0 !important;
 }
 
 .v-overflow-btn .v-select__slot {
-  height: 54px;
+  height: 54px !important;
 }
 
 .theme--light.v-overflow-btn.theme--light.v-overflow-btn > .v-input__control > .v-input__slot {
