@@ -36,5 +36,12 @@
   },
   "indexes": {
     "fearAndGreed": "Crypto Fear and Greed"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "bots": "Bots",
+    "settings": "Settings",
+    "news": "News",
+    "subscriptions": "Subscriptions"
   }
 }

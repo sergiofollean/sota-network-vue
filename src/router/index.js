@@ -87,6 +87,15 @@ const router = new Router({
               component: () => import("@/views/app/bots/Bot")
             }
           ]
+        },
+        {
+          path: "/news",
+          component: () => import("@/views/app/sessions/News"),
+        },
+        {
+          name: 'single-news',
+          path: "/news/:id",
+          component: () => import("@/views/app/sessions/Single-news"),
         }
       ]
     },
@@ -117,10 +126,6 @@ const router = new Router({
           component: () => import("@/views/app/sessions/Verify")
         },
       ]
-    },
-    {
-      path: "/profile",
-      component: () => import("@/views/app/pages/account/Account")
     }
   ]
 });

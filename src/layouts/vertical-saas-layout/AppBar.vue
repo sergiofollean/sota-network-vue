@@ -24,23 +24,6 @@
 
       <v-spacer />
 
-      <v-badge
-        bordered
-        overlap
-        content="3"
-        color="red"
-        offset-x="22"
-        offset-y="22"
-      >
-        <v-btn icon @click="notificationDrawer = !notificationDrawer">
-          <v-icon>mdi-bell</v-icon>
-        </v-btn>
-      </v-badge>
-
-      <v-btn icon @click="searchDrawer = !searchDrawer">
-        <v-icon>mdi-magnify</v-icon>
-      </v-btn>
-
       <v-menu offset-y min-width="150">
         <template v-slot:activator="{ on, attrs }">
           <v-chip pill class="bg-transparent py-5" v-bind="attrs" v-on="on">

@@ -23,7 +23,6 @@
             :key="`group-${i}`"
             :item="item"
           >
-            <!--  -->
           </base-item-group>
 
           <base-item v-else :key="`item-${i}`" :item="item" />
@@ -67,7 +66,7 @@ export default {
       return {
         ...item,
         children: item.children ? item.children.map(this.mapItem) : undefined,
-        title: item.title,
+        title: this.$t(item.title),
       };
     },
   },
