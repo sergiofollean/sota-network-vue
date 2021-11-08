@@ -394,13 +394,12 @@ export default {
         const client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
-          getTime: await client.time(),
+          getTime: () => Date.now()
         })
 
         if(this.Bot.Bot === 'spot') {
           let spotUserTrades = await client2.allOrders({
             symbol: this.Bot.symbolName,
-            // timestamp: await client.time(),
           });
 
           this.orders = [];

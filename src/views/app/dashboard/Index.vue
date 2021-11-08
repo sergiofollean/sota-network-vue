@@ -144,7 +144,7 @@ export default {
       const client2 = Binance({
         apiKey: this.apiKey,
         apiSecret: this.apiSecret,
-        getTime: await client.time(),
+        getTime: () => Date.now()
       });
 
       let info = await client2.lendingAccount();
