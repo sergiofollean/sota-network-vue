@@ -1,6 +1,6 @@
 <template>
   <div>
-    <future-graph :width="1200" :height="800" :symbol-name="'QTUMUSDT'" :symbol-period="'1m'"
+    <future-graph :width="1200" :height="800" :symbol-name="symbolName" :symbol-period="'1m'"
            :api-key="apiKey"
            :api-secret="'rJZ80K7NEyGRrhZHgqR5IwNZBBFd54ihQZKdmX4gYDy14lIB2NgTI03iMMXCtxTa'">
     </future-graph>
@@ -16,12 +16,14 @@ export default {
   },
   data() {
     return {
-      apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR'
+      apiKey: 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR',
+      symbolName: 'BTCUSDT'
     }
   },
   methods: {
     setNewValue: function () {
       this.apiKey = 'cIOx48OYVU8ixZ6C7ZmXhxMDOdAcTOnO49Qk9drn3QfppGttCf00VR3Z2Mj4kNGR';
+      this.symbolName = 'XRPUSDT';
     }
   }
 

@@ -1,8 +1,7 @@
 <template>
-  <v-card>
-    <v-card-title v-html="news.excerpt.rendered"></v-card-title>
-    <v-card-text v-html="news.content.rendered"></v-card-text>
-  </v-card>
+  <div>
+
+  </div>
 </template>
 
 <script>
@@ -17,9 +16,12 @@ var realdb = firebase.database();
 export default {
   data() {
     return {
-      subscriptions: {
-
-      },
+      subscriptions: [
+        {
+          title: 'subscriptions.default',
+          options: ['subscriptions.options.telegram', 'subscriptions.options.futureBot'],
+        }
+      ],
       id: 0,
     }
   },

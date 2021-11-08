@@ -1,8 +1,8 @@
 <template>
   <div>
-    <base-tf-selector :charts="tfs" :width="this.$props.width" :height="this.$props.height" v-on:selected="on_selected" :period="this.period">
+    <base-tf-selector :charts="tfs" :width="width" :height="height" v-on:selected="on_selected" :period="period">
     </base-tf-selector>
-    <trading-vue :data="chart" :overlays="overlays" :width="this.$props.width" :height="this.$props.height" :title-txt="this.symbol" :toolbar="true" :tf="this.period" ref="tradingVue"></trading-vue>
+    <trading-vue :data="chart" :overlays="overlays" :width="width" :height="height" :title-txt="symbol" :toolbar="true" :tf="period" ref="tradingVue"></trading-vue>
   </div>
 </template>
 <script>
@@ -39,19 +39,15 @@ export default {
     }
   },
   async created() {
-    this.binance = new Binance({
-      apiKey: this.apiKey,
-      apiSecret: this.apiSecret
-    });
+
   },
   data() {
     return {
-      overlays: [Overlays['EMA'], Overlays['Ichi'], Overlays['LongShortTrades']],
+      overlays: Object.values(Overlays),
       timer: '',
       symbol: this.symbolName,
       period: this.symbolPeriod,
       tfs: {'1m': {}, '3m': {}, '5m': {}, '15m': {}, '1h': {}, '4h': {}},
-      binance: null,
       chart: new DataCube({
         chart: {
           tf: '1m',
@@ -60,12 +56,26 @@ export default {
       }),
       wk: 1,
       wss: [],
+      token: this.apiKey,
+      secret: this.apiSecret,
+      binance: new Binance({
+        apiKey: this.token,
+        apiSecret: this.secret
+      })
     }
   },
   methods: {
     async on_selected(tf) {
-
-      this.chart.set('chart.data', []);
+      this.period = tf.name;
+      this.chart.set('chart.tf', tf.name);
+      await this.rerender();
+    },
+    async rerender() {
+      console.log('rerender');
+      this.binance = new Binance({
+        apiKey: this.apiKey,
+        apiSecret: this.apiSecret
+      })
       if (this.wss.length > 0) {
         for(const ws of this.wss) {
           ws();
@@ -73,28 +83,11 @@ export default {
         }
       }
       this.chart.set('chart.data', []);
-      this.period = tf.name;
-      this.chart.set('chart.tf', tf.name);
       let candleChartResults = await this.binance.candles({ symbol: this.symbol, interval: this.period });
       this.chart.set('chart.data', candleChartResults.map((candle) => {
         return [candle.openTime, Number(candle.open), Number(candle.high), Number(candle.low), Number(candle.close) , Number(candle.volume)];
       }));
-      this.chart.del('Trades')
-      this.chart.del('EMA')
-      this.chart.del('Ichi')
-      this.chart.add('onchart', { name: 'EMA 33', type: 'EMA', data: [], settings: {
-          length: 33,
-          lineWidth: 1
-      }})
-      this.chart.add('onchart', { name: 'EMA 55', type: 'EMA', data: [], settings: {
-          length: 55,
-          lineWidth: 2
-      }})
-      this.chart.add('onchart', { name: 'EMA 120', type: 'EMA', data: [], settings: {
-          length: 120,
-          lineWidth: 3
-      }})
-      this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
+
       const ws = await this.binance.ws.candles(this.symbol, this.period, candle => {
         if (this.chart.data.chart.data[this.chart.data.chart.data.length - 1].length && this.chart.data.chart.data[this.chart.data.chart.data.length - 1][0] === candle.startTime) {
           this.chart.data.chart.data.splice(this.chart.data.chart.data.length - 1, 1,
@@ -110,6 +103,22 @@ export default {
         }
       }
       this.wss.push(ws);
+      this.chart.del('Trades')
+      this.chart.del('EMA')
+      this.chart.del('Ichi')
+      this.chart.add('onchart', { name: 'Ichi', type: 'Ichi', data: [] });
+      this.chart.add('onchart', { name: 'EMA 33', type: 'EMA', data: [], settings: {
+          length: 33,
+          lineWidth: 1
+        }})
+      this.chart.add('onchart', { name: 'EMA 55', type: 'EMA', data: [], settings: {
+          length: 55,
+          lineWidth: 2
+        }})
+      this.chart.add('onchart', { name: 'EMA 120', type: 'EMA', data: [], settings: {
+          length: 120,
+          lineWidth: 3
+        }})
       this.$refs.tradingVue.resetChart();
       if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
         const orders = await this.binance.allOrders({
@@ -128,7 +137,6 @@ export default {
               ])
             }
           }
-
         });
         this.chart.add('onchart', {
           name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
@@ -136,6 +144,7 @@ export default {
             'showLabel': true
           }
         })
+
       }
     },
     findNearestCandle(time) {
@@ -146,6 +155,22 @@ export default {
         candle = this.chart.data.chart.data[counter++];
       }
       return candle[0] - time < step ? this.chart.data.chart.data[counter++] : null;
+    }
+  },
+  watch: {
+    symbolName: function(newVal, oldVal) {
+      this.symbol = newVal;
+      console.log(this.symbol);
+      this.on_selected({i: 0, name: '1m'})
+      this.rerender();
+    },
+    apiSecret: function(newVal, oldVal) {
+      this.secret = newVal;
+      this.on_selected({i: 0, name: '1m'})
+    },
+    apiKey: function(newVal, oldVal) {
+      this.token = newVal;
+      this.on_selected({i: 0, name: '1m'})
     }
   }
 }

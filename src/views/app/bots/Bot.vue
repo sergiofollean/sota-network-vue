@@ -228,6 +228,7 @@ export default {
         Bot: false,
         id: null,
         symbolName: 'BTCUSDT',
+        Market: {}
       },
       graphWidth: 333,
       graphHeight: 500,
@@ -501,8 +502,12 @@ export default {
         }
       }
     },
-    'Bot.Market': function() {
-      this.getOrders();
+    'Bot.Market': function(newVal, oldVal) {
+      if (newVal) {
+        console.log(newVal.replace(/\//, ''))
+        this.Bot.symbolName = newVal.replace(/\//, '');
+        this.getOrders();
+      }
     },
     'needsUpdate': function () {
       this.bussy = true;
