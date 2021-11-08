@@ -9,7 +9,7 @@ module.exports = {
 
   devServer: {
     // https: true,
-    // proxy: 'https://sota-network.com/',
+    // proxy: 'https://api.binance.com/',
     clientLogLevel: "warning",
     hot: true,
     contentBase: "dist",

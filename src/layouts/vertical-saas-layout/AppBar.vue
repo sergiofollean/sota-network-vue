@@ -157,5 +157,7 @@ export default {
 </script>
 
 <style scoped>
-
+.v-app-bar.v-app-bar--fixed {
+  z-index: 200;
+}
 </style>

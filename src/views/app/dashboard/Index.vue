@@ -50,8 +50,13 @@
             main-icon-name="mdi-robot"
             main-icon-background-color-class="bg-indigo-200"
             main-icon-text-color="text-primary"
+<<<<<<< Updated upstream
             :sub-heading-text="$t('dashboard.activeBots')"
             heading-text="3"
+=======
+            sub-heading-text="Активні боти"
+            :heading-text="activeBots"
+>>>>>>> Stashed changes
         />
       </v-col>
       <v-col cols="12" md="6" lg="4" sm="6">
@@ -59,8 +64,13 @@
             main-icon-name="mdi-cash-multiple"
             main-icon-background-color-class="bg-green-200"
             main-icon-text-color="text-success"
+<<<<<<< Updated upstream
             :sub-heading-text="$t('dashboard.totalBalance')"
             heading-text="2300 $"
+=======
+            sub-heading-text="Сумарний баланс"
+            :heading-text="totalBallance+' $'"
+>>>>>>> Stashed changes
         />
       </v-col>
       <v-col cols="12" md="6" lg="4" sm="6">
@@ -86,13 +96,65 @@
 <script>
 import analyticOneCard from "@/components/card/AnalyticCardVersionOne";
 import {mapGetters} from "vuex";
+import firebase from "firebase/app";
+import "firebase/auth";
+import "firebase/firestore";
+import Binance from 'binance-api-node';
+
+const client = Binance();
+const firestore = firebase.firestore();
+const database = firebase.database();
+
 export default {
   name: "Dashboard",
   components: {
     "analytic-one-card": analyticOneCard,
   },
+  data() {
+    return {
+      activeBots: '0',
+      totalBallance: '0',
+      apiKey: null,
+      apiSecret: null,
+    }
+  },
+  mounted() {
+    firebase.auth().onAuthStateChanged(async user => {
+      let Bots = firestore.collection('users').doc(user.uid).collection('Bots');
+      if(await Bots.get()) this.activeBots = ((await Bots.get()).size).toString();
+
+      let priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
+      priceDrivers = await priceDrivers.where('Status', '==', "true");
+      priceDrivers = await priceDrivers.where('AccountPriv', '!=', '').limit(1).get();
+
+      if(await priceDrivers.size > 0) {
+        await priceDrivers.forEach((snapshot) => {
+          // console.log(snapshot.data());
+          this.apiKey = snapshot.data()['AccountPub'];
+          this.apiSecret = snapshot.data()['AccountPriv'];
+        });
+      }
+    });
+  },
   computed: {
     ...mapGetters(["userData"]),
+  },
+  methods: {
+    async getBinanceData() {
+      const client2 = Binance({
+        apiKey: this.apiKey,
+        apiSecret: this.apiSecret,
+        getTime: await client.time(),
+      });
+
+      let info = await client2.lendingAccount();
+      console.log(await info);
+    },
+  },
+  watch: {
+    'apiSecret': async function(val) {
+      await this.getBinanceData();
+    }
   }
 }
 </script>
