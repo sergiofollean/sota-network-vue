@@ -1,5 +1,13 @@
 {
-  "dashboard": "Today",
+  "dashboard": {
+    "noSubscriptions": "You do not have any subscriptions.",
+    "checkSubscriptions": "Check my subscriptions",
+    "manageSubscriptions": "Manage subscriptions",
+    "activeBots": "Active bots",
+    "totalBalance": "Total balance",
+    "unrealizedProfit": "Unrealized profit",
+    "fearAndGreed": "Crypto Fear and Greed"
+  },
   "dashboardItems": {
     "versionOne": "Today",
     "versionTwo": "Version Two",
@@ -33,9 +41,6 @@
       "invalidEmail": "Email is invalid.",
       "exists": "Email is already exists."
     }
-  },
-  "indexes": {
-    "fearAndGreed": "Crypto Fear and Greed"
   },
   "nav": {
     "dashboard": "Dashboard",

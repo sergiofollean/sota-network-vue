@@ -39,12 +39,12 @@
         <template v-slot:activator="{ on, attrs }">
           <v-btn color dark v-bind="attrs" v-on="on" icon>
             <v-avatar size="30">
-              <img src="@/assets/images/flags/1x1/ua.svg" alt />
+              <img :src="country" alt />
             </v-avatar>
           </v-btn>
         </template>
         <v-list>
-          <v-list-item v-for="(item, index) in flags" :key="index" @click>
+          <v-list-item v-for="(item, index) in flags" :key="index" @click="changeLocal(item)">
             <v-list-item-title>
               <v-avatar class="mr-1" size="24">
                 <img :src="item.country" alt />
@@ -96,6 +96,7 @@ import { mapGetters, mapActions } from "vuex";
 import UserDrawer from "../common-drawer/UserDrawer.vue";
 import NotificationDrawer from "../common-drawer/NotificationDrawer.vue";
 import SearchDrawer from "../common-drawer/SearchDrawer.vue";
+import i18n from "../../lang/lang";
 export default {
   name: "VerticallAppBar",
   components: {
@@ -110,18 +111,22 @@ export default {
   data() {
     return {
       userDrawer: false,
+      country: require("@/assets/images/flags/1x1/us.svg"),
       flags: [
         {
           country: require("@/assets/images/flags/1x1/ua.svg"),
           lang: "Українська",
+          locale: "ua",
         },
         {
           country: require("@/assets/images/flags/1x1/ru.svg"),
           lang: "Русский",
+          locale: "ru",
         },
         {
           country: require("@/assets/images/flags/1x1/us.svg"),
           lang: "English",
+          locale: "en",
         },
       ],
     };
@@ -135,8 +140,11 @@ export default {
       // console.log("check");
     },
     changeDarkMode(data) {
-      // this.changeThemeDarkMode(data);
       this.$vuetify.theme.dark = data;
+    },
+    changeLocal(data) {
+      this.country = data.country;
+      i18n.locale = data.locale;
     },
     logoutUser() {
       console.log('logout');

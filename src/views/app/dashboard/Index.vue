@@ -12,10 +12,11 @@
                 <!--        No License        -->
                 <template v-if="userData.license === 'no-license'">
                   <div class="card-title m-0 text-xl">
-                    У вас не немає активних підписок
+                    {{ $t('dashboard.noSubscriptions') }}
                   </div>
                   <p class="text-muted mb-0">
-                    Перегляньте доступні підписки
+                    {{ $t('dashboard.checkSubscriptions') }}
+<!--                    Перегляньте доступні підписки-->
                   </p>
                 </template>
                 <!--        Pro        -->
@@ -33,7 +34,8 @@
                   text
                   color="primary"
               >
-                Керування підписками
+                {{ $t('dashboard.manageSubscriptions') }}
+<!--                Керування підписками-->
               </v-btn>
             </div>
           </v-card-text>
@@ -48,7 +50,7 @@
             main-icon-name="mdi-robot"
             main-icon-background-color-class="bg-indigo-200"
             main-icon-text-color="text-primary"
-            sub-heading-text="Активні боти"
+            :sub-heading-text="$t('dashboard.activeBots')"
             heading-text="3"
         />
       </v-col>
@@ -57,7 +59,7 @@
             main-icon-name="mdi-cash-multiple"
             main-icon-background-color-class="bg-green-200"
             main-icon-text-color="text-success"
-            sub-heading-text="Сумарний баланс"
+            :sub-heading-text="$t('dashboard.totalBalance')"
             heading-text="2300 $"
         />
       </v-col>
@@ -66,7 +68,7 @@
             main-icon-name="mdi-alarm"
             main-icon-background-color-class="bg-purple-200"
             main-icon-text-color="text-info"
-            sub-heading-text="Нереалізований прибуток"
+            :sub-heading-text="$t('dashboard.unrealizedProfit')"
             heading-text="+ 79,23 $"
         />
       </v-col>
@@ -74,7 +76,7 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="6" lg="4" sm="6">
-        {{ $t('indexes.fearAndGreed')}}
+        {{ $t('dashboard.fearAndGreed')}}
         <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index" />
       </v-col>
     </v-row>

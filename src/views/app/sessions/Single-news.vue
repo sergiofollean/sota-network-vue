@@ -10,13 +10,11 @@ import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/firestore";
 import axios from "axios";
-import { Tweet } from "vue-tweet-embed"
 
 var db = firebase.firestore();
 var realdb = firebase.database();
 
 export default {
-  components: { Tweet},
   data() {
     return {
       news: {},

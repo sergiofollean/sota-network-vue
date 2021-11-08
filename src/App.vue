@@ -9,10 +9,10 @@ export default {
   metaInfo() {
     return {
       // if no subcomponents specify a metaInfo.title, this title will be used
-      title: "Arctic Admins",
+      title: "Sota-network",
       // all titles will be injected into this template
       titleTemplate:
-        "%s | Arctic Admin - Vuejs & TailwindCSS Admin Dashboard Template Build With VuetifyJs",
+        "%s | Sota-network",
     };
   },
   methods: {

@@ -96,6 +96,11 @@ const router = new Router({
           name: 'single-news',
           path: "/news/:id",
           component: () => import("@/views/app/sessions/Single-news"),
+        },
+        {
+          name: 'subscriptions',
+          path: "/subscriptions",
+          component: () => import("@/views/app/sessions/Subscription"),
         }
       ]
     },

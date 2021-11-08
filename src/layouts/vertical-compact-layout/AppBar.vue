@@ -19,7 +19,7 @@
         color="primary"
       />
 
-      <v-toolbar-title>Arctic</v-toolbar-title>
+      <v-toolbar-title>Sota-network</v-toolbar-title>
 
       <v-spacer />
 

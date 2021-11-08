@@ -1,4 +1,13 @@
 {
+  "dashboard": {
+    "noSubscriptions": "У вас не немає активних підписок.",
+    "checkSubscriptions": "Перегляньте доступні підписки",
+    "manageSubscriptions": "Керування підписками",
+    "activeBots": "Активні боти",
+    "totalBalance": "Сумарний баланс",
+    "unrealizedProfit": "Нереалізований прибуток",
+    "fearAndGreed": "Індекс страху та жадності"
+  },
   "register": {
     "password": "Пароль",
     "email": "Е-мейл",
@@ -20,5 +29,12 @@
   },
   "indexes": {
     "fearAndGreed": "Тест"
+  },
+  "nav": {
+    "dashboard": "Дашборд",
+    "bots": "Боти",
+    "settings": "Налаштування",
+    "news": "Новини",
+    "subscriptions": "Підписки"
   }
 }
