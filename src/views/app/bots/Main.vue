@@ -12,7 +12,7 @@
           </v-col>
 
           <v-col sm="12" class="text-center">
-            <v-btn to="/settings">Налаштування</v-btn>
+            <v-btn to="/settings" depressed>Налаштування</v-btn>
           </v-col>
         </v-row>
       </v-alert>
@@ -39,7 +39,7 @@
                     inset
                     vertical
                 ></v-divider>
-                <v-btn color="primary" to="bots/bot" :disabled="validation === false">Додати</v-btn>
+                <v-btn color="primary" to="bots/bot" :disabled="validation === false" depressed>Додати</v-btn>
               </v-toolbar>
             </template>
             <!--      } Top      -->

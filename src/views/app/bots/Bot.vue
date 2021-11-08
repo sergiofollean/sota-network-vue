@@ -23,6 +23,7 @@
                           :disabled="disabledBot.spot"
                           @click="Bot.Bot = 'spot'"
                           value="spot"
+                          depressed
                       >Спот</v-btn>
                     </div>
                   </template>
@@ -31,14 +32,14 @@
                 <v-tooltip top :disabled="disabledBot.futures === false" max-width="300">
                   <template v-slot:activator="{ on }">
                     <div class="col" v-on="on">
-                      <v-btn block :disabled="disabledBot.futures" @click="Bot.Bot = 'futures'" value="futures">Фьючерси (простий)</v-btn>
+                      <v-btn block :disabled="disabledBot.futures" @click="Bot.Bot = 'futures'" value="futures" depressed>Фьючерси (простий)</v-btn>
                     </div>
                   </template>
                 </v-tooltip>
                 <v-tooltip top :disabled="disabledBot.futurespro === false" max-width="300">
                   <template v-slot:activator="{ on }">
                     <div class="col" v-on="on">
-                      <v-btn block :disabled="disabledBot.futurespro" @click="Bot.Bot = 'futurespro'" value="futurespro">Фьючерси (PRO)</v-btn>
+                      <v-btn block :disabled="disabledBot.futurespro" @click="Bot.Bot = 'futurespro'" value="futurespro" depressed>Фьючерси (PRO)</v-btn>
                     </div>
                   </template>
                 </v-tooltip>
@@ -117,14 +118,14 @@
                     />
                   </v-col>
                   <v-col sm="6">
-                    <v-select
+                    <v-overflow-btn
                         v-model="Bot.Market"
-                        outlined
                         label="Маркет"
                         no-data-text="Спершу оберіть акаунт"
                         :items="markets"
                         :rules="[(v) => !!v || 'Оберіть маркет']"
                         hide-details
+                        editable
                     />
                   </v-col>
                 </v-row>
@@ -138,7 +139,11 @@
                     ref="CSTM"
                 />
                 <Spot
+                    :Bot="Bot"
+                    :markets="markets"
+                    :binanceMarkets="binanceMarkets"
                     v-if="Bot.Bot === 'spot'"
+                    ref="Spot"
                 />
               </v-col>
             </v-row>
@@ -153,8 +158,10 @@
       </base-card>
     </v-col>
     <v-col lg="12" md="12" ref="graphCol" @resize="onResize" v-if="Bot.Bot">
-      <futureGraph class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
-                   :apiSecret="apiSecret"/>
+      <Graph v-if="Bot.Bot === 'spot'" class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
+             :apiSecret="apiSecret" />
+      <futureGraph v-else class="mt-4" :width="graphWidth" :height="graphHeight" :symbolName="Bot.symbolName" :apiKey="apiKey"
+                   :apiSecret="apiSecret" />
     </v-col>
     <v-col cols="12" v-if="Bot.id !== null">
       <base-card class="mt-4">
@@ -174,14 +181,14 @@
 
             <template v-slot:item.positionSide="{item}">
               <v-chip
-                  v-if="item.positionSide === 'LONG'"
+                  v-if="item.positionSide === 'LONG' || item.positionSide === 'BUY'"
                   color="success"
                   small
               >{{ item.positionSide }}
               </v-chip>
 
               <v-chip
-                  v-if="item.positionSide === 'SHORT'"
+                  v-if="item.positionSide === 'SHORT' || item.positionSide === 'SELL'"
                   color="error"
                   small
               >{{ item.positionSide }}
@@ -203,13 +210,14 @@ import Binance from 'binance-api-node';
 import futureGraph from '@/views/app/dashboard/FutureGraph';
 import CSTM from "@/views/app/bots/CSTM";
 import Spot from "@/views/app/bots/Spot";
+import Graph from "@/views/app/dashboard/Graph";
 
 const client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
 
 export default {
-  components: {Spot, futureGraph, CSTM},
+  components: {Graph, Spot, futureGraph, CSTM},
   data() {
     return {
       priceDrivers: [],
@@ -223,7 +231,6 @@ export default {
       },
       graphWidth: 333,
       graphHeight: 500,
-      // symbolName: 'BTCUSDT',
       ordersHeaders: [
         {text: "Дата", value: "time"},
         {text: "Маркет", value: "market"},
@@ -275,7 +282,10 @@ export default {
       // Binance
       if (priceDriver.platform === 'Binance') {
         if (priceDriver.type === 'Leverage Trading') {
-          platform = 'BinanceFutures'
+          platform = 'BinanceFutures';
+        }
+        if(priceDriver.type === 'Spot Trading') {
+          platform = 'Binance';
         }
       }
 
@@ -296,7 +306,12 @@ export default {
         });
 
         /* Doing request to Binance API */
-        this.binanceMarkets = await client.futuresPrices();
+        if(this.Bot.Bot === 'spot') {
+          this.binanceMarkets = await client.prices();
+        }
+        else {
+          this.binanceMarkets = await client.futuresPrices();
+        }
       }
       /* } Get Markets for v-select */
     },
@@ -316,6 +331,7 @@ export default {
         return false;
       }
 
+      if(this.Bot.Bot === 'spot') await this.$refs.Spot.saveSpot();
       if(this.Bot.Bot === 'futures') await this.$refs.CSTM.saveCSTM();
 
       // Redirect to new exist bot
@@ -368,35 +384,69 @@ export default {
 
     async getOrders() {
       if (this.apiKey && this.apiSecret) {
+        if (!this.bussy) {
+          this.bussy = true;
+        } else if (this.bussy === true) {
+          return false;
+        }
+
         const client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
           // getTime: await client.time(),
         })
 
-        let futuresUserTrades = await client2.futuresAllOrders({
-          symbol: this.Bot.symbolName,
-          // status: 'active'
-        });
+        if(this.Bot.Bot === 'spot') {
+          let spotUserTrades = await client2.allOrders({
+            symbol: this.Bot.symbolName,
+          });
 
-        this.orders = [];
-        await futuresUserTrades.map(el => {
-          if (el.status === "NEW") {
-            let time = new Date(el.time);
+          this.orders = [];
 
-            this.orders.push({
-              time: time.toLocaleString().replace(',', ''),
-              market: this.Bot.Market,
-              positionSide: el.positionSide,
-              price: el.price,
-              origQty: el.origQty
+          if(spotUserTrades) {
+            await spotUserTrades.map(el => {
+              if (el.status === "NEW") {
+                let time = new Date(el.time);
+
+                this.orders.push({
+                  time: time.toLocaleString().replace(',', ''),
+                  market: this.Bot.Market,
+                  positionSide: el.side,
+                  price: el.price,
+                  origQty: el.origQty
+                });
+              }
             });
           }
-        });
+        }
+        else {
+          let futuresUserTrades = await client2.futuresAllOrders({
+            symbol: this.Bot.symbolName,
+            // status: 'active'
+          });
+
+          this.orders = [];
+          if(await futuresUserTrades) {
+            await futuresUserTrades.map(el => {
+              if (el.status === "NEW") {
+                let time = new Date(el.time);
+
+                this.orders.push({
+                  time: time.toLocaleString().replace(',', ''),
+                  market: this.Bot.Market,
+                  positionSide: el.positionSide,
+                  price: el.price,
+                  origQty: el.origQty
+                });
+              }
+            });
+          }
+        }
+
+        this.bussy = false;
       } else {
         this.orders = [];
-      }
-    }
+      }}
   },
   watch: {
     'Bot.Bot': function() {
@@ -434,8 +484,22 @@ export default {
         this.getOrders();
       }
     },
-    'Bot.symbolName': async function (val, oldval) {
-      this.getOrders();
+    'binanceMarkets': function() {
+      if (this.binanceMarkets && this.markets) {
+        if (this.Bot.Market) {
+          let marketObject = this.markets.find(obj => {
+            return obj.value === this.Bot.Market
+          });
+
+          // format market symbols
+          if(marketObject) {
+            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+            this.Bot.symbolName = marketObj;
+
+            this.getOrders();
+          }
+        }
+      }
     },
     'Bot.Market': function() {
       this.getOrders();
@@ -518,6 +582,24 @@ export default {
 </script>
 
 <style>
+.v-overflow-btn {
+  margin-top: 0 !important;
+}
+
+.v-overflow-btn .v-select__slot {
+  height: 54px !important;
+}
+
+.theme--light.v-overflow-btn.theme--light.v-overflow-btn > .v-input__control > .v-input__slot {
+  border-radius: 4px;
+  border-color: rgba(0, 0, 0, 0.38);
+  border-width: 1px;
+}
+
+.theme--light.v-text-field--outlined:not(.v-input--is-focused):not(.v-input--has-state) > .v-input__control > .v-input__slot fieldset {
+  /*border-color: #eee;*/
+}
+
 @media (max-width: 768px) {
   .v-slider__tick-label {
     font-size: 12px;

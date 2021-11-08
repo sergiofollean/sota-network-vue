@@ -44,7 +44,7 @@ export default {
   props: {
     Bot: {},
     markets: [],
-    binanceMarkets: null
+    binanceMarkets: null,
   },
   data() {
     return {
@@ -58,18 +58,18 @@ export default {
 
       if (this.binanceMarkets && this.markets) {
         if (this.Bot.Market) {
-          let marketObject = this.markets.find(obj => {
-            return obj.value === this.Bot.Market
-          });
-
-          // format market symbols
-          let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
-          this.Bot.symbolName = marketObj;
-
           if (this.Bot.Ballance) {
+            let marketObject = this.markets.find(obj => {
+              return obj.value === this.Bot.Market
+            });
+
+            // format market symbols
+            let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+            this.Bot.symbolName = marketObj;
+
             // calculating contract size
             let contractUstd = this.Bot.Ballance / 110;
-            let contractSize = (contractUstd / this.binanceMarkets[marketObj]).toFixed(3);
+            let contractSize = (contractUstd / this.binanceMarkets[this.Bot.symbolName]).toFixed(3);
 
             // check if more then minimum trade amount
             if (contractSize >= marketObject.MinimumTradeAmount) {
@@ -122,7 +122,7 @@ export default {
             });
           }
 
-          await this.$router.push({name: 'Bot', params: {id: this.Bot.id}});
+          await this.$router.push({name: 'Bot', params: {id: Bot.id}});
         }
         /* } First save so create new  */
         /* Save exist bot { */
@@ -138,6 +138,7 @@ export default {
               Name: this.Bot.Name
             });
 
+            // Collecting data to update {
             let data = {};
             if (this.Bot.Oposition !== (await Bot.get()).data()['Oposition']) {
               data.Oposition = this.Bot.Oposition;
@@ -177,9 +178,11 @@ export default {
                 Ballance: this.Bot.Ballance
               });
             }
+            // } Collecting data to update
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
+              data.Bot = Bot.Bot;
 
               await Bot.update({
                 Status: 'pending'
@@ -205,6 +208,9 @@ export default {
       this.calculateBallance();
     },
     'markets': function () {
+      this.calculateBallance();
+    },
+    'binanceMarkets': function() {
       this.calculateBallance();
     },
     'Bot.symbolName': function() {
