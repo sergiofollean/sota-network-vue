@@ -48,5 +48,16 @@
     "settings": "Settings",
     "news": "News",
     "subscriptions": "Subscriptions"
+  },
+  "subscriptions": {
+    "default": "Default",
+    "light": "Light",
+    "pro": "Pro",
+    "options": {
+      "telegram": "Access to our private telegram channels.",
+      "spotBot": "Available spot bots to use.",
+      "futureBot": "Available future bots to use.",
+      "botsConfigure": "Available custom bots configure."
+    }
   }
 }
