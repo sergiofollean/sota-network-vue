@@ -149,7 +149,7 @@
             </v-row>
           </v-card-text>
           <v-card-text align="center" v-if="Bot.Bot">
-            <v-btn color="success" @click="saveBot" :disabled="bussy || Bot.Status === 'pending'" depressed>Зберегти</v-btn>
+            <v-btn color="success" @click="saveBot" :disabled="Bot.Status === 'pending'" depressed>Зберегти</v-btn>
             <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4" depressed>Запустити</v-btn>
             <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop" class="ml-4" depressed>Зупинити</v-btn>
             <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled class="ml-4">Обробка</v-btn>
