@@ -50,13 +50,9 @@
             main-icon-name="mdi-robot"
             main-icon-background-color-class="bg-indigo-200"
             main-icon-text-color="text-primary"
-<<<<<<< Updated upstream
             :sub-heading-text="$t('dashboard.activeBots')"
             heading-text="3"
-=======
-            sub-heading-text="Активні боти"
             :heading-text="activeBots"
->>>>>>> Stashed changes
         />
       </v-col>
       <v-col cols="12" md="6" lg="4" sm="6">
@@ -64,13 +60,8 @@
             main-icon-name="mdi-cash-multiple"
             main-icon-background-color-class="bg-green-200"
             main-icon-text-color="text-success"
-<<<<<<< Updated upstream
             :sub-heading-text="$t('dashboard.totalBalance')"
-            heading-text="2300 $"
-=======
-            sub-heading-text="Сумарний баланс"
             :heading-text="totalBallance+' $'"
->>>>>>> Stashed changes
         />
       </v-col>
       <v-col cols="12" md="6" lg="4" sm="6">
@@ -141,14 +132,14 @@ export default {
   },
   methods: {
     async getBinanceData() {
-      const client2 = Binance({
-        apiKey: this.apiKey,
-        apiSecret: this.apiSecret,
-        getTime: () => Date.now()
-      });
+      // const client2 = Binance({
+      //   apiKey: this.apiKey,
+      //   apiSecret: this.apiSecret,
+      //   getTime: () => Date.now()
+      // });
 
-      let info = await client2.lendingAccount();
-      console.log(await info);
+      // let info = await client2.lendingAccount();
+      // console.log(await info);
     },
   },
   watch: {

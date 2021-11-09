@@ -155,7 +155,7 @@
                                 outlined
                             />
                           </template>
-                          <v-btn color="success" class="my-4" @click="addAccount" :disabled="bussy">Відправити</v-btn>
+                          <v-btn color="success" class="my-4" @click="addAccount" :disabled="bussy" depressed>Відправити</v-btn>
                         </v-form>
                       </v-card-text>
                     </v-card>
@@ -254,11 +254,7 @@ export default {
   async created() {
     firebase.auth().onAuthStateChanged(async user => {
       realdb.ref('tasks').orderByChild('user').equalTo(user.uid).on('value', (snapshot) => {
-        if (snapshot.exists()) {
-          this.bussy = true;
-        } else {
-          this.bussy = false;
-        }
+        this.bussy = snapshot.exists();
       });
 
       var priceDrivers = db.collection('users').doc(user.uid).collection('PriceDrivers');
