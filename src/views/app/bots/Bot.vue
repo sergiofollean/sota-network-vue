@@ -6,47 +6,7 @@
             ref="BotForm"
             lazy-validation
         >
-
-          <v-card-text v-if="!Bot.Bot && !bussy">
-            <v-row justify="center">
-              <v-col cols="12">
-                <v-card-title class="px-0 justify-center" v-if="Bot.id == null">
-                  Оберіть бот який хочете створити
-                </v-card-title>
-              </v-col>
-              <v-col md="4" class="flex flex-column align-center">
-                <v-tooltip top :disabled="disabledBot.spot === false" max-width="300">
-                  <template v-slot:activator="{ on }">
-                    <div class="col" v-on="on">
-                      <v-btn
-                          block
-                          :disabled="disabledBot.spot"
-                          @click="Bot.Bot = 'spot'"
-                          value="spot"
-                          depressed
-                      >Спот</v-btn>
-                    </div>
-                  </template>
-                  <span>Для використання цього боту додайте спотовий акаунт в налаштуваннях</span>
-                </v-tooltip>
-                <v-tooltip top :disabled="disabledBot.futures === false" max-width="300">
-                  <template v-slot:activator="{ on }">
-                    <div class="col" v-on="on">
-                      <v-btn block :disabled="disabledBot.futures" @click="Bot.Bot = 'futures'" value="futures" depressed>Фьючерси (простий)</v-btn>
-                    </div>
-                  </template>
-                </v-tooltip>
-                <v-tooltip top :disabled="disabledBot.futurespro === false" max-width="300">
-                  <template v-slot:activator="{ on }">
-                    <div class="col" v-on="on">
-                      <v-btn block :disabled="disabledBot.futurespro" @click="Bot.Bot = 'futurespro'" value="futurespro" depressed>Фьючерси (PRO)</v-btn>
-                    </div>
-                  </template>
-                </v-tooltip>
-              </v-col>
-            </v-row>
-          </v-card-text>
-          <v-card-text v-if="Bot.Bot">
+          <v-card-text>
             <v-row>
               <v-col cols="12" lg="6">
                 <v-card-title class="px-0" v-if="Bot.id === null">
@@ -131,6 +91,49 @@
                 </v-row>
               </v-col>
               <v-col lg="6">
+                <v-row no-gutters justify="center" v-if="!Bot.Bot && !this.$route.params.id">
+                  <v-col cols="12">
+                    <v-card-title class="px-0 justify-center" v-if="Bot.id == null">
+                      Оберіть бот який хочете створити
+                    </v-card-title>
+                  </v-col>
+                  <v-col class="flex flex-column align-center" style="max-width: 300px">
+                    <v-tooltip top :disabled="disabledBot.spot === false" max-width="300">
+                      <template v-slot:activator="{ on }">
+                        <div class="col" v-on="on">
+                          <v-btn
+                              color="primary"
+                              block
+                              :disabled="disabledBot.spot"
+                              @click="Bot.Bot = 'spot'"
+                              value="spot"
+                              depressed
+                          >Спот</v-btn>
+                        </div>
+                      </template>
+                      <span>Для використання цього боту додайте спотовий акаунт в налаштуваннях</span>
+                    </v-tooltip>
+                    <v-tooltip top :disabled="disabledBot.futures === false" max-width="300">
+                      <template v-slot:activator="{ on }">
+                        <div class="col" v-on="on">
+                          <v-btn color="primary" block :disabled="disabledBot.futures" @click="Bot.Bot = 'futures'" value="futures" depressed>Фьючерси (простий)</v-btn>
+                        </div>
+                      </template>
+                      <span>Для використання цього боту додайте фьючерсний акаунт в налаштуваннях</span>
+                    </v-tooltip>
+                    <v-tooltip top :disabled="disabledBot.futurespro === false" max-width="300">
+                      <template v-slot:activator="{ on }">
+                        <div class="col" v-on="on">
+                          <v-btn color="primary" block :disabled="disabledBot.futurespro" @click="Bot.Bot = 'futurespro'" value="futurespro" depressed>Фьючерси (PRO)</v-btn>
+                        </div>
+                      </template>
+                      <span>Для використання цього боту додайте фьючерсний акаунт в налаштуваннях</span>
+                    </v-tooltip>
+                  </v-col>
+                </v-row>
+                <div v-if="!Bot.Bot && bussy" class="d-flex align-center justify-center" style="height: 100%">
+                  <v-progress-circular indeterminate></v-progress-circular>
+                </div>
                 <CSTM
                     :Bot="Bot"
                     :markets="markets"
@@ -148,8 +151,8 @@
               </v-col>
             </v-row>
           </v-card-text>
-          <v-card-text align="center" v-if="Bot.Bot">
-            <v-btn color="success" @click="saveBot" :disabled="Bot.Status === 'pending'" depressed ref="saveButton">Зберегти</v-btn>
+          <v-card-text align="center">
+            <v-btn color="success" @click="saveBot" :disabled="Bot.Status === 'pending' || !Bot.Bot" depressed ref="saveButton">Зберегти</v-btn>
             <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4" depressed>Запустити</v-btn>
             <v-btn v-if="Bot.Status === 'active'" color="primary" @click="botStop" class="ml-4" depressed>Зупинити</v-btn>
             <v-btn v-if="Bot.Status === 'pending'" color="primary" disabled class="ml-4">Обробка</v-btn>
@@ -212,7 +215,7 @@ import CSTM from "@/views/app/bots/CSTM";
 import Spot from "@/views/app/bots/Spot";
 import Graph from "@/views/app/dashboard/Graph";
 
-const client = Binance();
+var client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
 
@@ -391,7 +394,7 @@ export default {
           return false;
         }
 
-        const client2 = Binance({
+        var client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
           // getTime: () => Date.now(),

@@ -30,6 +30,9 @@ import VueApexCharts from "vue-apexcharts";
 import "animate.css";
 import i18n from "./lang/lang";
 
+import axios from 'axios';
+Vue.prototype.$http = axios;
+
 Vue.component("apexchart", VueApexCharts);
 
 Vue.use(egretKit);

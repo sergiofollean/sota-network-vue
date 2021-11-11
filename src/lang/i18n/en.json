@@ -59,5 +59,9 @@
       "futureBot": "Available future bots to use.",
       "botsConfigure": "Available custom bots configure."
     }
+  },
+  "profile": {
+    "accountSettings": "Account information",
+    "tradingSettings": "Trading Accounts"
   }
 }

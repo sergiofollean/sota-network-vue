@@ -204,20 +204,22 @@ export default {
         let Bots = [];
 
         snapshot.forEach(async doc => {
-          var priceDriver = await db
+          const priceDriver = await db
               .collection('users')
               .doc(user.uid)
               .collection('PriceDrivers')
-              .doc(doc.data()['PriceDriver']).get();
+              .doc(await doc.data()['PriceDriver']).get();
 
-          Bots.push({
-            id: doc.id,
-            Name: doc.data()['Name'],
-            AccountPlatform: await priceDriver.data()['AccountPlatform'],
-            AccountType: await priceDriver.data()['AccountType'],
-            Status: doc.data()['Status'],
-            removeDialog: false
-          });
+          if(priceDriver.exists) {
+            Bots.push({
+              id: doc.id,
+              Name: doc.data()['Name'],
+              AccountPlatform: await priceDriver.data()['AccountPlatform'],
+              AccountType: await priceDriver.data()['AccountType'],
+              Status: doc.data()['Status'],
+              removeDialog: false
+            });
+          }
         });
 
         this.Bots = Bots;
