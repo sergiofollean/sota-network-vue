@@ -10,6 +10,8 @@ import TradingVue from "trading-vue-js";
 import Binance from 'binance-api-node'
 import { DataCube } from "trading-vue-js";
 import Overlays from 'tvjs-overlays'
+import axios from "axios";
+import { createHmac} from 'crypto';
 
 export default {
   name: 'graph',
@@ -65,13 +67,8 @@ export default {
     }
   },
   methods: {
-    async on_selected(tf) {
-      this.period = tf.name;
-      this.chart.set('chart.tf', tf.name);
-      await this.rerender();
-    },
     async rerender() {
-      console.log('rerender');
+      let timestamp = (new Date()).getTime();
       this.binance = new Binance({
         apiKey: this.apiKey,
         apiSecret: this.apiSecret
@@ -121,31 +118,41 @@ export default {
         }})
       this.$refs.tradingVue.resetChart();
       if (this.apiKey && this.apiKey.length > 0 && this.apiSecret && this.apiSecret.length > 0) {
-        const orders = await this.binance.allOrders({
-          symbol: this.symbol,
+        const data = [];
+        data['symbol'] = this.symbol;
+        data['timestamp'] = timestamp;
+        const signature = createHmac('sha256', this.secret)
+            .update(makeQueryString({ ...data }).substr(1))
+            .digest('hex')
+
+        const newData = { ...data, signature }
+
+        let axiosResponse = await axios.get('http://localhost:8080/api/v3/allOrders' + makeQueryString({ ...newData }), {
+          headers: { 'X-MBX-APIKEY': this.apiKey },
+          proxy: {
+            host: 'https://api.binance.com'
+          }
         });
+        const orders = axiosResponse.data;
         const ordersData = [];
         orders.forEach((order) => {
           if (order.status === 'FILLED') {
-            const orderType = order.side === 'BUY' ? 1 : 3
-            const total = order.cummulativeQuoteQty;
-            const qty = order.executedQty;
-            let data = this.findNearestCandle(order.time);
-            if (data) {
-              ordersData.push([
-                data[0], orderType, total / qty, total, data[1], data[2], data[3], data[4]
-              ])
-            }
+            const orderType = order.side === 'BUY' ? 1 : 0;
+            ordersData.push([
+              Number(order.updateTime), Number(orderType), Number(order.price), order.side
+            ]);
           }
         });
-        this.chart.add('onchart', {
-          name: 'Trades', type: 'LongShortTrades', data: ordersData, settings: {
-            'z-index': 10,
-            'showLabel': true
-          }
-        })
+        this.chart.add('onchart', { name: 'Trades', type: 'TradesPlus', data: ordersData, settings: {
+            'z-index': 10
+          }})
 
       }
+    },
+    async on_selected(tf) {
+      this.period = tf.name;
+      this.chart.set('chart.tf', tf.name);
+      await this.rerender();
     },
     findNearestCandle(time) {
       let counter = 0;
@@ -160,7 +167,6 @@ export default {
   watch: {
     symbolName: function(newVal, oldVal) {
       this.symbol = newVal;
-      console.log(this.symbol);
       this.on_selected({i: 0, name: '1m'})
       this.rerender();
     },
@@ -174,5 +180,11 @@ export default {
     }
   }
 }
+const makeQueryString = q =>
+    q
+        ? `?${Object.keys(q)
+            .map(k => `${encodeURIComponent(k)}=${encodeURIComponent(q[k])}`)
+            .join('&')}`
+        : ''
 
 </script>

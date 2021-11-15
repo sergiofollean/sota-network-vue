@@ -136,12 +136,9 @@ export default {
             } else {
               orderIds[order.orderId] = [order];
             }
-            let data = this.findNearestCandle(order.time);
-            if (data) {
-              ordersData.push([
-                Number(data[0]), Number(orderType), Number(order.avgPrice), orderPos
-              ]);
-            }
+            ordersData.push([
+              Number(order.updateTime), Number(orderType), Number(order.avgPrice), orderPos
+            ]);
           }
         });
         this.chart.add('onchart', { name: 'Trades', type: 'TradesPlus', data: ordersData, settings: {

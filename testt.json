@@ -1,0 +1,14 @@
+curl 'https://api.binance.com/api/v3/allOrders?symbol=QTUMUSDT&timestamp=1636930124517&signature=540ee7392d9ba90f806c44c2e48df539db897ec2d506b0990bb31e609353737b' \
+-X 'OPTIONS' \
+-H 'authority: api.binance.com' \
+-H 'accept: */*' \
+-H 'access-control-request-method: GET' \
+-H 'access-control-request-headers: x-mbx-apikey' \
+-H 'origin: http://localhost:8080' \
+-H 'user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36' \
+-H 'sec-fetch-mode: cors' \
+-H 'sec-fetch-site: cross-site' \
+-H 'sec-fetch-dest: empty' \
+-H 'referer: http://localhost:8080/' \
+-H 'accept-language: en-GB,en-US;q=0.9,en;q=0.8' \
+--compressed
