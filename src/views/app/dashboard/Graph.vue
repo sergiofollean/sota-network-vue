@@ -128,10 +128,7 @@ export default {
         const newData = { ...data, signature }
 
         let axiosResponse = await axios.get('http://localhost:8080/api/v3/allOrders' + makeQueryString({ ...newData }), {
-          headers: { 'X-MBX-APIKEY': this.apiKey },
-          proxy: {
-            host: 'https://api.binance.com'
-          }
+          headers: { 'X-MBX-APIKEY': this.apiKey }
         });
         const orders = axiosResponse.data;
         const ordersData = [];
