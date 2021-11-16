@@ -127,17 +127,17 @@ export default {
             .digest('hex')
 
         const newData = { ...data, signature }
-
-        let url = 'https://sota-network.com/api/v3/allOrders' + makeQueryString({...newData});
-        console.log(url);
-        // let axiosResponse = await axios.get(url);
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'X-MBX-APIKEY': this.apiKey
-          }
-        })
-        console.log(res)
+        // let url = 'https://sota-network.com/api/v3/allOrders' + makeQueryString({...newData});
+        let axiosResponse = await axios.get('https://sota-network.com/api/v3/allOrders' + makeQueryString({ ...newData }), {
+          headers: { 'X-MBX-APIKEY': this.apiKey }
+        });
+        // const res = await fetch(url, {
+        //   method: 'GET',
+        //   headers: {
+        //     'X-MBX-APIKEY': this.apiKey
+        //   }
+        // })
+        // console.log(res)
         // console.log(axiosResponse);
         const orders = axiosResponse.data;
         const ordersData = [];
