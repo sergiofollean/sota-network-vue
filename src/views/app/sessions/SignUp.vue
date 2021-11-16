@@ -2,6 +2,13 @@
   <div class="page-wrap">
     <div class="session-form-hold">
       <base-card>
+        <v-progress-linear
+            :active="loading"
+            :indeterminate="loading"
+            absolute
+            top
+            color="primary"
+        ></v-progress-linear>
         <v-card-text class="text-center">
           <v-avatar size="60" class="mb-4">
             <img src="@/assets/images/logo.svg" alt="">
@@ -12,7 +19,7 @@
               {{ $t('register.done')}}
             </v-card-text>
           </div>
-          <form v-if="!done">
+          <v-form v-if="!done" :disabled="loading === true">
             <FormError :errors="formErrors.email">
               <v-text-field v-model="email" :label="$t('register.email')" id="email"/>
             </FormError>
@@ -56,7 +63,7 @@
   <!--          <v-checkbox v-model="checkbox1" :label="$t('register.terms')"></v-checkbox>-->
 
             <v-btn class="mb-4" block color="primary" dark v-on:click="signup">{{ $t('register.register') }}</v-btn>
-          </form>
+          </v-form>
           <div class="flex justify-around flex-wrap">
             <v-btn text small color="primary" to="/user/sign-in">{{ $t('login.login') }}</v-btn>
           </div>
@@ -92,11 +99,13 @@ import firebase, {firestore} from "firebase";
         show: false,
         formErrors: {},
         errors: {
-        }
+        },
+        loading: false,
       }
     },
     methods: {
       async signup() {
+        this.loading = true;
         this.formErrors = {};
         if (!this.email) {
           this.formErrors.email = [this.$t('register.errors.empty')];
@@ -156,6 +165,8 @@ import firebase, {firestore} from "firebase";
           } else if (e.code === 'auth/email-already-in-use') {
             this.formErrors.email = [this.$t('register.errors.exists')];
           }
+        } finally {
+          this.loading = false;
         }
       },
       validEmail (email) {

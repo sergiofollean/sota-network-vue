@@ -30,7 +30,6 @@
               :type="show ? 'text' : 'password'"
               name="input-10-2"
               label="пароль"
-              :counter="10"
               :rules="nameRules"
               v-model="ePassword"
               @click:append="show = !show"
@@ -80,7 +79,6 @@ export default {
       ],
       nameRules: [
         (v) => !!v || "Password is required",
-        (v) => (v && v.length <= 10) || "Name must be less than 10 characters",
       ],
     };
   },

@@ -6,7 +6,110 @@
   <component name="ChangeListManager">
     <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/dashboard/Graph.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/dashboard/Graph.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/css/chunk-0f45924a.0bff59ee.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-048d0829.3deebea8.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-048d0829.3deebea8.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-04b5e08c.f9435736.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-04b5e08c.f9435736.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-05ae4b4a.d773b2d1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-05ae4b4a.d773b2d1.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-092e7aa0.267afcb1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-092e7aa0.267afcb1.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0cacb370.d4d024ec.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0cacb370.d4d024ec.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0cbb6f6b.5560de8f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0cbb6f6b.5560de8f.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0f45924a.260d3a81.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-0f45924a.260d3a81.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-14d9f87a.0cfb1ca0.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-14d9f87a.0cfb1ca0.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-1848d8fd.efa24edc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-1848d8fd.efa24edc.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-1b75ad45.daf6b930.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-1b75ad45.daf6b930.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2158bfa4.94b8fa60.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2158bfa4.94b8fa60.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-238f4a27.d6478ef5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-238f4a27.d6478ef5.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-24eab35c.ada3c621.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-24eab35c.ada3c621.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-253e5e2e.232a7e12.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-253e5e2e.232a7e12.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-254cd6ec.c0be4cd2.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-254cd6ec.c0be4cd2.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-29ea0186.7b6f0f2a.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-29ea0186.7b6f0f2a.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2a781446.4b46cfcc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2a781446.4b46cfcc.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2ad8feee.35d9e31a.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2ad8feee.35d9e31a.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2c1317ca.b210312e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2c1317ca.b210312e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2c3472d7.b8689f7f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2c3472d7.b8689f7f.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0af29c.1022d376.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0af29c.1022d376.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0c4302.ad51beb7.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0c4302.ad51beb7.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0d79be.5711b82c.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0d79be.5711b82c.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0dd63d.4c170a7e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d0dd63d.4c170a7e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d2311c7.21ecc706.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-2d2311c7.21ecc706.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3829d791.1ef36196.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3829d791.1ef36196.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-38a27336.5c93ed5a.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-38a27336.5c93ed5a.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-398d344f.22ef597e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-398d344f.22ef597e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3b3a8190.99fd9d44.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3b3a8190.99fd9d44.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3d71c96f.66da1da5.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-3d71c96f.66da1da5.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4b3dd3ac.f2aeda17.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4b3dd3ac.f2aeda17.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4d904454.071da1e9.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4d904454.071da1e9.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4f8e6ac7.9b26a98e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-4f8e6ac7.9b26a98e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5bec2c4d.b066257e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5bec2c4d.b066257e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5c5784aa.8550d55d.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5c5784aa.8550d55d.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5c7cb41d.d76e7427.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-5c7cb41d.d76e7427.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-70c685b7.64ae683e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-70c685b7.64ae683e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-769d584a.1d983b2c.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-769d584a.1d983b2c.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-7ba26658.6f1371a8.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-7ba26658.6f1371a8.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-81412758.ad087dd1.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-81412758.ad087dd1.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-88c3bfae.a0509f50.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-88c3bfae.a0509f50.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-94906202.e19120dd.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-94906202.e19120dd.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-b01d9c10.7af5ee1e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-b01d9c10.7af5ee1e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-cdfefbbe.dc30e48e.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-cdfefbbe.dc30e48e.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d08b9214.5375c277.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d08b9214.5375c277.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d0c60f88.0977d510.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d0c60f88.0977d510.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d60b775e.5b401a4b.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d60b775e.5b401a4b.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-f05a866a.2abae78c.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-f05a866a.2abae78c.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-fe0b0a42.b250a888.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-fe0b0a42.b250a888.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/index.c7ecfe94.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/index.c7ecfe94.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/app/sessions/SignInTwo.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/sessions/SignInTwo.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/app/sessions/SignUp.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/sessions/SignUp.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,6 +188,16 @@
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.History.Properties">
+    <option name="COLUMN_ID_ORDER">
+      <list>
+        <option value="Default.Root" />
+        <option value="Default.Author" />
+        <option value="Default.Date" />
+        <option value="Default.Subject" />
+      </list>
+    </option>
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
@@ -95,5 +208,17 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/views/app/dashboard/Graph.vue</url>
+          <line>112</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
