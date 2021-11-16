@@ -132,6 +132,7 @@ export default {
             + '/api/v3/allOrders' + makeQueryString({ ...newData }), {
           headers: { 'X-MBX-APIKEY': this.apiKey }
         });
+        console.log(axiosResponse);
         const orders = axiosResponse.data;
         const ordersData = [];
         orders.forEach((order) => {
