@@ -127,8 +127,8 @@ export default {
 
         const newData = { ...data, signature }
 
-        let axiosResponse = await axios.get(process.env.PROTOCOL + '://'
-            + process.env.HOST + ':' + process.env.PORT
+        let axiosResponse = await axios.get(process.env.VUE_APP_PROTOCOL + '://'
+            + process.env.VUE_APP_HOST + ':' + process.env.VUE_APP_PORT
             + '/api/v3/allOrders' + makeQueryString({ ...newData }), {
           headers: { 'X-MBX-APIKEY': this.apiKey }
         });
