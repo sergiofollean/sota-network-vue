@@ -121,18 +121,24 @@ export default {
         const data = [];
         data['symbol'] = this.symbol;
         data['timestamp'] = timestamp;
+        // data['X-MBX-APIKEY'] = this.apiKey;
         const signature = createHmac('sha256', this.secret)
             .update(makeQueryString({ ...data }).substr(1))
             .digest('hex')
 
         const newData = { ...data, signature }
 
-        let axiosResponse = await axios.get(process.env.VUE_APP_PROTOCOL + '://'
-            + process.env.VUE_APP_HOST + ':' + process.env.VUE_APP_PORT
-            + '/api/v3/allOrders' + makeQueryString({ ...newData }), {
-          headers: { 'X-MBX-APIKEY': this.apiKey }
-        });
-        console.log(axiosResponse);
+        let url = 'https://api.binance.com/api/v3/allOrders' + makeQueryString({...newData});
+        console.log(url);
+        // let axiosResponse = await axios.get(url);
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'X-MBX-APIKEY': this.apiKey
+          }
+        })
+        console.log(res)
+        // console.log(axiosResponse);
         const orders = axiosResponse.data;
         const ordersData = [];
         orders.forEach((order) => {
