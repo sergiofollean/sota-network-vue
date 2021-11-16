@@ -397,6 +397,7 @@ export default {
         var client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
+          httpBase: 'https://sota-network.com'
           // getTime: () => Date.now(),
           // httpBase: 'sota-network.com'
         })
