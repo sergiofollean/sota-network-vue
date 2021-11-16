@@ -175,6 +175,18 @@
                     Активний
                   </v-chip>
                 </template>
+                <template v-else-if="item.Status === 'false'">
+                  <v-chip
+                      class=""
+                      color="danger"
+                      label
+                      small
+                      text-color="white"
+                  >
+                    <v-icon small left >mdi-close</v-icon>
+                    Відхилено
+                  </v-chip>
+                </template>
                 <template v-else>
                   <v-chip
                       class=""
