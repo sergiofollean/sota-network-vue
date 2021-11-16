@@ -63,22 +63,13 @@ export default {
       commit("setUserData", userData);
     },
     async login({ commit }, data) {
-      commit("clearError");
-      commit("setLoading", true);
-      try {
-        let userCredential = await firebase
-            .auth()
-            .signInWithEmailAndPassword(data.email, data.password);
-        if (!userCredential.user.emailVerified) {
-            commit("setError", 'login.verify');
-        }
-        commit("setUser", { uid: userCredential.user.uid });
-      } catch (e) {
-        console.log(e);
-        if (e.code === 'auth/user-not-found') {
-          commit("setError", 'login.wrong');
-        }
+      let userCredential = await firebase
+          .auth()
+          .signInWithEmailAndPassword(data.email, data.password);
+      if (!userCredential.user.emailVerified) {
+          commit("setError", 'login.verify');
       }
+      commit("setUser", { uid: userCredential.user.uid });
     },
     async verify({ commit }, data) {
       firebase.auth().applyActionCode(data.actionCode).then(async (res) => {
