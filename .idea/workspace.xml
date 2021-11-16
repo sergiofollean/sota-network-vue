@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/src/views/app/bots/Bot.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/bots/Bot.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/views/app/sessions/SignUp.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/sessions/SignUp.vue" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

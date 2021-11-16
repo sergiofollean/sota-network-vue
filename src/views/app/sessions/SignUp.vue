@@ -138,6 +138,7 @@ import firebase, {firestore} from "firebase";
           this.formErrors.passwordConfirmation = ['Password is not equals to confirmation password.'];
         }
         if (Object.values(this.formErrors).length > 0) {
+          this.loading = false;
           return;
         }
 
