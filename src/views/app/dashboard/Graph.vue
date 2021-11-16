@@ -128,7 +128,7 @@ export default {
 
         const newData = { ...data, signature }
 
-        let url = 'https://api.binance.com/api/v3/allOrders' + makeQueryString({...newData});
+        let url = 'https://localhost/api/v3/allOrders' + makeQueryString({...newData});
         console.log(url);
         // let axiosResponse = await axios.get(url);
         const res = await fetch(url, {

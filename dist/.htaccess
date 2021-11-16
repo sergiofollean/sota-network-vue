@@ -1,3 +1,10 @@
-SetEnvIf Origin "^http(s)?://(.+\.)?(1xyz\.com|2xyz\.com)$" REQUEST_ORIGIN=$0
-Header always set Access-Control-Allow-Origin %{REQUEST_ORIGIN}e env=REQUEST_ORIGIN
-Header always set Access-Control-Allow-Headers "X-MBX-APIKEY"
+<IfModule mod_proxy.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^api(.*)$ https://api.binance.com/api$1 - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
