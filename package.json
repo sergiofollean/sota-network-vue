@@ -17,6 +17,7 @@
     "bootstrap-vue": "^2.21.2",
     "core-js": "^3.19.1",
     "dns": "^0.2.2",
+    "dotenv-webpack": "^7.0.3",
     "firebase": "^7.24.0",
     "highlight.js": "^10.3.2",
     "node-binance-api": "^0.13.0",

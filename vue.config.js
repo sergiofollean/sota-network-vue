@@ -1,3 +1,6 @@
+const Dotenv = require('dotenv-webpack');
+
+
 module.exports = {
   pages: {
     index: {
@@ -8,8 +11,15 @@ module.exports = {
   },
 
   devServer: {
+    // changeOrigin: true,
     // https: true,
-    // proxy: 'https://api.binance.com/',
+    // proxy: 'https://sota-network.com/',
+    proxy: {
+      '^/api': {
+        target: 'https://api.binance.com',
+        changeOrigin: true
+      }
+    },
     clientLogLevel: "warning",
     hot: true,
     contentBase: "dist",
@@ -29,6 +39,9 @@ module.exports = {
     disableHostCheck: true
   },
   configureWebpack: {
+    plugins: [
+      new Dotenv()
+    ],
     node: {
       fs: "empty",
       dgram: "empty",

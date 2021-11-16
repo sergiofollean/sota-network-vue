@@ -127,7 +127,9 @@ export default {
 
         const newData = { ...data, signature }
 
-        let axiosResponse = await axios.get('http://localhost:8080/api/v3/allOrders' + makeQueryString({ ...newData }), {
+        let axiosResponse = await axios.get(process.env.PROTOCOL + '://'
+            + process.env.HOST + ':' + process.env.PORT
+            + '/api/v3/allOrders' + makeQueryString({ ...newData }), {
           headers: { 'X-MBX-APIKEY': this.apiKey }
         });
         const orders = axiosResponse.data;
