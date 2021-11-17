@@ -9,6 +9,13 @@
         :rules="[v => !!v || 'Це поле обовьязкове!']"
     />
     <v-text-field
+        v-model="Bot.Sell"
+        outlined
+        value="1"
+        label="Кількість ордерів на продаж"
+        :rules="[v => !!v || 'Це поле обовьязкове!']"
+    />
+    <v-text-field
         v-model="Bot.Buy"
         outlined
         label="Кількість ордерів на покупку"
@@ -66,6 +73,11 @@ export default {
       },
     }
   },
+  created() {
+    this.Bot.Buy = 1;
+    this.Bot.Sell = 0;
+    this.Bot.Spread = 1;
+  },
   methods: {
     saveSpot() {
       firebase.auth().onAuthStateChanged(async user => {
@@ -79,6 +91,7 @@ export default {
             Status: "pending",
             Bot: this.Bot.Bot,
             BasePrice: this.Bot.BasePrice,
+            Sell: this.Bot.Sell,
             Buy: this.Bot.Buy,
             OrderSize: this.Bot.OrderSize,
             Spread: this.Bot.Spread
@@ -95,6 +108,7 @@ export default {
                 Market: this.Bot.Market,
                 Bot: this.Bot.Bot,
                 BasePrice: this.Bot.BasePrice,
+                Sell: this.Bot.Sell,
                 Buy: this.Bot.Buy,
                 OrderSize: this.Bot.OrderSize,
                 Spread: this.Bot.Spread
@@ -142,6 +156,13 @@ export default {
               data.BasePrice = this.Bot.BasePrice;
               await Bot.update({
                 BasePrice: this.Bot.BasePrice
+              });
+            }
+
+            if(this.Bot.Sell !== (await Bot.get()).data()['Sell']) {
+              data.Sell = this.Bot.Sell;
+              await Bot.update({
+                Sell: this.Bot.Sell
               });
             }
 

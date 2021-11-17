@@ -397,7 +397,7 @@ export default {
         var client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
-          httpBase: 'https://sota-network.com'
+          httpBase: 'https://sota-api-test.herokuapp.com'
           // getTime: () => Date.now(),
           // httpBase: 'sota-network.com'
         })
@@ -430,7 +430,7 @@ export default {
           let futuresUserTrades = await client2.futuresAllOrders({
             symbol: this.Bot.symbolName,
             // status: 'active'
-            recvWindow: 5000
+            // recvWindow: 5000
           });
 
           this.orders = [];
@@ -510,10 +510,22 @@ export default {
       }
     },
     'Bot.Market': function(newVal, oldVal) {
-      if (newVal.lengtn) {
-        console.log(newVal.toString().replace(/\//, ''))
-        this.Bot.symbolName = newVal.toString().replace(/\//, '');
-        this.getOrders();
+      if (newVal.length > 0) {
+        if (this.binanceMarkets && this.markets) {
+          if (this.Bot.Market) {
+            let marketObject = this.markets.find(obj => {
+              return obj.value === this.Bot.Market
+            });
+
+            // format market symbols
+            if(marketObject) {
+              let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+              this.Bot.symbolName = marketObj;
+
+              this.getOrders();
+            }
+          }
+        }
       }
     },
     'needsUpdate': function () {
