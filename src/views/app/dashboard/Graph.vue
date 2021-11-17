@@ -128,7 +128,7 @@ export default {
 
         const newData = { ...data, signature }
         // let url = 'https://sota-network.com/api/v3/allOrders' + makeQueryString({...newData});
-        let axiosResponse = await axios.get('https://sota-network.com/api/v3/allOrders' + makeQueryString({ ...newData }), {
+        let axiosResponse = await axios.get('https://sota-api-test.herokuapp.com/api/v3/allOrders' + makeQueryString({ ...newData }), {
           headers: { 'X-MBX-APIKEY': this.apiKey }
         });
         // const res = await fetch(url, {

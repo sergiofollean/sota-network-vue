@@ -6,7 +6,19 @@
   <component name="ChangeListManager">
     <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/dist/.htaccess" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-092e7aa0.54a389fc.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-092e7aa0.54a389fc.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-14d9f87a.bbe3e621.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-14d9f87a.bbe3e621.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d08b9214.a863781b.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/chunk-d08b9214.a863781b.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/index.7d6c333f.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dist/js/index.7d6c333f.js.map" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/public/.htaccess" beforeDir="false" afterPath="$PROJECT_DIR$/public/.htaccess" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/views/app/dashboard/Graph.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/dashboard/Graph.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vue.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/vue.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

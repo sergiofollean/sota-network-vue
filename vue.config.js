@@ -11,15 +11,6 @@ module.exports = {
   },
 
   devServer: {
-    // changeOrigin: true,
-    // https: true,
-    // proxy: 'https://sota-network.com/',
-    // proxy: {
-    //   '^/api': {
-    //     target: 'https://api.binance.com',
-    //     changeOrigin: true
-    //   }
-    // },
     clientLogLevel: "warning",
     hot: true,
     contentBase: "dist",
