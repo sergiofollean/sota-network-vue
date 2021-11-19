@@ -1,35 +1,61 @@
 <template>
-  <div>
-    <v-card-title class="px-0">Нашалтування торгів</v-card-title>
-    <v-radio-group label="Сторона" row v-model="Bot.Oposition">
-      <v-radio
-          label="short"
-          color="red"
-          value="short"
+  <div class="flex-wrap mt-4 justify-center" style="height: 100%">
+    <div v-if="!Bot.Oposition" class="flex-column align-center">
+      <v-alert type="info" text>Оберіть сторону</v-alert>
+      <v-radio-group label="Сторона" row v-model="Bot.Oposition">
+        <v-radio
+            label="short"
+            color="red"
+            value="short"
+        />
+        <v-radio
+            label="long"
+            color="green"
+            value="long"
+        />
+      </v-radio-group>
+    </div>
+    <div v-else>
+      <v-card-title class="px-0">
+        Сторона
+        <v-chip
+            class="ml-4"
+            :color="Bot.Oposition === 'long' ? 'success' : 'danger'"
+            label
+            small
+            text-color="white"
+
+        >{{Bot.Oposition === 'long' ? 'Лонг' : 'Шорт'}}</v-chip>
+      </v-card-title>
+      <v-card-title class="px-0">Нашалтування торгів</v-card-title>
+
+      <v-slider
+          v-model="Bot.Level"
+          class="my-4"
+          :tick-labels="level"
+          :max="2"
+          ticks="always"
       />
-      <v-radio
-          label="long"
-          color="green"
-          value="long"
+      <v-slider
+          v-model="Bot.Leverage"
+          class="mt-8"
+          :min="1"
+          :max="20"
+          ticks="always"
+          label="Кредитне плече"
+          thumb-label="always"
       />
-    </v-radio-group>
-    <v-slider
-        v-model="Bot.Level"
-        class="my-4"
-        :tick-labels="level"
-        :max="2"
-        ticks="always"
-    />
-    <v-text-field
-        v-model="Bot.Ballance"
-        outlined
-        label="Баланс для торгівлі"
-        prepend-inner-icon="mdi-currency-usd"
-        suffix="USDT"
-        :rules="[v => !!v || 'Це поле обовьязкове!']"
-        :hint="BallanceHint"
-        persistent-hint
-    />
+      <v-text-field
+          v-model="Bot.Ballance"
+          outlined
+          label="Баланс для торгівлі"
+          prepend-inner-icon="mdi-currency-usd"
+          suffix="USDT"
+          :rules="[v => !!v || 'Це поле обовьязкове!']"
+          :hint="BallanceHint"
+          persistent-hint
+      />
+    </div>
   </div>
 </template>
 
@@ -68,7 +94,7 @@ export default {
             this.Bot.symbolName = marketObj;
 
             // calculating contract size
-            let contractUstd = this.Bot.Ballance / 110;
+            let contractUstd = (this.Bot.Ballance * this.Bot.Leverage) / 110;
             let contractSize = (contractUstd / this.binanceMarkets[this.Bot.symbolName]).toFixed(3);
 
             // check if more then minimum trade amount
@@ -202,6 +228,9 @@ export default {
   },
   watch: {
     'Bot.Ballance': function (val, oldval) {
+      this.calculateBallance();
+    },
+    'Bot.Leverage': function () {
       this.calculateBallance();
     },
     'Bot.Market': function () {

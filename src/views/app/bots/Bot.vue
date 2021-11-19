@@ -151,6 +151,7 @@
               </v-col>
             </v-row>
           </v-card-text>
+          <v-divider class="mx-4"></v-divider>
           <v-card-text align="center">
             <v-btn color="success" @click="saveBot" :disabled="Bot.Status === 'pending' || !Bot.Bot" depressed ref="saveButton">Зберегти</v-btn>
             <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4" depressed>Запустити</v-btn>
