@@ -94,7 +94,10 @@ export default {
             this.Bot.symbolName = marketObj;
 
             // calculating contract size
-            let contractUstd = (this.Bot.Ballance * this.Bot.Leverage) / 110;
+            let delta = 110;
+            if(this.Bot.Level === 0) delta = 70;
+            console.log(delta);
+            let contractUstd = (this.Bot.Ballance * this.Bot.Leverage) / delta;
             let contractSize = (contractUstd / this.binanceMarkets[this.Bot.symbolName]).toFixed(3);
 
             // check if more then minimum trade amount
@@ -231,6 +234,9 @@ export default {
       this.calculateBallance();
     },
     'Bot.Leverage': function () {
+      this.calculateBallance();
+    },
+    'Bot.Level': function () {
       this.calculateBallance();
     },
     'Bot.Market': function () {
