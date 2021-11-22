@@ -1,5 +1,8 @@
 <template>
   <v-row>
+    <v-col cols="12">
+      <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-col>
     <v-col sm="12">
       <base-card>
         <v-card-title>
@@ -261,6 +264,18 @@ export default {
         state: '',
         zip: '',
       },
+      breadcrumbs: [
+        {
+          text: this.$t('Dashboard'),
+          disabled: false,
+          to: '/dashboard',
+        },
+        {
+          text: this.$t('Settings'),
+          disabled: false,
+          to: '/settings',
+        }
+      ]
     }
   },
   async created() {

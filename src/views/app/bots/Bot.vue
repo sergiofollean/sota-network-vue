@@ -1,5 +1,8 @@
 <template>
   <v-row no-gutters>
+    <v-col cols="12">
+      <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-col>
     <v-col lg="12" sm="12">
       <base-card ref="panelCol" class="panelCol-event">
         <v-form
@@ -87,6 +90,38 @@
                         hide-details
                         editable
                     />
+                  </v-col>
+                  <v-col>
+                    <v-card-title class="px-0">
+                      <div class="flex-wrap">
+                        <template v-if="Bot.Bot">
+                          <div class="col">
+                            <label>Тип боту</label>
+                            <v-chip
+                                class="ml-4"
+                                color="dark"
+                                label
+                                small
+                                text-color="white"
+
+                            >{{Bot.Bot === 'spot' ? 'Спот' : 'Фьючерси'}}</v-chip>
+                          </div>
+                        </template>
+                        <template v-if="Bot.Oposition">
+                          <div class="col">
+                            Сторона
+                            <v-chip
+                                class="ml-4"
+                                :color="Bot.Oposition === 'long' ? 'success' : 'danger'"
+                                label
+                                small
+                                text-color="white"
+
+                            >{{Bot.Oposition === 'long' ? 'Лонг' : 'Шорт'}}</v-chip>
+                          </div>
+                        </template>
+                      </div>
+                    </v-card-title>
                   </v-col>
                 </v-row>
               </v-col>
@@ -252,7 +287,25 @@ export default {
         spot: true,
         futures: true,
         futurespro: true
-      }
+      },
+      breadcrumbs: [
+        {
+          text: this.$t('Dashboard'),
+          disabled: false,
+          to: '/dashboard',
+        },
+        {
+          text: this.$t('Bots'),
+          disabled: false,
+          to: '/bots',
+          exact: true
+        },
+        {
+          text: this.$t('Bot'),
+          disabled: false,
+          to: '/bots/bot',
+        }
+      ]
     }
   },
   mounted() {

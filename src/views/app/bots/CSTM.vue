@@ -16,17 +16,6 @@
       </v-radio-group>
     </div>
     <div v-else>
-      <v-card-title class="px-0">
-        Сторона
-        <v-chip
-            class="ml-4"
-            :color="Bot.Oposition === 'long' ? 'success' : 'danger'"
-            label
-            small
-            text-color="white"
-
-        >{{Bot.Oposition === 'long' ? 'Лонг' : 'Шорт'}}</v-chip>
-      </v-card-title>
       <v-card-title class="px-0">Нашалтування торгів</v-card-title>
 
       <v-slider

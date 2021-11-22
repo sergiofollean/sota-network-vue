@@ -3,6 +3,7 @@
     v-model="getThemeMode.verticalSaasSidebarDrawer"
     :mobile-breakpoint="1000"
     height="100vh"
+    style="top: 75px"
     class="vertical-sass-sidebar"
     :right="$vuetify.rtl"
     :color="$vuetify.theme.dark ? 'dark' : 'white'"

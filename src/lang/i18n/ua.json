@@ -1,4 +1,7 @@
 {
+  "Dashboard": "Головна",
+  "Bots": "Боти",
+  "Bot": "Бот",
   "dashboard": {
     "noSubscriptions": "У вас не немає активних підписок.",
     "checkSubscriptions": "Перегляньте доступні підписки",
