@@ -69,7 +69,7 @@
                         hide-details
                     />
                   </v-col>
-                  <v-col sm="6">
+                  <v-col md="6" cols="12">
                     <v-select
                         v-model="Bot.PriceDriver"
                         outlined
@@ -80,7 +80,7 @@
                         hide-details
                     />
                   </v-col>
-                  <v-col sm="6">
+                  <v-col md="6" cols="12">
                     <v-overflow-btn
                         v-model="Bot.Market"
                         label="Маркет"
@@ -91,9 +91,9 @@
                         editable
                     />
                   </v-col>
-                  <v-col>
+                  <v-col v-if="Bot.Bot || Bot.Oposition">
                     <v-card-title class="px-0">
-                      <div class="flex-wrap">
+                      <v-row class="flex-column">
                         <template v-if="Bot.Bot">
                           <div class="col">
                             <label>Тип боту</label>
@@ -120,7 +120,7 @@
                             >{{Bot.Oposition === 'long' ? 'Лонг' : 'Шорт'}}</v-chip>
                           </div>
                         </template>
-                      </div>
+                      </v-row>
                     </v-card-title>
                   </v-col>
                 </v-row>

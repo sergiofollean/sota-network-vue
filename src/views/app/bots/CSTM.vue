@@ -1,18 +1,26 @@
-<template>
-  <div class="flex-wrap mt-4 justify-center" style="height: 100%">
-    <div v-if="!Bot.Oposition" class="flex-column align-center">
+<template xmlns="http://www.w3.org/1999/html">
+  <div class="flex-wrap justify-center" style="height: 100%">
+    <div v-if="!Bot.Oposition" class="flex-column align-center mt-4">
       <v-alert type="info" text>Оберіть сторону</v-alert>
       <v-radio-group label="Сторона" row v-model="Bot.Oposition">
         <v-radio
             label="short"
             color="red"
             value="short"
-        />
+        >
+          <template v-slot:label>
+            <strong class="danger--text">Шорт</strong>
+          </template>
+        </v-radio>
         <v-radio
             label="long"
             color="green"
             value="long"
-        />
+        >
+          <template v-slot:label>
+            <strong class="success--text">Лонг</strong>
+          </template>
+        </v-radio>
       </v-radio-group>
     </div>
     <div v-else>
