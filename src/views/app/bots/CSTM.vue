@@ -199,8 +199,9 @@ export default {
             }
 
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
-              // Update Level
+              // Update Ballance
               data.SlotSize = this.Bot.SlotSize;
+              data.SlotSize_Level = this.Bot.Level;
               await Bot.update({
                 Ballance: this.Bot.Ballance
               });
@@ -209,7 +210,7 @@ export default {
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
-              // data.Bot = Bot.Bot;
+              data.Bot = this.Bot.Bot;
 
               await Bot.update({
                 Status: 'pending'
