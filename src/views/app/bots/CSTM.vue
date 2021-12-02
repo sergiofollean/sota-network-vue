@@ -177,44 +177,31 @@ export default {
             if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
               data.PriceDriver = this.Bot.PriceDriver;
-              await Bot.update({
-                PriceDriver: this.Bot.PriceDriver
-              });
             }
 
             if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
               data.Market = this.Bot.Market;
-              await Bot.update({
-                Market: this.Bot.Market
-              });
             }
 
             if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
               // Update Level
               data.Level = this.Bot.Level;
-              await Bot.update({
-                Level: this.Bot.Level
-              });
             }
 
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
               // Update Ballance
               data.SlotSize = this.Bot.SlotSize;
               data.SlotSize_Level = this.Bot.Level;
-              await Bot.update({
-                Ballance: this.Bot.Ballance
-              });
             }
             // } Collecting data to update
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
               data.Bot = this.Bot.Bot;
+              data.Status = "pending";
 
-              await Bot.update({
-                Status: 'pending'
-              });
+              await Bot.update(data);
 
               await database.ref('tasks').push().set({
                 task: 'update_bot',

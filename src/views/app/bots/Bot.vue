@@ -104,7 +104,11 @@
                                 small
                                 text-color="white"
 
-                            >{{Bot.Bot === 'spot' ? 'Спот' : 'Фьючерси'}}</v-chip>
+                            >
+                              <template v-if="Bot.Bot === 'spot'">Спот</template>
+                              <template v-if="Bot.Bot === 'futures'">Фьючерси</template>
+                              <template v-if="Bot.Bot === 'futurespro'">Фьючерси (про)</template>
+                            </v-chip>
                           </div>
                         </template>
                         <template v-if="Bot.Oposition">
@@ -183,6 +187,13 @@
                     v-if="Bot.Bot === 'spot'"
                     ref="Spot"
                 />
+                <Kgbx
+                    :Bot="Bot"
+                    :markets="markets"
+                    :binanceMarkets="binanceMarkets"
+                    v-if="Bot.Bot === 'futurespro'"
+                    ref="Kgbx"
+                />
               </v-col>
             </v-row>
           </v-card-text>
@@ -250,13 +261,14 @@ import futureGraph from '@/views/app/dashboard/FutureGraph';
 import CSTM from "@/views/app/bots/CSTM";
 import Spot from "@/views/app/bots/Spot";
 import Graph from "@/views/app/dashboard/Graph";
+import Kgbx from "@/views/app/bots/Kgbx";
 
 var client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
 
 export default {
-  components: {Graph, Spot, futureGraph, CSTM},
+  components: {Kgbx, Graph, Spot, futureGraph, CSTM},
   data() {
     return {
       priceDrivers: [],
@@ -391,6 +403,7 @@ export default {
 
       if(this.Bot.Bot === 'spot') await this.$refs.Spot.saveSpot();
       if(this.Bot.Bot === 'futures') await this.$refs.CSTM.saveCSTM();
+      if(this.Bot.Bot === 'futurespro') await this.$refs.Kgbx.saveKgbx();
 
       // Redirect to new exist bot
       // this.needsUpdate = true;
