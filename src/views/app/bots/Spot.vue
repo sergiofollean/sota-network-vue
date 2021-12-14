@@ -6,6 +6,13 @@
         outlined
         label="Базова ціна"
         prepend-inner-icon="mdi-currency-usd"
+        :rules="[rules.BasePrice]"
+    />
+    <v-text-field
+        v-model="Bot.Sell"
+        outlined
+        value="1"
+        label="Кількість ордерів на продаж"
         :rules="[v => !!v || 'Це поле обовьязкове!']"
     />
     <v-text-field
@@ -58,6 +65,18 @@ export default {
     return {
       rules: {
         OrderSize(value) {
+          if(value.length === 0) {
+            return 'Це поле обовьязкове!';
+          }
+          if (/^[0-9\.]*$/.test(value)){
+            return true;
+          }
+          return 'Дозволено тільки цифри з точкою. (приклад 3.14)'
+        },
+        BasePrice(value) {
+          if(value.length === 0) {
+            return 'Це поле обовьязкове!';
+          }
           if (/^[0-9\.]*$/.test(value)){
             return true;
           }
@@ -65,6 +84,11 @@ export default {
         }
       },
     }
+  },
+  created() {
+    this.Bot.Buy = 1;
+    this.Bot.Sell = 0;
+    this.Bot.Spread = 1;
   },
   methods: {
     saveSpot() {
@@ -79,6 +103,7 @@ export default {
             Status: "pending",
             Bot: this.Bot.Bot,
             BasePrice: this.Bot.BasePrice,
+            Sell: this.Bot.Sell,
             Buy: this.Bot.Buy,
             OrderSize: this.Bot.OrderSize,
             Spread: this.Bot.Spread
@@ -95,6 +120,7 @@ export default {
                 Market: this.Bot.Market,
                 Bot: this.Bot.Bot,
                 BasePrice: this.Bot.BasePrice,
+                Sell: this.Bot.Sell,
                 Buy: this.Bot.Buy,
                 OrderSize: this.Bot.OrderSize,
                 Spread: this.Bot.Spread
@@ -125,55 +151,40 @@ export default {
               // Update PriceDriver
               data.PriceDriver = this.Bot.PriceDriver;
               data.Market = this.Bot.Market;
-              await Bot.update({
-                PriceDriver: this.Bot.PriceDriver
-              });
             }
 
             if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
               data.Market = this.Bot.Market;
-              await Bot.update({
-                Market: this.Bot.Market
-              });
             }
 
             if(this.Bot.BasePrice !== (await Bot.get()).data()['BasePrice']) {
               data.BasePrice = this.Bot.BasePrice;
-              await Bot.update({
-                BasePrice: this.Bot.BasePrice
-              });
+            }
+
+            if(this.Bot.Sell !== (await Bot.get()).data()['Sell']) {
+              data.Sell = this.Bot.Sell;
             }
 
             if(this.Bot.Buy !== (await Bot.get()).data()['Buy']) {
               data.Buy = this.Bot.Buy;
-              await Bot.update({
-                Buy: this.Bot.Buy
-              });
             }
 
             if(this.Bot.OrderSize !== (await Bot.get()).data()['OrderSize']) {
               data.OrderSize = this.Bot.OrderSize;
-              await Bot.update({
-                OrderSize: this.Bot.OrderSize
-              });
             }
 
             if(this.Bot.Spread !== (await Bot.get()).data()['Spread']) {
               data.Spread = this.Bot.Spread;
-              await Bot.update({
-                Spread: this.Bot.Spread
-              });
             }
             // } Collecting data to update
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
               data.Bot = this.Bot.Bot;
+              data.Status = "pending";
 
-              await Bot.update({
-                Status: 'pending'
-              });
+              await Bot.update(data);
 
               await database.ref('tasks').push().set({
                 task: 'update_bot',

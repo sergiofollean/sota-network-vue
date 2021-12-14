@@ -1,35 +1,58 @@
-<template>
-  <div>
-    <v-card-title class="px-0">Нашалтування торгів</v-card-title>
-    <v-radio-group label="Сторона" row v-model="Bot.Oposition">
-      <v-radio
-          label="short"
-          color="red"
-          value="short"
+<template xmlns="http://www.w3.org/1999/html">
+  <div class="flex-wrap justify-center" style="height: 100%">
+    <div v-if="!Bot.Oposition" class="flex-column align-center mt-4">
+      <v-alert type="info" text>Оберіть сторону</v-alert>
+      <v-radio-group label="Сторона" row v-model="Bot.Oposition">
+        <v-radio
+            label="short"
+            color="red"
+            value="short"
+        >
+          <template v-slot:label>
+            <strong class="danger--text">Шорт</strong>
+          </template>
+        </v-radio>
+        <v-radio
+            label="long"
+            color="green"
+            value="long"
+        >
+          <template v-slot:label>
+            <strong class="success--text">Лонг</strong>
+          </template>
+        </v-radio>
+      </v-radio-group>
+    </div>
+    <div v-else>
+      <v-card-title class="px-0">Нашалтування торгів</v-card-title>
+
+      <v-slider
+          v-model="Bot.Level"
+          class="my-4"
+          :tick-labels="level"
+          :max="2"
+          ticks="always"
       />
-      <v-radio
-          label="long"
-          color="green"
-          value="long"
+      <v-slider
+          v-model="Leverage"
+          class="mt-8"
+          :min="1"
+          :max="20"
+          ticks="always"
+          label="Кредитне плече"
+          thumb-label="always"
       />
-    </v-radio-group>
-    <v-slider
-        v-model="Bot.Level"
-        class="my-4"
-        :tick-labels="level"
-        :max="2"
-        ticks="always"
-    />
-    <v-text-field
-        v-model="Bot.Ballance"
-        outlined
-        label="Баланс для торгівлі"
-        prepend-inner-icon="mdi-currency-usd"
-        suffix="USDT"
-        :rules="[v => !!v || 'Це поле обовьязкове!']"
-        :hint="BallanceHint"
-        persistent-hint
-    />
+      <v-text-field
+          v-model="Bot.Ballance"
+          outlined
+          label="Баланс для торгівлі"
+          prepend-inner-icon="mdi-currency-usd"
+          suffix="USDT"
+          :rules="[v => !!v || 'Це поле обовьязкове!']"
+          :hint="BallanceHint"
+          persistent-hint
+      />
+    </div>
   </div>
 </template>
 
@@ -50,6 +73,7 @@ export default {
     return {
       level: ["Низький ризик", "Середній ризик", "Високий ризик"],
       BallanceHint: 'Спершу оберіть біржу',
+      Leverage: 1
     }
   },
   methods: {
@@ -68,7 +92,10 @@ export default {
             this.Bot.symbolName = marketObj;
 
             // calculating contract size
-            let contractUstd = this.Bot.Ballance / 110;
+            let delta = 110;
+            if(this.Bot.Level === 0) delta = 70;
+            console.log(delta);
+            let contractUstd = (this.Bot.Ballance * this.Leverage) / delta;
             let contractSize = (contractUstd / this.binanceMarkets[this.Bot.symbolName]).toFixed(3);
 
             // check if more then minimum trade amount
@@ -140,53 +167,41 @@ export default {
 
             // Collecting data to update {
             let data = {};
-            if (this.Bot.Oposition !== (await Bot.get()).data()['Oposition']) {
-              data.Oposition = this.Bot.Oposition;
-              await Bot.update({
-                Oposition: this.Bot.Oposition
-              });
-            }
+            // if (this.Bot.Oposition !== (await Bot.get()).data()['Oposition']) {
+            //   data.Oposition = this.Bot.Oposition;
+            //   await Bot.update({
+            //     Oposition: this.Bot.Oposition
+            //   });
+            // }
 
             if (this.Bot.PriceDriver !== (await Bot.get()).data()['PriceDriver']) {
               // Update PriceDriver
               data.PriceDriver = this.Bot.PriceDriver;
-              await Bot.update({
-                PriceDriver: this.Bot.PriceDriver
-              });
             }
 
             if (this.Bot.Market !== (await Bot.get()).data()['Market']) {
               // Update Market
               data.Market = this.Bot.Market;
-              await Bot.update({
-                Market: this.Bot.Market
-              });
             }
 
             if (this.Bot.Level !== (await Bot.get()).data()['Level']) {
               // Update Level
               data.Level = this.Bot.Level;
-              await Bot.update({
-                Level: this.Bot.Level
-              });
             }
 
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
-              // Update Level
+              // Update Ballance
               data.SlotSize = this.Bot.SlotSize;
-              await Bot.update({
-                Ballance: this.Bot.Ballance
-              });
+              data.SlotSize_Level = this.Bot.Level;
             }
             // } Collecting data to update
 
             if (Object.keys(data).length > 0) {
               data.id = Bot.id;
-              data.Bot = Bot.Bot;
+              data.Bot = this.Bot.Bot;
+              data.Status = "pending";
 
-              await Bot.update({
-                Status: 'pending'
-              });
+              await Bot.update(data);
 
               await database.ref('tasks').push().set({
                 task: 'update_bot',
@@ -202,6 +217,12 @@ export default {
   },
   watch: {
     'Bot.Ballance': function (val, oldval) {
+      this.calculateBallance();
+    },
+    'Leverage': function () {
+      this.calculateBallance();
+    },
+    'Bot.Level': function () {
       this.calculateBallance();
     },
     'Bot.Market': function () {

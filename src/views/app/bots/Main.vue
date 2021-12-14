@@ -1,5 +1,8 @@
 <template>
   <v-row>
+    <v-col cols="12">
+      <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-col>
     <v-col sm="12" v-if="validation === false">
       <v-alert
           type="error"
@@ -181,7 +184,19 @@ export default {
       Bots: [],
       loading: true,
       // requireAccount: true,
-      validation: true
+      validation: true,
+      breadcrumbs: [
+        {
+          text: this.$t('Dashboard'),
+          disabled: false,
+          to: '/dashboard',
+        },
+        {
+          text: this.$t('Bots'),
+          disabled: false,
+          to: '/bots',
+        }
+      ]
     }
   },
   mounted() {

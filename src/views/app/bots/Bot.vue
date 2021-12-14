@@ -1,5 +1,8 @@
 <template>
   <v-row no-gutters>
+    <v-col cols="12">
+      <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+    </v-col>
     <v-col lg="12" sm="12">
       <base-card ref="panelCol" class="panelCol-event">
         <v-form
@@ -66,7 +69,7 @@
                         hide-details
                     />
                   </v-col>
-                  <v-col sm="6">
+                  <v-col md="6" cols="12">
                     <v-select
                         v-model="Bot.PriceDriver"
                         outlined
@@ -77,7 +80,7 @@
                         hide-details
                     />
                   </v-col>
-                  <v-col sm="6">
+                  <v-col md="6" cols="12">
                     <v-overflow-btn
                         v-model="Bot.Market"
                         label="Маркет"
@@ -87,6 +90,42 @@
                         hide-details
                         editable
                     />
+                  </v-col>
+                  <v-col v-if="Bot.Bot || Bot.Oposition">
+                    <v-card-title class="px-0">
+                      <v-row class="flex-column">
+                        <template v-if="Bot.Bot">
+                          <div class="col">
+                            <label>Тип боту</label>
+                            <v-chip
+                                class="ml-4"
+                                color="dark"
+                                label
+                                small
+                                text-color="white"
+
+                            >
+                              <template v-if="Bot.Bot === 'spot'">Спот</template>
+                              <template v-if="Bot.Bot === 'futures'">Фьючерси</template>
+                              <template v-if="Bot.Bot === 'futurespro'">Фьючерси (про)</template>
+                            </v-chip>
+                          </div>
+                        </template>
+                        <template v-if="Bot.Oposition">
+                          <div class="col">
+                            Сторона
+                            <v-chip
+                                class="ml-4"
+                                :color="Bot.Oposition === 'long' ? 'success' : 'danger'"
+                                label
+                                small
+                                text-color="white"
+
+                            >{{Bot.Oposition === 'long' ? 'Лонг' : 'Шорт'}}</v-chip>
+                          </div>
+                        </template>
+                      </v-row>
+                    </v-card-title>
                   </v-col>
                 </v-row>
               </v-col>
@@ -148,9 +187,17 @@
                     v-if="Bot.Bot === 'spot'"
                     ref="Spot"
                 />
+                <Kgbx
+                    :Bot="Bot"
+                    :markets="markets"
+                    :binanceMarkets="binanceMarkets"
+                    v-if="Bot.Bot === 'futurespro'"
+                    ref="Kgbx"
+                />
               </v-col>
             </v-row>
           </v-card-text>
+          <v-divider class="mx-4"></v-divider>
           <v-card-text align="center">
             <v-btn color="success" @click="saveBot" :disabled="Bot.Status === 'pending' || !Bot.Bot" depressed ref="saveButton">Зберегти</v-btn>
             <v-btn v-if="Bot.Status === 'paused'" color="primary" @click="botStart" class="ml-4" depressed>Запустити</v-btn>
@@ -214,13 +261,14 @@ import futureGraph from '@/views/app/dashboard/FutureGraph';
 import CSTM from "@/views/app/bots/CSTM";
 import Spot from "@/views/app/bots/Spot";
 import Graph from "@/views/app/dashboard/Graph";
+import Kgbx from "@/views/app/bots/Kgbx";
 
 var client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
 
 export default {
-  components: {Graph, Spot, futureGraph, CSTM},
+  components: {Kgbx, Graph, Spot, futureGraph, CSTM},
   data() {
     return {
       priceDrivers: [],
@@ -251,7 +299,25 @@ export default {
         spot: true,
         futures: true,
         futurespro: true
-      }
+      },
+      breadcrumbs: [
+        {
+          text: this.$t('Dashboard'),
+          disabled: false,
+          to: '/dashboard',
+        },
+        {
+          text: this.$t('Bots'),
+          disabled: false,
+          to: '/bots',
+          exact: true
+        },
+        {
+          text: this.$t('Bot'),
+          disabled: false,
+          to: '/bots/bot',
+        }
+      ]
     }
   },
   mounted() {
@@ -337,6 +403,7 @@ export default {
 
       if(this.Bot.Bot === 'spot') await this.$refs.Spot.saveSpot();
       if(this.Bot.Bot === 'futures') await this.$refs.CSTM.saveCSTM();
+      if(this.Bot.Bot === 'futurespro') await this.$refs.Kgbx.saveKgbx();
 
       // Redirect to new exist bot
       // this.needsUpdate = true;
@@ -397,7 +464,7 @@ export default {
         var client2 = Binance({
           apiKey: this.apiKey,
           apiSecret: this.apiSecret,
-          httpBase: 'https://sota-network.com'
+          httpBase: 'https://sota-api-test.herokuapp.com'
           // getTime: () => Date.now(),
           // httpBase: 'sota-network.com'
         })
@@ -430,7 +497,7 @@ export default {
           let futuresUserTrades = await client2.futuresAllOrders({
             symbol: this.Bot.symbolName,
             // status: 'active'
-            recvWindow: 5000
+            // recvWindow: 5000
           });
 
           this.orders = [];
@@ -510,10 +577,22 @@ export default {
       }
     },
     'Bot.Market': function(newVal, oldVal) {
-      if (newVal.lengtn) {
-        console.log(newVal.toString().replace(/\//, ''))
-        this.Bot.symbolName = newVal.toString().replace(/\//, '');
-        this.getOrders();
+      if (newVal.length > 0) {
+        if (this.binanceMarkets && this.markets) {
+          if (this.Bot.Market) {
+            let marketObject = this.markets.find(obj => {
+              return obj.value === this.Bot.Market
+            });
+
+            // format market symbols
+            if(marketObject) {
+              let marketObj = marketObject.PrimaryCurrency + marketObject.SecondaryCurrency;
+              this.Bot.symbolName = marketObj;
+
+              this.getOrders();
+            }
+          }
+        }
       }
     },
     'needsUpdate': function () {

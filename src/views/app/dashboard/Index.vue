@@ -1,6 +1,9 @@
 <template>
   <div>
     <v-row>
+      <v-col cols="12">
+        <v-breadcrumbs :items="breadcrumbs"></v-breadcrumbs>
+      </v-col>
       <v-col
           cols="12"
       >
@@ -99,8 +102,65 @@
     </v-row>
     <v-row>
       <v-col cols="12" md="6" lg="4" sm="6">
-        {{ $t('dashboard.fearAndGreed')}}
-        <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index" />
+        <base-card>
+          <v-card-title>{{ $t('dashboard.fearAndGreed')}}</v-card-title>
+          <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index" />
+        </base-card>
+      </v-col>
+      <v-col lg="8" md="6" sm="6">
+        <base-card>
+          <v-card-text>
+            <v-tabs v-model="tab">
+              <v-tab v-for="item in items" :key="item.tab">
+                {{ item.tab }}
+              </v-tab>
+            </v-tabs>
+
+            <v-tabs-items v-model="tab">
+              <v-tab-item v-for="item in items" :key="item.tab">
+                <v-card flat>
+                  <v-card-text>
+                    <v-simple-table>
+                      <thead>
+                      <tr>
+                        <th class="text-left">
+                          Coin
+                        </th>
+                        <th class="text-left">
+                          Last Price
+                        </th>
+                        <th class="text-left">
+                          Change
+                        </th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr v-for="(itemTwo, index) in item.content" :key="index">
+                        <td>{{ itemTwo.coin }}</td>
+                        <td>
+                          <p :class="parseFloat(itemTwo.percent) < 0 ? 'text-red-600' : 'text-green-600'">
+                            {{ itemTwo.lastPrice }} USDT
+                          </p>
+                        </td>
+                        <td>
+                          <v-chip
+                              :class="parseFloat(itemTwo.percent) < 0 ? 'bg-red-600 text-gray-200' : 'bg-green-600 text-gray-200'"
+                              small
+                              label
+                              class="ml-2"
+                          >
+                            {{ itemTwo.percent }} %
+                          </v-chip>
+                        </td>
+                      </tr>
+                      </tbody>
+                    </v-simple-table>
+                  </v-card-text>
+                </v-card>
+              </v-tab-item>
+            </v-tabs-items>
+          </v-card-text>
+        </base-card>
       </v-col>
     </v-row>
   </div>
@@ -138,7 +198,27 @@ export default {
       treeMapSeriesData: [],
       treemapSeries: [{ data: []}],
       polarOptions: {},
-      polarSeries: []
+      polarSeries: [],
+      tab: null,
+      items: [
+        {
+          tab: "Спот",
+          content: [
+          ],
+        },
+        {
+          tab: "Фьючерси",
+          content: [
+          ],
+        },
+      ],
+      breadcrumbs: [
+        {
+          text: this.$t('Dashboard'),
+          disabled: false,
+          to: '/dashboard',
+        },
+      ]
     }
   },
   async mounted() {
@@ -238,34 +318,41 @@ export default {
       }
       await quotes.update({date: (new Date()).getTime()});
     }
+    const treemapData = [];
     for (let i = 0; i < coins.length; i++) {
       let coin = quoteData[coins[i]];
-      console.log(coin);
       this.series.push({ name: coin.name, data: [coin.quote.USD.market_cap_dominance]});
-      this.treemapSeries[0].data.push({x: coin.name, y: coin.quote.USD.percent_change_24h.toFixed(2)});
+      treemapData.push({x: coin.name, y: coin.quote.USD.percent_change_24h.toFixed(2)});
     }
+    this.treemapSeries = [{data: treemapData}];
+    await this.getBinanceData();
   },
-  // async mounted() {
-
-    // firebase.auth().onAuthStateChanged(async user => {
-    //   let Bots = firestore.collection('users').doc(user.uid).collection('Bots');
-    //   if(await Bots.get()) this.activeBots = ((await Bots.get()).size).toString();
-    //
-    //   let priceDrivers = firestore.collection('users').doc(user.uid).collection('PriceDrivers');
-    //   priceDrivers = await priceDrivers.where('Status', '==', "true");
-    //   priceDrivers = await priceDrivers.where('AccountPriv', '!=', '').limit(1).get();
-    //
-    //   if(await priceDrivers.size > 0) {
-    //     await priceDrivers.forEach((snapshot) => {
-    //       // console.log(snapshot.data());
-    //       this.apiKey = snapshot.data()['AccountPub'];
-    //       this.apiSecret = snapshot.data()['AccountPriv'];
-    //     });
-    //   }
-    // });
-  // },
   computed: {
     ...mapGetters(["userData"]),
   },
+  methods: {
+    async getBinanceData() {
+      // Spot
+      let symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT', 'XMRUSDT'];
+      for (const symbol of symbols) {
+        let index = symbols.indexOf(symbol);
+        let info = await client.dailyStats({ symbol: symbol });
+        this.items[0].content.push({coin: symbol, lastPrice:parseFloat(await info.lastPrice), percent: await info.priceChangePercent});
+
+      }
+
+      // Futures
+      for (const symbol of symbols) {
+        let index = symbols.indexOf(symbol);
+        let info = await client.futuresDailyStats({ symbol: symbol });
+        this.items[1].content.push({coin: symbol, lastPrice:parseFloat(await info.lastPrice), percent: await info.priceChangePercent});
+      }
+    },
+  },
+  watch: {
+    'apiSecret': async function (val) {
+      await this.getBinanceData();
+    }
+  }
 }
 </script>
