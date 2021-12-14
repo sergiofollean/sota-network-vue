@@ -1,4 +1,5 @@
 import { themeConfig, themePreset } from "@/themeConfig";
+import Vue from "vue";
 
 const state = {
   themeMode: themeConfig,
@@ -49,6 +50,7 @@ const actions = {
 
 const mutations = {
   toggleThemeDarkMode(state, data) {
+    localStorage.set('theme', data ? 'dark' : 'light')
     state.themeMode.isDark = data;
     this.$vuetify.theme.dark = data;
     console.log(state.themeMode.isDark);

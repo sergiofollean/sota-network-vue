@@ -202,6 +202,7 @@
 </template>
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Vue from "vue";
 export default {
   data() {
     return {

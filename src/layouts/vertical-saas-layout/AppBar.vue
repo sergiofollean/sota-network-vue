@@ -97,6 +97,7 @@ import UserDrawer from "../common-drawer/UserDrawer.vue";
 import NotificationDrawer from "../common-drawer/NotificationDrawer.vue";
 import SearchDrawer from "../common-drawer/SearchDrawer.vue";
 import i18n from "../../lang/lang";
+import Vue from "vue";
 export default {
   name: "VerticallAppBar",
   components: {
@@ -140,6 +141,7 @@ export default {
       // console.log("check");
     },
     changeDarkMode(data) {
+      Vue.localStorage.set('theme', data ? 'dark' : 'light')
       this.$vuetify.theme.dark = data;
     },
     changeLocal(data) {

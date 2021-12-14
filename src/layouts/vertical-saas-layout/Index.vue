@@ -22,6 +22,7 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import Vue from "vue";
 export default {
   components: {
     BaseView: () => import("./View"),
@@ -33,6 +34,7 @@ export default {
     ...mapGetters(["getThemeMode"]),
 
     theme() {
+      this.$vuetify.theme.dark = Vue.localStorage.get('theme', 'light') === 'dark';
       return this.$vuetify.theme.dark ? "dark" : "light";
     },
   },

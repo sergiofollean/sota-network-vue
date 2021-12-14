@@ -14,6 +14,8 @@
 </template>
 
 <script>
+  import Vue from "vue";
+
   export default {
     name: 'BaseLayout',
     components: {
@@ -22,9 +24,9 @@
       VerticalDrawer: () => import('../vertical/Sidebar'),
       VerticalAppBar: () => import('../vertical/AppBar'),
     },
-
     computed: {
       theme () {
+        this.$vuetify.theme.dark = Vue.localStorage.get('theme', 'light');
         return this.$vuetify.theme.dark ? 'dark' : 'light'
       },
     },

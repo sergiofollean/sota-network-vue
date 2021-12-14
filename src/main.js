@@ -9,10 +9,12 @@ import VueApexCharts from "vue-apexcharts";
 import "animate.css";
 import i18n from "./lang/lang";
 import axios from 'axios';
+import VueLocalStorage from 'vue-localstorage'
 
 Vue.prototype.$http = axios;
 Vue.component("apexchart", VueApexCharts);
 Vue.use(egretKit);
+Vue.use(VueLocalStorage)
 Vue.config.productionTip = false;
 
 new Vue({

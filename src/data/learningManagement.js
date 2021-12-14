@@ -83,7 +83,7 @@ export const studyChart = {
     },
     {
       name: 'Javascript',
-      data: [65, 80, 70, 100, 90, 70, 55],
+      data: [65, 80, 70, 10, 90, 70, 55],
       type: 'bar',
       itemStyle: {
         barBorderRadius: [10, 10, 0, 0],
@@ -94,53 +94,42 @@ export const studyChart = {
   chartOptions: {
     chart: {
       type: 'bar',
-      
       stacked: true,
       toolbar: {
         show: false,
       },
-      
     },
-    // tooltip: {
-    //   theme: 'dark'
-    // },
     legend: {
       position: 'bottom',
       itemMargin: {
         horizontal: 10,
         vertical: 15
+      },
     },
-  
-  },
     plotOptions: {
       bar: {
         horizontal: false,
         columnWidth: '20px',
       },
     },
-  
-
- 
-
-      dataLabels: {
-        enabled: false,
-      },
-     
-      colors: ['#0081ff', '#e95455', '#e97d23'],
-      xaxis: {
-        axisBorder: {
-          show: false,
-        },
-      
-        categories: ['Sat', 'Sun', 'Mon', 'Tue',
-          'Wed', 'Thur'
-        ],
-      },
-      yaxis: {
+    dataLabels: {
+      enabled: false,
+    },
+    colors: ['#0081ff', '#e95455', '#e97d23'],
+    xaxis: {
+      axisBorder: {
         show: false,
       },
-      grid: {
-        show: false,
-      },
+
+      categories: ['Sat', 'Sun', 'Mon', 'Tue',
+        'Wed', 'Thur'
+      ],
+    },
+    yaxis: {
+      show: false,
+    },
+    grid: {
+      show: false,
+    },
   },
 }
