@@ -94,6 +94,20 @@
       <v-col cols="12" lg="4" md="6" sm="12">
         <base-card>
           <v-card-text>
+            <span>Spot assets amount</span>
+            <apexchart
+                type="polarArea"
+                height="340"
+                :options="polarOptions"
+                :series="polarSeries"
+            />
+          </v-card-text>
+        </base-card>
+      </v-col>
+
+      <v-col cols="12" lg="4" md="6" sm="12">
+        <base-card>
+          <v-card-text>
             <apexchart id="ttreemap" type="treemap" height="350" :options="treemapOptions" :series="treemapSeries"/>
           </v-card-text>
         </base-card>
@@ -177,7 +191,6 @@ import Binance from 'binance-api-node';
 const client = Binance();
 const firestore = firebase.firestore();
 const database = firebase.database();
-import {now} from "trading-vue-js/src/helpers/script_utils";
 import CoinMarketCap from "../../../plugins/marketCapApi";
 
 
@@ -197,7 +210,28 @@ export default {
       treemapOptions: {},
       treeMapSeriesData: [],
       treemapSeries: [{ data: []}],
-      polarOptions: {},
+      polarOptions: {
+        chart: {
+          type: 'polarArea',
+        },
+        stroke: {
+          colors: ['#fff']
+        },
+        fill: {
+          opacity: 0.8
+        },
+        responsive: [{
+          breakpoint: 480,
+          options: {
+            chart: {
+              width: 200
+            },
+            legend: {
+              position: 'bottom'
+            }
+          }
+        }]
+      },
       polarSeries: [],
       tab: null,
       items: [
@@ -327,27 +361,46 @@ export default {
     this.treemapSeries = [{data: treemapData}];
     await this.getBinanceData();
   },
-  computed: {
-    ...mapGetters(["userData"]),
-  },
   methods: {
     async getBinanceData() {
       // Spot
       let symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'DOGEUSDT', 'XMRUSDT'];
       for (const symbol of symbols) {
-        let index = symbols.indexOf(symbol);
         let info = await client.dailyStats({ symbol: symbol });
         this.items[0].content.push({coin: symbol, lastPrice:parseFloat(await info.lastPrice), percent: await info.priceChangePercent});
-
       }
 
       // Futures
       for (const symbol of symbols) {
-        let index = symbols.indexOf(symbol);
         let info = await client.futuresDailyStats({ symbol: symbol });
         this.items[1].content.push({coin: symbol, lastPrice:parseFloat(await info.lastPrice), percent: await info.priceChangePercent});
       }
+
+      firebase.auth().onAuthStateChanged(async user => {
+        var priceDrivers = firestore.collection('users')
+            .doc(user.uid)
+            .collection('PriceDrivers');
+        priceDrivers.onSnapshot(snapshot => {
+          snapshot.forEach(async ech => {
+            const data = ech.data();
+            if (data['AccountPlatform'] === 'Binance') {
+              let binance = new Binance({
+                httpBase: 'https://sota-api-test.herokuapp.com',
+                apiKey: data['AccountPub'],
+                apiSecret: data['AccountPriv']
+              });
+              let lendingData = await binance.lendingAccount();
+              this.polarOptions = {...this.polarOptions, labels: [...lendingData.positionAmountVos.map((item) => item.asset)]}
+              lendingData.positionAmountVos.forEach((item) => { this.polarSeries.push(item.amountInUSDT)});
+            }
+          });
+        });
+      });
+
     },
+  },
+  computed: {
+    ...mapGetters(["userData"]),
   },
   watch: {
     'apiSecret': async function (val) {
