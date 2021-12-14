@@ -4,19 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/views/app/bots/Kgbx.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/public/index.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/lang/i18n/ua.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/lang/i18n/ua.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/layouts/vertical-saas-layout/Sidebar.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/layouts/vertical-saas-layout/Sidebar.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/bots/Bot.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/bots/Bot.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/bots/CSTM.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/bots/CSTM.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/bots/Main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/bots/Main.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/bots/Spot.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/bots/Spot.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/dashboard/Index.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/dashboard/Index.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/views/app/settings/Main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/src/views/app/settings/Main.vue" afterDir="false" />
-    </list>
+    <list default="true" id="e9005ae0-fdaa-4a17-9ab2-22f310403610" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -108,7 +96,7 @@
       <workItem from="1637237821470" duration="6434000" />
       <workItem from="1637289153315" duration="46000" />
       <workItem from="1637687551521" duration="3350000" />
-      <workItem from="1638892399636" duration="19583000" />
+      <workItem from="1638892399636" duration="20088000" />
     </task>
     <servers />
   </component>
