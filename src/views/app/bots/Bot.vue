@@ -361,9 +361,9 @@ export default {
 
       /* Doing ajax to get markets from Haas */
       if (platform.length > 0) {
-        axios.get('https://sota-api.gq/GetPriceMarkets/' + platform).then(response => {
-          if (response.data.length > 0) {
-            response.data.map(el => {
+        axios.get('http://34.88.222.239/haas/GetPriceMarkets?priceSourceName=' + platform).then(response => {
+          if (response.data.Result.length > 0) {
+            response.data.Result.map(el => {
               this.markets.push({
                 text: el.ShortName,
                 value: el.ShortName,
