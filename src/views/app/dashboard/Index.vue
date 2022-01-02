@@ -122,15 +122,13 @@
         </base-card>
       </v-col>
 
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="6" lg="4" sm="6">
+      <v-col cols="12" md="6" lg="4" sm="12">
         <base-card>
           <v-card-title>{{ $t('dashboard.fearAndGreed')}}</v-card-title>
           <img src="https://alternative.me/crypto/fear-and-greed-index.png" alt="Latest Crypto Fear & Greed Index" />
         </base-card>
       </v-col>
-      <v-col lg="8" md="6" sm="6">
+      <v-col lg="8" md="6" sm="12">
         <base-card>
           <v-card-text>
             <v-tabs v-model="tab">
