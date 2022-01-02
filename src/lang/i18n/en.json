@@ -4,7 +4,8 @@
     "checkSubscriptions": "Check my subscriptions",
     "manageSubscriptions": "Manage subscriptions",
     "activeBots": "Active bots",
-    "totalBalance": "Total balance",
+    "futuresBalance": "Futures balance",
+    "fiatBalanceInBtc": "Fiat balance in BTC",
     "unrealizedProfit": "Unrealized profit",
     "fearAndGreed": "Crypto Fear and Greed"
   },

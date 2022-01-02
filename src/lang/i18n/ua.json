@@ -8,6 +8,8 @@
     "manageSubscriptions": "Керування підписками",
     "activeBots": "Активні боти",
     "totalBalance": "Сумарний баланс",
+    "futuresBalance": "Баланс фьючерсів",
+    "fiatBalanceInBtc": "Фіатовий баланс в BTC",
     "unrealizedProfit": "Нереалізований прибуток",
     "fearAndGreed": "Індекс страху та жадності"
   },

@@ -63,8 +63,17 @@
             main-icon-name="mdi-cash-multiple"
             main-icon-background-color-class="bg-green-200"
             main-icon-text-color="text-success"
-            :sub-heading-text="$t('dashboard.totalBalance')"
-            :heading-text="totalBallance+' $'"
+            :sub-heading-text="$t('dashboard.futuresBalance')"
+            :heading-text="totalBalance +' $'"
+        />
+      </v-col>
+      <v-col cols="12" md="6" lg="4" sm="6">
+        <analytic-one-card
+            main-icon-name="mdi-cash-multiple"
+            main-icon-background-color-class="bg-green-200"
+            main-icon-text-color="text-success"
+            :sub-heading-text="$t('dashboard.fiatBalanceInBtc')"
+            :heading-text="fiatBalanceInBtc +' $'"
         />
       </v-col>
       <v-col cols="12" md="6" lg="4" sm="6">
@@ -73,7 +82,7 @@
             main-icon-background-color-class="bg-purple-200"
             main-icon-text-color="text-info"
             :sub-heading-text="$t('dashboard.unrealizedProfit')"
-            heading-text="+ 79,23 $"
+            :heading-text="unPnl+ ' $'"
         />
       </v-col>
       <v-col cols="12" lg="4" md="6" sm="12">
@@ -204,7 +213,9 @@ export default {
       options: {},
       series: [],
       activeBots: '0',
-      totalBallance: '0',
+      totalBalance: '0',
+      fiatBalanceInBtc: 0,
+      unPnl: '0',
       apiKey: null,
       apiSecret: null,
       treemapOptions: {},
@@ -390,12 +401,20 @@ export default {
                 apiSecret: data['AccountPriv']
               });
               let lendingData = await binance.lendingAccount();
+              let snapshotData = (await binance.accountSnapshot({type: 'SPOT'})).snapshotVos[0].data;
+              this.fiatBalanceInBtc = snapshotData.totalAssetOfBtc;
               this.polarOptions = {...this.polarOptions, labels: [...lendingData.positionAmountVos.map((item) => item.asset)]}
+              this.polarSeries.splice(0);
               lendingData.positionAmountVos.forEach((item) => { this.polarSeries.push(item.amountInUSDT)});
+              let futuresAccountInfoResult = await binance.futuresAccountInfo();
+              this.unPln = futuresAccountInfoResult.totalUnrealizedProfit;
+              this.totalBalance = Number.parseFloat(futuresAccountInfoResult.totalWalletBalance).toFixed(2);
             }
           });
         });
       });
+
+
 
     },
   },
