@@ -34,7 +34,7 @@
           ticks="always"
       />
       <v-slider
-          v-model="Leverage"
+          v-model="Bot.Leverage"
           class="mt-8"
           :min="1"
           :max="20"
@@ -73,14 +73,14 @@ export default {
     return {
       level: ["Низький ризик", "Середній ризик", "Високий ризик"],
       BallanceHint: 'Спершу оберіть біржу',
-      Leverage: 1
+      // Leverage: 1
     }
   },
   methods: {
     calculateBallance() {
       /* Calculating contracts count to Ballance */
 
-      if (this.binanceMarkets && this.markets) {
+      if (this.binanceMarkets && this.markets.length > 0) {
         if (this.Bot.Market) {
           if (this.Bot.Ballance) {
             let marketObject = this.markets.find(obj => {
@@ -95,7 +95,7 @@ export default {
             let delta = 110;
             if(this.Bot.Level === 0) delta = 70;
             console.log(delta);
-            let contractUstd = (this.Bot.Ballance * this.Leverage) / delta;
+            let contractUstd = (this.Bot.Ballance * this.Bot.Leverage) / delta;
             let contractSize = (contractUstd / this.binanceMarkets[this.Bot.symbolName]).toFixed(3);
 
             // check if more then minimum trade amount
@@ -127,6 +127,7 @@ export default {
             Market: this.Bot.Market,
             Oposition: this.Bot.Oposition,
             Level: this.Bot.Level,
+            Leverage: this.Bot.Leverage,
             Ballance: this.Bot.Ballance,
             Status: "pending",
             Bot: this.Bot.Bot
@@ -189,6 +190,11 @@ export default {
               data.Level = this.Bot.Level;
             }
 
+            if (this.Bot.Leverage !== (await Bot.get()).data()['Leverage']) {
+              // Update Leverage
+              data.Leverage = this.Bot.Leverage;
+            }
+
             if (this.Bot.Ballance !== (await Bot.get()).data()['Ballance']) {
               // Update Ballance
               data.SlotSize = this.Bot.SlotSize;
@@ -219,7 +225,7 @@ export default {
     'Bot.Ballance': function (val, oldval) {
       this.calculateBallance();
     },
-    'Leverage': function () {
+    'Bot.Leverage': function () {
       this.calculateBallance();
     },
     'Bot.Level': function () {
