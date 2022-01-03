@@ -9,12 +9,12 @@ export const items = [{
     icon: 'mdi-robot',
     to: '/bots'
   },
-  {
-    title: 'nav.subscriptions',
-    icon: 'mdi-av-timer',
-    group: 'subscriptions',
-    to: '/subscriptions'
-  },
+  // {
+  //   title: 'nav.subscriptions',
+  //   icon: 'mdi-av-timer',
+  //   group: 'subscriptions',
+  //   to: '/subscriptions'
+  // },
   {
     title: 'nav.settings',
     icon: 'mdi-cog',

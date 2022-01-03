@@ -70,8 +70,8 @@ export default {
       password: "Password",
       checkbox1: true,
       checkbox2: false,
-      email: "admin@gmail.com",
-      ePassword: "123456",
+      email: "",
+      ePassword: "",
       loading: false,
       emailRules: [
         (v) => !!v || "E-mail is required",
